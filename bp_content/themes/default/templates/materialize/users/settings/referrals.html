@@ -1,0 +1,253 @@
+{% extends base_layout %}
+
+<!-- ADD PAGE HEAD ELEMENTS -->
+{% block title %}<title>MBoilerplate » Settings Referrals</title>{% endblock %}
+   
+{% block page_css %}
+  <style shim-shadowdom>
+    paper-tabs {
+      background-color: transparent;
+      color: #fff;
+      cursor:pointer;
+    }
+
+    paper-tabs[noink][nobar] paper-tab.core-selected {
+      color: #fff;      
+    }
+
+    paper-tabs::shadow #selectionBar {
+      background-color: rgba(255, 255, 255, 1);
+    }
+
+    paper-tabs paper-tab::shadow #ink {
+      color: rgba(255, 255, 255, 1);
+    }
+
+
+    paper-tab {
+      cursor:pointer;
+    }
+
+    td {
+        padding: 3px!important;
+        padding-top:7px!important;
+    }
+
+    thead {
+        border-bottom: 1px dotted rgba(37, 50, 56, 0.1)!important;
+    }
+
+    .dataTables_length{
+      display:none!important;
+    }
+
+    .dataTables_info{
+      display: none!important;
+    }
+
+    paper-checkbox.custom-checkbox{
+        height:4px; margin-left:6px;margin-bottom:10px;
+    }
+
+    paper-checkbox.custom-checkbox::shadow #ink[checked] {
+      color: #FBE4BB;
+    }
+
+    paper-checkbox.custom-checkbox::shadow #checkbox.checked {
+      background-color: #ff6623;
+      border-color: #ff6623;
+    }
+  </style>
+  <link href="http://cdn.datatables.net/1.10.6/css/jquery.dataTables.min.css" type="text/css" rel="stylesheet" media="screen,projection">
+{% endblock %}
+
+{% block page_components %}
+    <link href="/boilerplate/webcomponents/bower_components/paper-tabs/paper-tabs.html" rel="import">
+    <link href="/boilerplate/webcomponents/bower_components/core-icon/core-icon.html" rel="import">
+    <link href="/boilerplate/webcomponents/bower_components/paper-checkbox/paper-checkbox.html" rel="import">
+{% endblock %}
+
+
+
+
+
+<!-- ADD PAGE BODY ELEMENTS-->
+{% block breadcrums %}
+	<!--breadcrumbs start-->
+    <div id="breadcrumbs-wrapper" class=" grey lighten-3">
+      <div class="container">
+        <div class="row">
+          <div class="col s12 m12 l12">
+            <h5 class="breadcrumbs-title">Referrals</h5>
+          </div>
+        </div>
+        <paper-tabs id="scrollableTabs" selected="2" scrollable style="margin-left: -20px;background-color: #03A9F4;width: 110%;   margin-top: 5px;">
+          <paper-tab onclick="window.open('{{ uri_for("materialize-settings-profile") }}', '_top')">Profile</paper-tab>
+          <paper-tab onclick="window.open('{{ uri_for("materialize-settings-address") }}', '_top')">Address</paper-tab>
+          <paper-tab onclick="window.open('{{ uri_for("materialize-settings-referrals") }}', '_top')">Referrals</paper-tab>
+          <paper-tab onclick="window.open('{{ uri_for("materialize-settings-account") }}', '_top')">Account</paper-tab>
+      </paper-tabs>
+      </div>
+    </div>
+    <!--breadcrumbs end-->
+{% endblock %}
+
+{% block page_content %}
+ <div class="section">
+    <div class="container">
+    <div class="row">
+      <div class="col s12">
+          {% if total > 0 %}
+              <div class="row" style="position:relative;">
+                <p class="col s11 offset-s1 flow-text" style="margin-bottom: 40px;text-shadow: 1px 1px 1px rgba(128, 128, 128, 0.46); position: absolute; top: -15px; z-index:2;">Haz invitado a 
+                  {% if last_page > 1 %} más de {{ grand_total }} contactos ! 
+                    (
+                      {% if page > 1 %} 
+                        <core-icon icon="chevron-left" style="background:transparent; fill:#ff6623; cursor:pointer;" onclick="changePage('prev')"></core-icon>
+                      {% endif %} 
+                    Grupo {{page}} de {{last_page}} <core-icon icon="chevron-right" style="background:transparent; fill:#ff6623; cursor:pointer;" onclick="changePage('next')"></core-icon>) 
+                  {% else %} 
+                    {{total}} contactos. 
+                  {% endif %}
+                </p>
+                <div class="col s10 offset-s1" id="table-datatables">
+                    <table id="data-table-simple" class="responsive-table hoverable centered display">
+                        <thead style="font-family:roboto; color:#777777;">
+                          <tr>
+                              <th >Hace</th>
+                              <th >Contacto</th>
+                              <th >Estado</th>
+                          </tr>
+                        </thead>
+                        <tbody style="font-family:roboto-light;">
+                           {% for referral in referrals %}
+                            <tr>
+                                {% for attr in properties %}
+                                    <td class="property-{{attr}}">
+                                        {% if getattr(referral, attr)|e == 'invited' %}
+                                            Volver a invitar: <paper-checkbox class="custom-checkbox" id="check-{{ getattr(referral, 'content')|e }}" onchange="addEmail(this)"></paper-checkbox>
+                                        {% elif getattr(referral, attr)|e == 'joined' %}
+                                            <span style="color:#43CC20">¡Se unió!</span>
+                                        {% elif getattr(referral, attr)|e == 'inelegible' %}
+                                            <span style="color:#00A0D7">Ya tenía cuenta</span>
+                                        {% else %}
+                                            {{ getattr(referral, attr)|e }}
+                                        {% endif %}
+                                    </td>
+                                {% endfor %}
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    <button onclick="sendForm('form_referrals')" class="waves-effect waves-light light-blue white-text btn right" style="margin-top:20px" id="connect-btn" name="action">Invitar de nuevo
+                      <i class="mdi-content-send right"></i>
+                    </button>
+                    <p class="left" style="margin-top: 20px;">¿No ves algún invitado? <a href="/materialize/referrals/">Clic aquí para invitarlo.</a></p>  
+                </div>             
+              </div>
+              <form id="form_referrals" action="{{ url|safe }}" method="post" style="display:none;">
+                  <fieldset>
+                          <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+                          <input type="hidden" id="emails" name="emails" value="" hidden>
+                  </fieldset>
+              </form>
+              {% else %}
+              <div class="row">
+                <p class="col s12 flow-text" style="margin-bottom: 40px;text-shadow: 1px 1px 1px rgba(128, 128, 128, 0.46);">Haz invitado a {{total}} contactos.</p>
+                <button onclick="window.open('{{ uri_for("materialize-referrals") }}', '_top')" class="waves-effect waves-light light-blue white-text btn center" style="margin-left: 12px;" id="connect-btn" name="action">Invitar ahora
+                      <i class="mdi-content-send right"></i>
+                </button>    
+              </div>
+              {% endif %}
+      </div>
+    </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block sidebar_right %}
+{% endblock %}
+
+{% block page_floatings %}
+{% endblock %}
+
+{% block page_footer %}
+{% endblock %}
+
+
+<!-- ADD PAGE SCRIPT ELEMENTS-->
+{% block page_scripts %}
+  <script src="/{{ theme }}/js/lib/moment-with-locales.min.js"></script>
+  <script src="/{{ theme }}/materialize/js/plugins/data-tables/js/jquery.dataTables.min.js"></script>
+  <script>
+      moment.locale('es');
+      emails = [];
+      
+
+      function addEmail(element){
+          if (element.checked){
+              emails.push(element.id.replace('check-',''));
+          } else{
+              emails.splice(emails.indexOf(element.id.replace('check-','')))
+          }
+      }
+
+      function sendForm(formID){
+          document.getElementById('emails').value = JSON.stringify(emails);
+          if (document.getElementById('emails').value != '[]'){
+              document.getElementById(formID).submit();
+          }else
+            Materialize.toast('<span class="toast-warning">Por favor selecciona al menos 1 contacto.</span>', 4500);
+              
+      }
+
+      $(document).ready(function(){
+
+         $('#data-table-simple').DataTable({
+              scrollY: 200,
+              paging: false,
+              "language": {
+                "search": "Buscar:",
+                "zeroRecords": "Registro ninja encontrado"
+              }
+          } );
+
+         
+         var y,m,d,x = document.getElementsByClassName("property-timestamp");
+         for (var i = 0, j = x.length; i < j; i++){
+              y = parseInt(x[i].innerHTML.trim().substr(0,4));
+              m = parseInt(x[i].innerHTML.trim().substr(5,2))-1;
+              if (m<0)
+                  m=12;
+              d = parseInt(x[i].innerHTML.trim().substr(8,2));
+              var a  = moment([y,m,d]);
+              var _b = new Date()
+              var b = moment([_b.getFullYear(), _b.getMonth(), _b.getDate()]);
+              if (a.from(b, true) != 'unos segundos')
+                  x[i].innerHTML = a.from(b, true);
+              else
+                  x[i].innerHTML = 'menos de un día';
+         }
+
+      });
+
+      function changePage(to){
+         var page = 1;
+         var url = window.location.protocol + "//" + window.location.host + window.location.pathname;;
+         if (getParameterByName('p') != '')
+            if (to == 'prev')
+              page = parseInt(getParameterByName('p'))-1;
+            else
+              page = parseInt(getParameterByName('p'))+1;
+         url += '?p=' + page;
+         window.open(url, "_self");
+      }
+
+      function getParameterByName(name) {
+          name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+          var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+              results = regex.exec(location.search);
+          return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+      }
+  </script>
+{% endblock %}

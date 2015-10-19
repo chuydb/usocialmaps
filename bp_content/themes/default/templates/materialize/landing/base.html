@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="{{ locale_language_id }}"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8" lang="{{ locale_language_id }}"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9" lang="{{ locale_language_id }}"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="{{ locale_language_id }}"> <!--<![endif]-->
+
+
+{% block document_head %}
+	<head>
+  		{% block title %}<title>{{app_name}}</title>{% endblock %}
+
+		<!-- All meta tags from config files -->
+	    {% block metadata %}
+			{{ meta_tags_code }}
+	    {% endblock %}
+
+		{% block favicons %}
+		    <link rel="icon" href="{{brand_favicon}}" sizes="32x32">
+		    {% if is_mobile %}
+				<!-- For iPhone -->
+				<link rel="apple-touch-icon-precomposed" href="{{brand_favicon}}">
+				<!-- For Windows Phone -->
+				<meta name="msapplication-TileColor" content="#00bcd4">
+				<meta name="msapplication-TileImage" content="{{brand_favicon}}">
+		    {% endif %}
+		{% endblock %}
+
+	  	<!-- CSS  -->
+	  	{% block stylesheets %}
+	  		<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+	  		<link href="/{{theme}}/materialize/css/materialize.min.css" type="text/css" rel="stylesheet" media="screen,projection">		    
+		    <link href="/{{theme}}/materialize/css/style.css" type="text/css" rel="stylesheet" media="screen,projection">
+		    <style type="text/css">
+	    		.toast {background-color: white!important; border-radius: 40px;}
+	    		.toast-success{ color: #25CD67!important; line-height: 18px;}
+	    		.toast-danger{ color: #CE1212!important; line-height: 18px;}
+	    		.toast-warning{ color: #CEB029!important; line-height: 18px;}
+	    		.toast-info{ color: #2095CB!important; line-height: 18px;}
+	    		@-webkit-keyframes pulsate {
+				    0% {-webkit-transform: scale(0.1, 0.1); opacity: 0.0;}
+				    50% {opacity: 1.0;}
+				    100% {-webkit-transform: scale(1.2, 1.2); opacity: 0.0;}
+				}
+
+				.icon-block {
+				  padding: 0 15px;
+				}
+				.icon-block .material-icons {
+				  font-size: inherit;
+				}
+				ul li{
+					font-family: roboto-thin!important;
+				}
+				.g-recaptcha{
+					  margin-left: 23%;
+  					  -webkit-transform: scale(0.8);
+  					  transform: scale(0.8);
+				}
+				html, body { height: 100%; margin: 0; padding: 0; }
+				#map {height: 95%}
+				.spacer{margin-bottom: 35px;}
+	    	</style>
+		    {% block page_css %}{% endblock %}
+		{% endblock %}
+		
+		<!-- All google, mixpanel and analytics tags from config files. -->
+		{% block analytics %}
+			{{ google_analytics_code }}
+		{% endblock %}
+	    
+	    <!-- All JavaScript at the bottom, except these. -->
+		{% block priority_js %}
+			<!-- <script type="text/javascript" src="/boilerplate/webcomponents/bower_components/webcomponentsjs/webcomponents.min.js"></script>	 -->
+    		<script type="text/javascript" src="/boilerplate/js/libs/modernizr-2.7.1.min.js"></script>
+   		 	<script src="https://ajax.googleapis.com/ajax/libs/webfont/1.5.10/webfont.js"></script>
+		{% endblock %}
+
+		<!--  POLYMER   -->
+		<!-- {% block webcomponents %}
+			{% block page_components %}{% endblock %}
+		{% endblock %}  -->
+
+	</head>
+{% endblock %}
+
+{% block document_body %}
+	<body>
+
+		{% block navbar %}
+			<!-- START NAVBAR -->
+			<nav style="background-color: transparent;position: fixed;border-bottom: none; z-index: 9999999;" class="z-depth-2">
+				<div class="nav-wrapper" style="background:white;">
+				  <a href="{{uri_for("landing")}}" class="brand-logo"><img src="{{brand_logo}}" style="height:45px; margin-top:8px; {% if is_mobile %}margin-left:4px;{% else %}margin-left:10px;{% endif %}"></a>
+				  <a href="#" data-activates="mobile-demo" class="button-collapse right"><i class="mdi-navigation-more-vert"></i></a>
+				  <ul id="nav-mobile" class="right hide-on-med-and-down">
+				    {% if not user_id %}
+				    <li id="nav-login"><a href="#modal1" class="modal-trigger menu-item btn" style="background-color: #65BD2E;margin-left: 20px;margin-right: 20px;">Ingreso</a></li>
+				    <li id="nav-register"><a href="#modal2" class="modal-trigger menu-item btn" style="background-color: #F6A10C;margin-left: 20px;margin-right: 20px;">Registro</a></li>
+				    {% else %}
+				    <ul id="profile-dropdown" class="dropdown-content" style="margin-top:10px; border-radius:4px; padding:10px">
+		                  <li><a  style="font-size: 1rem;padding: 0.5rem;" class="{{brand_color}}-text" href="{{ uri_for("materialize-home") }}">My dashboard</a>
+	                        </li>
+	                      <li><a  style="font-size: 1rem;padding: 0.5rem;" class="{{brand_color}}-text" href="{{ uri_for("materialize-settings-profile") }}">My profile </a>
+	                        </li>
+	                      <li><a  style="font-size: 1rem;padding: 0.5rem;" class="{{brand_color}}-text" href="{{ uri_for("logout") }}">Logout</a>
+	                        </li>
+		            </ul>
+				    <li class="nav-user" style="margin-right: -32px;">
+                        	{% if has_picture %}
+								<a class="btn-flat dropdown-button waves-effect waves-light white-text profile-btn right" href="#" data-activates="profile-dropdown" style="    height: 45px; margin-top: 8px;    line-height: 1.5rem;    position: relative;">
+										<div style="position: absolute;left: 0px;"><img src="/media/serve/profile/{{user_id}}/" alt="" class="circle responsive-img valign profile-image" style=" height: 30px; margin-top:6px;border: 1px solid white; height:35px"></div>
+										<span style="padding: 15px;height: 46px;text-transform: none;" class="valign-wrapper">{{name}} <i class="material-icons right" style="margin-left: 5px; font-size: 14px;">arrow_drop_down</i></span>
+		                        </a>
+							{% else %}
+								<a class="btn-flat dropdown-button waves-effect waves-light white-text profile-btn right" href="#" data-activates="profile-dropdown" style="    height: 45px; margin-top: 8px;    line-height: 1.5rem;    position: relative;">
+										<div style="position: absolute;left: 0px;">
+											<span class="circle white light-blue-text lighten-1" style="width: 35px;   height: 35px; display: inline-block;   text-align: center;   font-size: 1.5rem;   color: #fff;   font-weight: 300;margin-top: 5px;line-height: 2.2rem;">{{ name_i }}</span>
+										</div>
+										<span style="padding: 15px;height: 46px;text-transform: none;" class="valign-wrapper">{{name}} <i class="material-icons right" style="margin-left: 5px; font-size: 14px;">arrow_drop_down</i></span>
+		                        </a>
+							{% endif %}
+                     </li>	
+				    {% endif %}
+				    <li id="nav-blog"><a href="{{uri_for("blog")}}" class="modal-trigger menu-item btn" style="background-color: #ED363D;margin-left: 20px;margin-right: 20px;">Tendencias</a></li>
+				  </ul>
+				  <ul class="side-nav" id="mobile-demo">
+				    {% if not user_id %}
+				    <li id="nav-login"><a href="#modal1" class="modal-trigger menu-item">Ingreso</a></li>
+				    <li id="nav-register"><a href="#modal2" class="modal-trigger menu-item">Registro</a></li>
+				    {% else %}
+				    <li class="no-padding">
+                        <ul class="collapsible collapsible-accordion">
+                            <li class="bold">
+                            	<a class="collapsible-header waves-effect waves-cyan">
+						    	{% if has_picture %}
+									<img src="/media/serve/profile/{{user_id}}/" alt="" class="circle responsive-img valign profile-image" style="margin-top:6px;border: 1px solid rgb(3, 169, 244); height:35px">
+								{% else %}
+		                        	<span class="circle red lighten-1" style="width: 35px;   height: 35px; display: inline-block;   vertical-align: middle;   text-align: center;   font-size: 1.5rem;   color: #fff;   font-weight: 300; margin-top: 10px;margin-left: 10px;">{{ name_i }}</span>
+								{% endif %}
+									<i class="material-icons right" style="line-height: 1.6;margin-left: -38px;">arrow_drop_down</i>
+                            	<div class="collapsible-body">
+                                    <ul>
+									  <li><a href="{{ uri_for("materialize-home") }}">My dashboard</a>
+		                                </li>
+		                              <li><a href="{{ uri_for("materialize-settings-profile") }}">My profile </a>
+		                                </li>
+		                              <li><a href="{{ uri_for("logout") }}">Logout</a>
+		                                </li>
+                                    </ul>
+                                </div>
+                            </li>
+                        </ul>
+                     </li>
+				     <li class="divider"></li>
+				    {% endif %}
+				    <li id="nav-blog"><a href="{{uri_for("blog")}}" class="modal-trigger menu-item">Tendencias</a></li>
+				  </ul>
+				</div>
+			</nav>
+			<!-- END NAVBAR -->
+		{% endblock %}
+
+		{% block header_content %}
+		{% endblock %}
+
+		{% block body_content %}
+			<div id="map">				
+			</div>
+		{% endblock %}
+
+		{% block modals_content %}
+			<div id="modal1" class="modal white {{brand_color}}-text center" style="display: none; opacity: 1; top: 0px;">
+		      <i class="mdi-navigation-close {{brand_color}}-text right modal-action modal-close" style="padding: 10px;"></i>
+		      <div class="modal-content">
+	        	<form id="form_login_user" action="/login/" method="post">
+		            <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+			        <div class="row">
+			          <div class="input-field col s12 center">
+			            <p class="center login-form-text">Usa tu correo y contraseña para ingresar</p>
+			          </div>
+			        </div>
+			        <div class="row margin">
+			          <div class="input-field col s12">
+			            <i class="mdi-social-person-outline prefix"></i>
+			            <input id="login_email" name="email" type="email" class="validate">
+			            <label for="email" class="center-align">Correo</label>
+			          </div>
+			        </div>
+			        <div class="row margin">
+			          <div class="input-field col s12">
+			            <i class="mdi-action-lock-outline prefix"></i>
+			            <input id="login_password" name="password" type="password">
+			            <label for="password">Constraseña</label>
+			          </div>
+			        </div>
+			        <div class="row">          
+			          <div class="input-field col s12 m12 l12  login-text" style="display:none;">
+			              <input id="login_remember-me" name="remember_me" type="checkbox" />
+			              <label for="remember-me">Recordarme</label>
+			          </div>
+			        </div>
+			        <div class="row">
+			          <div class="input-field col s12">
+			            <a class="btn waves-effect waves-light col s12" style="cursor:pointer;background-color: #65BD2E;" onclick="sendForm('form_login_user')">Ingresar</a>
+			          </div>
+			        </div>
+			        <div class="row">
+			        	<p class="margin right-align medium-small left"><a target="_blank" href="{{uri_for("faq")}}">Preguntas frecuentes</a></p>
+				        <p class="margin right-align medium-small right"><a target="_blank" href="{{ uri_for("password-reset") }}">¿Olvidaste tu contraseña?</a></p>
+			        </div>
+			      </form>
+		      </div>
+		    </div>
+		    <div id="modal2" class="modal white {{brand_color}}-text center" style="display: none; opacity: 1; top: 0px; max-height:80%;">
+		      <i class="mdi-navigation-close {{brand_color}}-text right modal-action modal-close" style="padding: 10px;"></i>
+		      <div class="modal-content">
+	        	<form id="form_register_user" action="/register/" method="post">
+		            <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+			        <div class="row">
+			          <div class="input-field col s12 center">
+			            <p class="center login-form-text">¡Únete a la comunidad que reaviva Guadalupe!</p>
+			          </div>
+			        </div>
+			        <div class="row margin">
+			          <div class="input-field col s12">
+			            <i class="mdi-social-person-outline prefix"></i>
+			            <input id="register_name" name="name" type="text">
+			            <label for="name" class="center-align">Nombre</label>
+			          </div>
+			        </div>
+			        <div class="row margin">
+			          <div class="input-field col s12">
+			            <i class="mdi-communication-email prefix"></i>
+			            <input id="register_email" name="email" type="email" class="validate">
+			            <label for="email" class="center-align">Correo</label>
+			          </div>
+			        </div>
+			        <div class="row margin">
+			          <div class="input-field col s12">
+			            <i class="mdi-action-lock-outline prefix"></i>
+			            <input id="register_password" name="password" type="password">
+			            <label for="password">Contraseña</label>
+			          </div>
+			        </div>
+			        <div class="row margin">
+			          <div class="input-field col s12">
+			        	{{captchahtml | safe}}
+			          </div>
+			        </div>
+			        <div class="row">
+			          <div class="input-field col s12">
+			            <a class="btn waves-effect waves-light col s12" style="cursor:pointer;background-color: #F6A10C;" onclick="sendForm('form_register_user')">Registrarme</a>
+			          </div>
+			        </div>
+			        <div class="row">
+			        	<p class="margin right-align medium-small left"><a target="_blank" href="{{uri_for("tou")}}">Términos de uso</a></p>
+				        <p class="margin right-align medium-small right"><a target="_blank" href="{{uri_for("privacy")}}">Aviso de privacidad</a></p>
+			        </div>
+			      </form>
+		      </div>
+		    </div>
+		{% endblock %}
+
+		{% block footer %}
+			<!-- START FOOTER -->
+			<footer class="page-footer" style="margin-top:0!important; background-color:#f1f1f1!important">
+				<div class="footer-copyright " style="text-align:right;">
+				  <div class="container">
+				  	<a class="white-text" href="{{uri_for("license")}}">MIT License - </a>© 2015 Gobierno de Guadalupe, All rights reserved. Powered by <a class="white-text tooltipped" data-position="top" data-delay="50" data-tooltip="Intenta el Konami-code" href="http://mboilerplate.appspot.com" target="_blank">the amazing MBoilerplate.</a>
+				  </div>
+				</div>
+			</footer>
+			<!-- END FOOTER -->
+		{% endblock %}
+
+	  	<!-- All Scripts start here -->
+		{% block scripts %}
+			<!-- jQuery Library -->
+		    <script type="text/javascript" src="/{{theme}}/materialize/js/jquery-1.11.2.min.js"></script>
+		    <!--materialize js-->
+		    <script type="text/javascript" src="/{{theme}}/materialize/js/materialize.min.js"></script>
+		    <!--scrollbar-->
+		    <script type="text/javascript" src="/{{theme}}/materialize/js/plugins/perfect-scrollbar/perfect-scrollbar.min.js"></script>
+		    <!--plugins.js - Some Specific JS codes for Plugin Settings-->
+		    <script type="text/javascript" src="/{{theme}}/materialize/js/plugins.js"></script>
+		  	<script src="/{{theme}}/materialize/js/plugins/jquery/jquery.color-2.1.0.js"></script>
+		  	<!-- Toast Notification -->
+		    {% if messages|safe %}		    	
+			    {% for message in messages %}
+		    		<script type="text/javascript">
+		            	var resendIndex = 0 ;
+		            	var _text = "{{ message[0]|safe }}";
+		            	var _textAdditionals = "";
+						resendIndex = _text.search('resend');
+						if ( resendIndex > 0 ){
+							//this is the case when resend-activation-link is sent
+							// 1: Add this text as html to toast additionals
+							_textAdditionals = '<a class="toast-warning" href="/'+_text.substr(resendIndex).replace(/ /g,'/')+'/">Clic here if you need us to resend activation link. Previous link will be forgotten.</a>';
+							// 2: Trim this text from toast
+							_text = _text.substr(0, resendIndex-1);							
+						}
+						var _msg = '<span class="toast-{{ message[1]|safe }}">'+_text+'</span>';
+		            	Materialize.toast(_msg, 4500);
+		            	if (_textAdditionals != "") Materialize.toast(_textAdditionals, 10000);
+		            </script>
+			    {% endfor %}
+			{% endif %}	
+
+	        {% block raptor %}
+				<script src="https://hammerjs.github.io/dist/hammer.js"></script>
+				<script src="/{{ theme }}/materialize/js/plugins/raptor/raptor.js?v=5"></script>
+				<script type="text/javascript">
+					$(window).load(function() {
+						$('body').raptorize({
+							'enterOn' : 'konami-code'
+						});
+					});
+				</script>
+			{% endblock %}
+	        
+	        {% block onload_methods %}
+				<script type="text/javascript">
+	    			var is_Safari = false, not_Chrome = false;
+					$(function(){						
+
+						$('a[href*=#]:not([href=#])').click(function() {
+						    if (location.pathname.replace(/^\//,'') == this.pathname.replace(/^\//,'') && location.hostname == this.hostname) {
+						      var target = $(this.hash);
+						      target = target.length ? target : $('[name=' + this.hash.slice(1) +']');
+						      if (target.length) {
+						        $('html,body').animate({
+						          scrollTop: target.offset().top
+						        }, 2000);
+						        return false;
+						      }
+						    }
+						});
+					    $('.button-collapse').sideNav({
+					      edge: 'right'
+					    });
+						$('.modal-trigger').leanModal();
+						$('.tooltipped').tooltip({delay: 50});
+					    $('.parallax').parallax();
+						$(".menu-item").click(function(){
+							$('.button-collapse').sideNav('hide');
+						});
+
+						var body = document.body,html = document.documentElement;
+						var height = Math.max( body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight );
+						var scroll_pos = 0;
+					    var animation_begin_pos = 500;
+					    var animation_end_pos = height;
+					    var original_color = new $.Color( 'rgba(0,0,0,0)' );
+					    var beginning_color = new $.Color( 'rgb(32, 88, 113)' );
+					    var ending_color = new $.Color( 'rgb(3, 155, 229)' );
+					    $(document).scroll(function() {
+					        scroll_pos = $(this).scrollTop(); 
+					        if(scroll_pos >= animation_begin_pos && scroll_pos <= animation_end_pos ) { 
+					            var percentScrolled = scroll_pos / ( animation_end_pos - animation_begin_pos );
+					            var newRed = beginning_color.red() + ( ( ending_color.red() - beginning_color.red() ) * percentScrolled );
+					            var newGreen = beginning_color.green() + ( ( ending_color.green() - beginning_color.green() ) * percentScrolled );
+					            var newBlue = beginning_color.blue() + ( ( ending_color.blue() - beginning_color.blue() ) * percentScrolled );
+					            var newColor = new $.Color( newRed, newGreen, newBlue );
+					            $('nav').animate({ backgroundColor: newColor }, 0);
+					        } else if ( scroll_pos > animation_end_pos ) {
+					            $('nav').animate({ backgroundColor: ending_color }, 0);
+					        } else if ( scroll_pos < animation_begin_pos && scroll_pos > 0) {
+					        } else { 
+					            $('nav').animate({ backgroundColor: original_color }, 0);
+
+					        }
+					    });
+
+						var BrowserDetect = {
+							init: function() {
+								this.browser = this.searchString(this.dataBrowser) || "An unknown browser";
+								this.version = this.searchVersion(navigator.userAgent) || this.searchVersion(navigator.appVersion) || "an unknown version";
+								this.OS = this.searchString(this.dataOS) || "an unknown OS";
+								console.log("Detected " + this.browser + " v." + this.version + " running {{app_name}} in a " + this.OS);
+								if (this.browser != 'Chrome' && this.browser.indexOf('Safari') == -1 && this.browser.indexOf('iPhone') == -1 && this.browser != 'Firefox') {
+									alert("Sorry, this is a system for the future, use Google Chrome.");
+								}
+								else if (this.browser.indexOf("Safari") != -1)
+									is_Safari = true;
+								else if (this.browser.indexOf("Chrome") == -1)
+									not_Chrome = true;
+							},
+							searchString: function(data) {
+								for (var i = 0; i < data.length; i++) {
+									var dataString = data[i].string;
+									var dataProp = data[i].prop;
+									this.versionSearchString = data[i].versionSearch || data[i].identity;
+									if (dataString) {
+										if (dataString.indexOf(data[i].subString) != -1) return data[i].identity;
+									} else if (dataProp) return data[i].identity;
+								}
+							},
+							searchVersion: function(dataString) {
+								var index = dataString.indexOf(this.versionSearchString);
+								if (index == -1) return;
+								return parseFloat(dataString.substring(index + this.versionSearchString.length + 1));
+							},
+							dataBrowser: [{
+								string: navigator.userAgent,
+								subString: "Chrome",
+								identity: "Chrome"
+							}, {
+								string: navigator.userAgent,
+								subString: "OmniWeb",
+								versionSearch: "OmniWeb/",
+								identity: "OmniWeb"
+							}, {
+								string: navigator.vendor,
+								subString: "Apple",
+								identity: "Safari",
+								versionSearch: "Version"
+							}, {
+								prop: window.opera,
+								identity: "Opera",
+								versionSearch: "Version"
+							}, {
+								string: navigator.vendor,
+								subString: "iCab",
+								identity: "iCab"
+							}, {
+								string: navigator.vendor,
+								subString: "KDE",
+								identity: "Konqueror"
+							}, {
+								string: navigator.userAgent,
+								subString: "Firefox",
+								identity: "Firefox"
+							}, {
+								string: navigator.vendor,
+								subString: "Camino",
+								identity: "Camino"
+							}, { // for newer Netscapes (6+)
+								string: navigator.userAgent,
+								subString: "Netscape",
+								identity: "Netscape"
+							}, {
+								string: navigator.userAgent,
+								subString: "MSIE",
+								identity: "Explorer",
+								versionSearch: "MSIE"
+							}, {
+								string: navigator.userAgent,
+								subString: "Gecko",
+								identity: "Mozilla",
+								versionSearch: "rv"
+							}, { // for older Netscapes (4-)
+								string: navigator.userAgent,
+								subString: "Mozilla",
+								identity: "Netscape",
+								versionSearch: "Mozilla"
+							}],
+							dataOS: [{
+								string: navigator.platform,
+								subString: "Win",
+								identity: "Windows"
+							}, {
+								string: navigator.platform,
+								subString: "Mac",
+								identity: "Mac"
+							}, {
+								string: navigator.userAgent,
+								subString: "iPhone",
+								identity: "iPhone/iPod"
+							}, {
+								string: navigator.platform,
+								subString: "Linux",
+								identity: "Linux"
+							}]
+						};
+						BrowserDetect.init();	
+					}); 
+
+					function sendForm(formID){
+			    		if (formID == "form_login_user"){
+			    			if (document.getElementById('login_email').value != "" && document.getElementById('login_password') != ""){
+			    				document.getElementById(formID).submit();
+			    			}else{
+			    				Materialize.toast('<span class="toast-warning">Oops! Are you missing an input field ?</span>',4500);
+			    			}
+			    		}else if (formID == "form_login"){
+			    			if (document.getElementById('email').value != "" && document.getElementById('password') != ""){
+			    				document.getElementById(formID).submit();
+			    			}else{
+			    				Materialize.toast('<span class="toast-warning">Oops! Are you missing an input field ?</span>',4500);
+			    			}
+			    		}else if (formID == "form_register_user"){
+			    			if (document.getElementById('register_name').value != "" && document.getElementById('register_email').value != "" && document.getElementById('register_password') != ""){
+			    				document.getElementById(formID).submit();
+			    			}else{
+			    				Materialize.toast('<span class="toast-warning">Oops! Are you missing an input field ?</span>',4500);
+			    			}
+			    		}else if (formID == "form_register"){
+			    			if (document.getElementById('r_name').value != "" && document.getElementById('r_email').value != "" && document.getElementById('r_password') != ""){
+			    				document.getElementById(formID).submit();
+			    			}else{
+			    				Materialize.toast('<span class="toast-warning">Oops! Are you missing an input field ?</span>',4500);
+			    			}
+			    		}
+
+					}
+				</script>
+			{% endblock %}
+
+			{% if locale_language_id != "en" %}
+				{% if locale_iso.language == "pt" and locale_iso.territory == "BR" %}
+					<script src="/boilerplate/js/libs/jquery_validation/localization/messages_{{ locale_iso.language }}_{{ locale_iso.territory }}.js"></script>
+				{% else %}
+					<script src="/boilerplate/js/libs/jquery_validation/localization/messages_{{ locale_language_id }}.js"></script>
+				{% endif %}
+			{% endif %}
+
+			{% block page_scripts %}
+				<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&libraries=drawing,places,panoramio,weather,visualization"></script>
+				<script src="http://libs.cartocdn.com/cartodb.js/v3/cartodb.js"></script>
+                <script type="text/javascript">
+					/* MAPS RELATED */
+					var mapCenter = [25.6765307,-100.2124545],map;
+					google.maps.event.addDomListener(window,'load', init);
+                    
+					function init(){
+						/*  MAP  */
+						var mapOptions = {
+							center: new google.maps.LatLng(mapCenter[0], mapCenter[1]),
+							zoom: 14,
+							minZoom:5,
+							zoomControl: true,
+							zoomControlOptions: {
+								style: google.maps.ZoomControlStyle.SMALL,	
+							},
+							mapTypeControl: true,
+							mapTypeControlOptions: { 
+								mapTypeIds: [google.maps.MapTypeId.SATELLITE, 'style_1','style_2','style_3','style_4'],
+								style: google.maps.MapTypeControlStyle.DROPDOWN_MENU
+							},
+							scrollwheel: false,
+							streetViewControl: true,
+							panControl:false,
+							backgroundColor: 'rgb(249, 249, 249)',
+							rotateControl:true,
+							overviewMapControl:true
+						};
+						map = new google.maps.Map(document.getElementById('map'), mapOptions);
+						
+    					google.maps.event.addDomListener(window, 'resize', function() {
+                            map.setCenter({lat: mapCenter[0], lng: mapCenter[1]});
+							/*
+                            window.setTimeout(function() {
+                                  map.panTo({lat: mapCenter[0], lng: mapCenter[1]});
+                            }, 1000);                            
+							*/
+                        });
+						
+						/* GMAPS STYLES courtesy of http://snazzymaps.com/ */
+						var styler1 = [{"featureType": "water","stylers": [{ "visibility": "on" },{ "color": "#03A9F4" }]},{"featureType": "road","stylers": [{ "visibility": "off" }]}];
+						var styler1 = [{  "featureType": "administrative",  "stylers": [    { "hue": "#8800ff" },    { "saturation": 17 },    { "lightness": 48 }  ]},{  "featureType": "landscape",  "stylers": [    { "hue": "#ffcc00" },    { "saturation": 81 },    { "lightness": 49 }  ]},{  "featureType": "poi",  "stylers": [    { "saturation": 8 },    { "lightness": 51 }  ]},{  "featureType": "road",  "stylers": [    { "saturation": 1 },    { "lightness": 65 }  ]},{  "featureType": "water",  "stylers": [    { "hue": "#00ddff" },    { "lightness": -4 },    { "saturation": -50 }  ]}]
+						var styler2 = [{"featureType":"water","elementType;":"geometry","stylers":[{"color":"#000000"},{"lightness":17}]},{"featureType":"landscape","elementType":"geometry","stylers":[{"color":"#000000"},{"lightness":20}]},{"featureType":"road.highway","elementType":"geometry.fill","stylers":[{"color":"#000000"},{"lightness":17}]},{"featureType":"road.highway","elementType":"geometry.stroke","stylers":[{"color":"#000000"},{"lightness":29},{"weight":0.2}]},{"featureType":"road.arterial","elementType":"geometry","stylers":[{"color":"#000000"},{"lightness":18}]},{"featureType":"road.local","elementType":"geometry","stylers":[{"color":"#000000"},{"lightness":16}]},{"featureType":"poi","elementType":"geometry","stylers":[{"color":"#000000"},{"lightness":21}]},{"elementType":"labels.text.stroke","stylers":[{"visibility":"on"},{"color":"#000000"},{"lightness":16}]},{"elementType":"labels.text.fill","stylers":[{"saturation":36},{"color":"#000000"},{"lightness":40}]},{"elementType":"labels.icon","stylers":[{"visibility":"off"}]},{"featureType":"transit","elementType":"geometry","stylers":[{"color":"#000000"},{"lightness":19}]},{"featureType":"administrative","elementType":"geometry.fill","stylers":[{"color":"#000000"},{"lightness":20}]},{"featureType":"administrative","elementType":"geometry.stroke","stylers":[{"color":"#000000"},{"lightness":17},{"weight":1.2}]}];
+						var styler3 =[{"featureType":"water","elementType":"geometry","stylers":[{"color":"#a2daf2"}]},{"featureType":"landscape.man_made","elementType":"geometry","stylers":[{"color":"#f7f1df"}]},{"featureType":"landscape.natural","elementType":"geometry","stylers":[{"color":"#d0e3b4"}]},{"featureType":"landscape.natural.terrain","elementType":"geometry","stylers":[{"visibility":"off"}]},{"featureType":"poi.park","elementType":"geometry","stylers":[{"color":"#bde6ab"}]},{"featureType":"poi","elementType":"labels","stylers":[{"visibility":"off"}]},{"featureType":"poi.medical","elementType":"geometry","stylers":[{"color":"#fbd3da"}]},{"featureType":"poi.business","stylers":[{"visibility":"off"}]},{"featureType":"road","elementType":"geometry.stroke","stylers":[{"visibility":"off"}]},{"featureType":"road","elementType":"labels","stylers":[{"visibility":"off"}]},{"featureType":"road.highway","elementType":"geometry.fill","stylers":[{"color":"#ffe15f"}]},{"featureType":"road.highway","elementType":"geometry.stroke","stylers":[{"color":"#efd151"}]},{"featureType":"road.arterial","elementType":"geometry.fill","stylers":[{"color":"#ffffff"}]},{"featureType":"road.local","elementType":"geometry.fill","stylers":[{"color":"black"}]},{"featureType":"transit.station.airport","elementType":"geometry.fill","stylers":[{"color":"#cfb2db"}]}];
+						var styler4 = [{"featureType":"water","stylers":[{"saturation":43},{"lightness":-11},{"hue":"#0088ff"}]},{"featureType":"road","elementType":"geometry.fill","stylers":[{"hue":"#ff0000"},{"saturation":-100},{"lightness":99}]},{"featureType":"road","elementType":"geometry.stroke","stylers":[{"color":"#808080"},{"lightness":54}]},{"featureType":"landscape.man_made","elementType":"geometry.fill","stylers":[{"color":"#ece2d9"}]},{"featureType":"poi.park","elementType":"geometry.fill","stylers":[{"color":"#ccdca1"}]},{"featureType":"road","elementType":"labels.text.fill","stylers":[{"color":"#767676"}]},{"featureType":"road","elementType":"labels.text.stroke","stylers":[{"color":"#ffffff"}]},{"featureType":"poi","stylers":[{"visibility":"off"}]},{"featureType":"landscape.natural","elementType":"geometry.fill","stylers":[{"visibility":"on"},{"color":"#b8cb93"}]},{"featureType":"poi.park","stylers":[{"visibility":"on"}]},{"featureType":"poi.sports_complex","stylers":[{"visibility":"on"}]},{"featureType":"poi.medical","stylers":[{"visibility":"on"}]},{"featureType":"poi.business","stylers":[{"visibility":"simplified"}]}];
+						
+						var styleMap1 = new google.maps.StyledMapType(styler1,{name: "GMaps"});	
+						var styleMap2 = new google.maps.StyledMapType(styler2,{name: "Black"});	
+						var styleMap3 = new google.maps.StyledMapType(styler3,{name: "Apple Maps"});	
+						var styleMap4 = new google.maps.StyledMapType(styler4,{name: "Mapbox"});	
+						
+						map.mapTypes.set('style_1', styleMap1);
+						map.mapTypes.set('style_2', styleMap2);
+						map.mapTypes.set('style_3', styleMap3);
+						map.mapTypes.set('style_4', styleMap4);
+
+						map.setMapTypeId('style_1');
+					}
+						
+
+                    function addCommas(val) {
+					  	while (/(\d+)(\d{3})/.test(val.toString())) {
+					  		var val = val.toString().replace(/(\d+)(\d{3})/, '$1' + ',' + '$2');
+					  	}
+					  	return val;
+					}	
+				</script>
+
+			{% endblock %}			
+		{% endblock %}
+
+	</body>        
+{% endblock %}
+</html>

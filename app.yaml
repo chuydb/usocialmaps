@@ -1,0 +1,181 @@
+application: usocialmaps
+version: production
+runtime: python27
+api_version: 1
+threadsafe: true
+
+env_variables:
+  theme: 'default'
+
+default_expiration: "30d"
+
+skip_files:
+- ^(.*/)?app\.yaml
+- ^(.*/)?app\.yml
+- ^(.*/)?#.*#
+- ^(.*/)?.*~
+- ^(.*/)?.*\.py[co]
+- ^(.*/)?.*/RCS/.*
+- ^(.*/)?\..*
+- ^(.*/)?tests$
+- ^(.*/)?test$
+- ^test/(.*/)?
+- ^COPYING.LESSER
+- ^README\..*
+- \.gitignore
+- ^\.git/.*
+- \.*\.lint$
+- ^fabfile\.py
+- ^testrunner\.py
+- ^grunt\.js
+- ^node_modules/(.*/)?
+
+builtins:
+- appstats: on #/_ah/stats/
+- remote_api: on #/_ah/remote_api/
+
+handlers:
+# @bp_admin
+- url: /admin.*
+  script: main.app
+  login: admin
+
+- url: /favicon\.ico
+  mime_type: image/vnd.microsoft.icon
+  static_files: bp_content/themes/default/static/favicon.ico
+  upload: bp_content/themes/default/static/favicon.ico
+
+- url: /(\w*)/favicon\.ico
+  mime_type: image/vnd.microsoft.icon
+  static_files: bp_content/themes/\1/static/favicon.ico
+  upload: bp_content/themes/(\w*)/static/favicon.ico
+
+- url: /(robots\.txt|humans\.txt|sitemap\.xml|crossdomain\.xml)
+  script: main.app
+
+# @bp_includes - styles
+- url: /boilerplate/css
+  mime_type: text/css
+  static_dir: bp_includes/static/css
+
+# @bp_includes - scripts
+- url: /boilerplate/js
+  mime_type: text/javascript
+  static_dir: bp_includes/static/js
+
+# @bp_includes - images
+- url: /boilerplate/img/(.*\.(gif|png|jpg))
+  static_files: bp_includes/static/img/\1
+  upload: bp_includes/static/img/(.*\.(gif|png|jpg))
+
+# @bp_includes - fonts
+- url: /boilerplate/fonts/(.*\.(eot|svg|ttf|woff))
+  static_files: bp_includes/static/fonts/\1
+  upload: bp_includes/static/fonts/(.*\.(eot|svg|ttf|woff))
+
+# @bp_content - materialize styles
+- url: /(\w*)/materialize/css/(.*\.(css|map|scss))$
+  static_files: bp_content/themes/\1/static/materialize/css/\2
+  upload: bp_content/themes/(\w*)/static/materialize/css/(.*\.(css|map|scss))$
+
+- url: /(\w*)/materialize/css/(\w*)/(\w-*)/(.*\.(css|map|scss))$
+  static_files: bp_content/themes/\1/static/materialize/css/\2/\3/\4
+  upload: bp_content/themes/(\w*)/static/materialize/css/(\w*)/(\w-*)/(.*\.(css|map|scss))$
+
+- url: /(\w*)/materialize/css/(\w*)/(\w-*)/scss/(.*\.(css|map|scss))$
+  static_files: bp_content/themes/\1/static/materialize/css/\2/\3/\4
+  upload: bp_content/themes/(\w*)/static/materialize/css/(\w*)/(\w-*)/scss/(.*\.(css|map|scss))$
+
+- url: /(\w*)/materialize/css/(\w*)/(\w-*)/scss/(\w*)/(.*\.(css|map|scss))$
+  static_files: bp_content/themes/\1/static/materialize/css/\2/\3/\4/\5
+  upload: bp_content/themes/(\w*)/static/materialize/css/(\w*)/(\w-*)/scss/(\w*)/(.*\.(css|map|scss))$
+
+- url: /(\w*)/materialize/sass/(.*\.(css|map|scss))$
+  static_files: bp_content/themes/\1/static/materialize/sass/\2
+  upload: bp_content/themes/(\w*)/static/materialize/sass/(.*\.(css|map|scss))$
+
+- url: /(\w*)/materialize/sass/(\w*)/(.*\.(css|map|scss))$
+  static_files: bp_content/themes/\1/static/materialize/sass/\2/\3
+  upload: bp_content/themes/(\w*)/static/materialize/sass/(\w*)/(.*\.(css|map|scss))$
+
+- url: /(\w*)/materialize/sass/(\w*)/(\w*)/(.*\.(css|map|scss))$
+  static_files: bp_content/themes/\1/static/materialize/sass/\2/\3/\4
+  upload: bp_content/themes/(\w*)/static/materialize/sass/(\w*)/(\w*)/(.*\.(css|map|scss))$
+
+# @bp_content - materialize scripts
+- url: /(\w*)/materialize/js/(.*\.js)$
+  static_files: bp_content/themes/\1/static/materialize/js/\2
+  upload: bp_content/themes/(\w*)/static/materialize/js/(.*\.js)$
+
+- url: /(\w*)/materialize/js/(\w*)/(\w-*)/(.*\.(js|css|map|mp3|swf))$
+  static_files: bp_content/themes/\1/static/materialize/js/\2/\3/\4
+  upload: bp_content/themes/(\w*)/static/materialize/js/(\w*)/(\w-*)/(.*\.(js|css|map|mp3|swf))$
+
+- url: /(\w*)/materialize/js/(\w*)/(\w-*)/(\w*)/(.*\.(js|css|map|mp3|swf|png|scss))$
+  static_files: bp_content/themes/\1/static/materialize/js/\2/\3/\4/\5
+  upload: bp_content/themes/(\w*)/static/materialize/js/(\w*)/(\w-*)/(\w*)/(.*\.(js|css|map|mp3|swf|scss|png|scss))$
+
+- url: /(\w*)/materialize/js/(\w*)/(\w-*)/(\w*)/(\w*)/(.*\.(js|css|map|mp3|swf|scss))$
+  static_files: bp_content/themes/\1/static/materialize/js/\2/\3/\4/\5/\6
+  upload: bp_content/themes/(\w*)/static/materialize/js/(\w*)/(\w-*)/(\w*)/(\w*)/(.*\.(js|css|map|mp3|swf|scss))$
+
+- url: /(\w*)/materialize/js/(\w*)/(\w-*)/(\w*)/(\w*)/(\w*)/(.*\.(js|css|map|mp3|swf|scss|png|gif))$
+  static_files: bp_content/themes/\1/static/materialize/js/\2/\3/\4/\5/\6/\7
+  upload: bp_content/themes/(\w*)/static/materialize/js/(\w*)/(\w-*)/(\w*)/(\w*)/(\w*)/(.*\.(js|css|map|mp3|swf|scss|png|gif))$
+
+# @bp_content - materialize images
+- url: /(\w*)/materialize/images/(.*\.(gif|png|jpg|jpeg|svg))
+  static_files: bp_content/themes/\1/static/materialize/images/\2
+  upload: bp_content/themes/(\w*)/static/materialize/images/(.*\.(gif|png|jpg|jpeg|svg))
+
+- url: /(\w*)/materialize/images/(\w*)/(.*\.(gif|png|jpg|jpeg|svg))
+  static_files: bp_content/themes/\1/static/materialize/images/\2/\3
+  upload: bp_content/themes/(\w*)/static/materialize/images/(\w*)/(.*\.(gif|png|jpg|jpeg|svg))
+
+# @bp_content - materialize fonts
+- url: /(\w*)/materialize/font/(\w*)/(.*\.(ttf|woff|woff2|eot|svg))$
+  static_files: bp_content/themes/\1/static/materialize/font/\2/\3
+  upload: bp_content/themes/(\w*)/static/materialize/font/(\w*)/(.*\.(ttf|woff|woff2|eot|svg))$
+
+# @bp_content - materialize audio
+- url: /(\w*)/materialize/audio/(.*\.(ogg|mp3))$
+  static_files: bp_content/themes/\1/static/materialize/audio/\2
+  upload: bp_content/themes/(\w*)/static/materialize/audio/(.*\.(ogg|mp3))$
+
+
+# @taskqueue email sender
+- url: /taskqueue-send-email.*
+  script: main.app
+  login: admin
+
+# Endpoints handler: this must be /_ah/spi for Endpoints, NOT /_ah/api!
+# - url: /_ah/spi/.*
+#   script: api.APPLICATION
+
+# Main
+- url: /.*
+  script: main.app
+#  secure: always
+
+libraries:
+- name: jinja2
+  version: "2.6"
+- name: webapp2
+  version: "2.5.2"
+- name: markupsafe
+  version: "0.15"
+- name: pycrypto
+  version: "2.6"
+# - name: endpoints
+#   version: 1.0
+
+error_handlers:
+  # Only errors with error_code, don't put a default error here
+  - error_code: over_quota
+    file: bp_content/themes/default/errors/over_quota.html
+
+  - error_code: dos_api_denial
+    file: bp_content/themes/default/errors/dos_api_denial.html
+
+  - error_code: timeout
+    file: bp_content/themes/default/errors/timeout.html

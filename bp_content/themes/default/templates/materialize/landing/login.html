@@ -1,0 +1,67 @@
+{% extends landing_layout %}
+
+{% block title %}
+	<title>MBoilerplate » Login</title>
+{% endblock %}
+
+{% block page_css %}
+	<style type="text/css">
+		#nav-login{
+			display: none!important;
+		}
+	</style>
+{% endblock %}
+
+{% block header_content %}
+	<!-- START CONTENT -->
+	<div class="parallax-container z-depth-3" style="height:auto;">
+		<div class="section no-pad-bot" style="padding-bottom: 40px;">
+		  <div class="container center row" style="margin-top: 80px;opacity: 0.8;">
+		    <div class="white light-blue-text center col s10 m6 offset-m3 offset-s1" style="opacity: 1; top: 0px;">
+		      <div class="modal-content">
+	        	<form id="form_login" action="{{ url|safe }}" method="post">
+			        <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+			        <div class="row">
+			          <div class="input-field col s12 center">
+			            <p class="center login-form-text">Please enter your credentials</p>
+			          </div>
+			        </div>
+			        <div class="row margin">
+			          <div class="input-field col s12">
+			            <i class="mdi-social-person-outline prefix"></i>
+			            <input id="email" name="email" type="email" class="validate">
+			            <label for="email" class="center-align">Email</label>
+			          </div>
+			        </div>
+			        <div class="row margin">
+			          <div class="input-field col s12">
+			            <i class="mdi-action-lock-outline prefix"></i>
+			            <input id="password" name="password" type="password">
+			            <label for="password" class="">Password</label>
+			          </div>
+			        </div>
+			        <div class="row">          
+			          <div class="input-field col s12 m12 l12  login-text">
+			              <input type="checkbox" name="remember_me" id="remember-me">
+			              <label for="remember-me">Remember me</label>
+			          </div>
+			        </div>
+			        <div class="row">
+			          <div class="input-field col s12">
+			            <a class="btn waves-effect waves-light col s12" style="cursor:pointer;" onclick="sendForm('form_login')">Login</a>
+			          </div>
+			        </div>
+			        <div class="row right">
+			          <div class="input-field col s12">
+			              <p class="margin right-align medium-small"><a href="{{ uri_for("password-reset") }}">Forgot password ?</a></p>
+			          </div>          
+			        </div>
+			      </form>
+		      </div>
+		    </div>
+		  </div>
+		</div>
+		<div class="parallax"><img src="/default/materialize/images/landing/black_mac.png" alt="Unsplashed background img 1" style="display: block; transform: translate3d(-50%, 172px, 0px);"></div>
+	</div>
+{% endblock %}
+

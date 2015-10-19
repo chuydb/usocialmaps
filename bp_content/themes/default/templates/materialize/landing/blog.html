@@ -1,0 +1,51 @@
+{% extends landing_layout %}
+
+{% block title %}
+  <title>MBoilerplate » Blog</title>
+{% endblock %}
+
+{% block header_content %}
+  <div class="row spacer"></div>
+{% endblock %}
+
+{% block body_content %}
+  <div class="container">
+    <div class="section">
+        {% if total == 0 %}
+        <div class="row">
+          <div class="col s12 m4 offset-m4">
+            <div class="icon-block">
+              <h2 class="center {{brand_color}}-text"><i class="mdi-editor-border-color" style="font-size: 40px;"></i></h2>
+              <h5 class="center">There are {{total}} blog posts, create the first one at <a href="/admin/blog/">Blog Admin</a>.</h5>
+            </div>
+          </div>
+        </div>
+        {% endif %}
+        <div class="row">
+          {% for id, updated, title, subtitle, blob_key, author, brief, category in posts %}
+              <div class="col s12 m4">
+                  <div class="card">
+                    <div class="card-image waves-effect waves-block waves-light">
+                      <img class="activator" src="/blobstore/serve/{{blob_key}}/" alt="">
+                    </div>
+                    <div class="card-content" style="background:white;">
+                      <span class="card-title activator grey-text text-darken-4">{{title}} <i class="mdi-navigation-more-vert right"></i></span>
+	                  <p style="font-family: roboto-thin;" class="ultra-small">{{updated}}</p>
+                      <p style="font-family: roboto-thin;">{{subtitle}}</p>
+                      <p class="ultra-small {{brand_color}}-text">#: {{category}}</p>
+                    </div>
+                    <div class="card-action">
+                      by <a>{{author}}</a>
+                      <a href="/blog/{{id}}/" class="right">Read more &gt;</a>
+                    </div>
+                    <div class="card-reveal" style="display: none; transform: translateY(0px);">
+                      <span class="card-title grey-text text-darken-4">{{title}} <i class="mdi-navigation-close right"></i></span>
+                      <p>{{brief}}</p>
+                    </div>
+                  </div>
+              </div>
+          {% endfor %}
+        </div>
+    </div>
+  </div>
+{% endblock %}

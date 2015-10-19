@@ -1,0 +1,137 @@
+{% extends 'admin_base.html' %}
+
+{% block breadcrums %}
+<!--breadcrumbs start-->
+<div id="breadcrumbs-wrapper" class=" grey lighten-3" style="  min-height: 70px;">
+    <div class="container">
+        <div class="row">
+          <div class="col s12 m12 l12">
+            <h5 class="breadcrumbs-title">Stats</h5>
+          </div>
+        </div>
+    </div>
+</div>
+<!--breadcrumbs end-->
+{% endblock %}
+
+{% block page_content %}
+    <div class="row center" style="border-top: 1px dashed rgb(216, 216, 216);padding-top: 20px;">
+        <span class="col s12 m6 indicator flow-text" style="text-align:center; font-size:40px; color:#ff6623;"><h6>Total Users</h6>{{sum_users}}</span>
+        <span class="col s12 m6 indicator flow-text" style="text-align:center; font-size:40px; color:#9E23FF;"><h6>Total Blogs</h6>{{sum_blogs}}</span>
+    </div>
+    <div class="row">
+        <div class="col s12" id="container-card1" style="min-width: 310px; height: 240px; margin-bottom: 80px; margin-top: 80px;"></div>
+        <input id="users" value='{{users}}' hidden>
+        <input id="blogs" value='{{blogs}}' hidden>
+    </div>
+{% endblock %}
+
+{% block page_floatings %}
+{% endblock %}
+
+
+{% block page_scripts %}
+    <script src="http://code.highcharts.com/highcharts.js"></script>
+    <script>
+        $(document).ready(function(){
+                users = JSON.parse(document.getElementById("users").value);
+                users_dates = [];
+                users_values = [];
+                users_data = [];
+                for (var i = 0, j = users.length; i<j;i++){
+                    users_values.push(users[i][0]);
+                    users_dates.push(Date.parse(users[i][1]));
+                    users_data.push([Date.parse(users[i][1]), users[i][0]]);
+                }
+                blogs = JSON.parse(document.getElementById("blogs").value);
+                blogs_dates = [];
+                blogs_values = [];
+                blogs_data = [];
+                for (var i = 0, j = blogs.length; i<j;i++){
+                    blogs_dates.push(blogs[i][0]);
+                    blogs_values.push(Date.parse(blogs[i][1]));
+                    blogs_data.push([Date.parse(blogs[i][1]), blogs[i][0]]);
+                }
+                
+
+                $('#container-card1').highcharts({
+                    chart: {
+                        zoomType: 'xy'
+                    },
+                    title: {
+                        text: ''
+                    },
+                    subtitle: {
+                        text: ''
+                    },
+                    xAxis: [{
+                        type: 'datetime'
+                    }],
+                    yAxis: [{
+                        labels: {
+                            enabled: false,
+                            format: '{value} users',
+                            style: {
+                                color: Highcharts.getOptions().colors[1]
+                            }
+                        },
+                        title: {
+                            text: '',
+                            style: {
+                                color: Highcharts.getOptions().colors[1]
+                            }
+                        },
+                        gridLineDashStyle: 'ShortDash'
+                    }],
+                    tooltip: {
+                        shared: false
+                    // formatter: function() {
+                    //     var text = '';
+                    //     return text;
+                    // }
+                    },
+                    legend: {
+                        layout: 'vertical',
+                        align: 'left',
+                        x: 0,
+                        verticalAlign: 'top',
+                        y: -18,
+                        floating: true,
+                        backgroundColor: (Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF'
+                    },
+                    plotOptions: {
+                        spline: {
+                            dashStyle: 'ShortDash'
+                        },
+                        series: {
+                            marker: {
+                                enabled: false
+                            },
+                            borderWidth: 1,
+                            borderRadius: 4
+                        }
+                    },
+                    navigation: {
+                        buttonOptions: {
+                            enabled: false
+                        }
+                    },
+                    series: [{
+                        name: 'Users',
+                        type: 'spline',
+                        lineWidth: 3,
+                        color: '#FF6623',
+                        data: users_data
+                    },
+                    {
+                        name: 'Blogposts',
+                        type: 'spline',
+                        lineWidth: 3,
+                        color: '#9E23FF',
+                        data: blogs_data
+                    }]
+                });
+               
+        });
+    </script>
+{% endblock %}

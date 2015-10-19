@@ -1,0 +1,14 @@
+{% macro render_pager() -%}
+    <ul class="pager">
+      {% if prev_cursor %}
+      <li><a href="{{ pager_url('prev', prev_cursor) }}"><i class="material-icons" style="margin-top: 5px;">chevron_left</i></a></li>
+      {% else %}
+      <li class='grey-text'><span><i class="material-icons" style="margin-top: 5px;">chevron_left</i></span></li>
+      {% endif %}
+      {% if next_cursor %}
+      <li><a href="{{ pager_url('next', next_cursor) }}"><i class="material-icons" style="margin-top: 5px;">chevron_right</i></a></li>
+      {% else %}
+      <li class='grey-text'><span><i class="material-icons" style="margin-top: 5px;">chevron_right</i></span></li>
+      {% endif %}
+    </ul>
+{% endmacro %}

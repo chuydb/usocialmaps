@@ -1,0 +1,123 @@
+{% extends 'admin_base.html' %}
+
+{% block page_css %}
+<style>
+  #live { 
+  	background: #efefef; 
+  }
+</style>
+{% endblock %}
+
+
+
+{% block breadcrums %}
+<!--breadcrumbs start-->
+<div id="breadcrumbs-wrapper" class=" grey lighten-3" style="  min-height: 70px;">
+    <div class="container">
+        <div class="row">
+          <div class="col s12 m12 l12">
+            <h5 class="breadcrumbs-title">Blog Details <a class="btn waves-effect waves-light right indigo" href="/admin/blog/">Back<i class="mdi-navigation-arrow-back left"></i></a></h5>
+          </div>
+        </div>
+    </div>
+</div>
+<!--breadcrumbs end-->
+{% endblock %}
+
+{% block page_content %}
+<div class="container">
+	<div class="row">
+		<div class="col s12">
+			<form action="{{ url|safe }}" method="POST" enctype="multipart/form-data">
+				<input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+				<input type="hidden" name="post_id" value="{{ post_id }}">
+
+				<div class="row">
+                  <div class="input-field col s12">
+                    <textarea placeholder="My amazing blog title" id="title" name="title"  class="materialize-textarea">{{title}}</textarea>
+                    <label for="title" class="">Title</label>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="input-field col s12">
+                    <textarea placeholder="My brutally attractive subtitle" id="subtitle" name="subtitle"  class="materialize-textarea">{{subtitle}}</textarea>
+                    <label for="subtitle" class="">Subtitle</label>
+                  </div>
+                </div>
+
+				<div class="row">
+                  <div class="input-field col s12">
+                    <textarea placeholder="Me the almighty" id="author" name="author"  class="materialize-textarea">{{author}}</textarea>
+                    <label for="author" class="">Author</label>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="input-field col s12">
+                    <textarea placeholder="Blog briefs" id="brief" name="brief"  class="materialize-textarea">{{brief}}</textarea>
+                    <label for="brief" class="">Brief</label>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="input-field col s12">
+                    <textarea placeholder="Main HTML, JS and CSS body" id="_content" name="content"  class="materialize-textarea">{{content}}</textarea>
+                    <label for="_content" class="">Contents (JS, CSS, HTML)</label>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="input-field col s12">
+                    <textarea placeholder="Comma-separated categories" id="category" name="category"  class="materialize-textarea">{{ category }}</textarea>
+                    <label for="category" class="">Categories</label>
+                  </div>
+                </div>
+
+                <div class="file-field input-field">
+                  <input class="file-path validate right" type="text">
+                  <div class="btn">
+                    <span>Main picture</span>
+                    <input type="file" name="file">
+                  </div>
+                </div>
+
+
+                <div class="row">
+	                <div class="input-field col s12">
+	                  <button class="btn light-blue waves-effect waves-light right" type="submit" name="action">Save
+	                    <i class="mdi-content-send right"></i>
+	                  </button>
+	                </div>
+	            </div>
+
+			</form>
+		</div>
+	</div>
+</div>
+
+<div class="row" style="margin-top:40px;">
+	<div class="container">
+		<h5 class="grey-text">CONTENT PREVIEW</h5>
+		<div class="col s12 z-depth-1" id="live"></div>
+	</div>
+</div>
+
+
+{% endblock %}
+
+
+{% block page_floatings %}
+{% endblock %}
+
+{% block page_scripts %}
+<script type="text/javascript">
+	$(document).ready(function(){
+		category.value = category.value.replace(/u'/g,'').replace(/'/g,'').replace(/\[/g,'').replace(/\]/g,'');
+		live.innerHTML = _content.value;
+	    $('#content').keyup(function() {
+		    live.innerHTML = _content.value;
+		});
+	});
+</script>
+{% endblock %}

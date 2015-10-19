@@ -1,0 +1,70 @@
+{% extends 'admin_base.html' %}
+
+{% block breadcrums %}
+<!--breadcrumbs start-->
+<div id="breadcrumbs-wrapper" class=" grey lighten-3" style="  min-height: 70px;">
+    <div class="container">
+        <div class="row">
+          <div class="col s12 m12 l12">
+            <h5 class="breadcrumbs-title">Map</h5>
+          </div>
+        </div>
+    </div>
+</div>
+<!--breadcrumbs end-->
+{% endblock %}
+
+{% block page_css %}
+<style>
+  google-map {
+    height: 600px;
+  }
+</style>
+{% endblock %}
+
+{% block page_components %}
+    <link rel="import" href="/boilerplate/webcomponents/bower_components/google-map/google-map.html">
+{% endblock %}
+
+{% block page_content %}
+    <div class="section">
+        <div class="container">
+            <div class="row">
+                <google-map latitude="37.77493" longitude="-122.41942" fitToMarkers>        
+                    {% for latlng in latlngs %}
+                            {% for attr1, attr2 in list_attrs %}
+                                <google-map-marker latitude="{{ getattr(latlng, attr1)|e }}" longitude="{{ getattr(latlng, attr2)|e }}"></google-map-marker>
+                            {% endfor %}
+                    {% endfor %}
+                </google-map>
+                <div id="chart_div" style="width: 900px; height: 500px; display: none"></div>
+            </div>
+        </div>
+    </div>
+    
+{% endblock %}
+
+{% block page_floatings %}
+{% endblock %}
+ 
+{% block page_scripts %}
+    <script src='https://www.google.com/jsapi'></script>
+    <script>
+        google.load('visualization', '1', {'packages': ['geochart']});
+        google.setOnLoadCallback(drawRegionsMap);
+        function drawRegionsMap() {
+            var data = google.visualization.arrayToDataTable([
+                ['Country', 'Registrations'],
+                {% for country, registrations in data %}
+                ['{{ country }}', {{ registrations }}],
+                {% endfor %}
+            ]);
+
+            var options = {};
+
+            var chart = new google.visualization.GeoChart(document.getElementById('chart_div'));
+            chart.draw(data, options);
+        }
+    </script>
+ {% endblock %}
+ 

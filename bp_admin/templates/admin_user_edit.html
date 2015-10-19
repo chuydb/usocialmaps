@@ -1,0 +1,143 @@
+{% extends 'admin_base.html' %}
+
+{% block breadcrums %}
+<!--breadcrumbs start-->
+<div id="breadcrumbs-wrapper" class=" grey lighten-3" style="  min-height: 70px;">
+    <div class="container">
+        <div class="row">
+          <div class="col s12 m12 l12">
+            <h5 class="breadcrumbs-title">User Details</h5>
+          </div>
+        </div>
+    </div>
+</div>
+<!--breadcrumbs end-->
+{% endblock %}
+
+{% block page_content %}
+
+{% if user %}
+    <dl class="dl-horizontal">
+      <dt class="grey-text">{% trans %}Email{% endtrans %}</dt>
+      <dd class="gey-text text-darken-3">{{ user.email|safe }}</dd>
+      <dt class="grey-text">{% trans %}Created{% endtrans %}</dt>
+      <dd class="gey-text text-darken-3">{{ user.created|safe }}</dd>
+      <dt class="grey-text">{% trans %}Updated{% endtrans %}</dt>
+      <dd class="gey-text text-darken-3">{{ user.updated|safe }}</dd>
+    </dl>
+{% endif %}
+
+<div class="section">
+    <div class="container">
+    <div class="row grey-text text-darken-3">
+      <form class="col s12" id="form_edit_profile" action="{{ url|safe }}" enctype="multipart/form-data" method="post">
+            <div class="col s12 m3 center" style="margin-top:8px;">
+                        <div class="form-group">
+                            <label class="controls">
+                            <span class="col s12" style="font-size: 1.1em;font-family: roboto-light;margin-bottom: 10px;">Click on image to update.</span>
+                                {% if user.picture %}
+                                  <img id="blah" src="/media/serve/profile/{{user_id}}/" alt="your image" class="circle responsive-img valign z-depth-1" style="max-height:150px; cursor:pointer;border: 1px solid rgb(3, 169, 244);"/>
+                                {% else %}
+                                  <img id="blah" src="" alt="your image" class="circle responsive-img valign valign z-depth-1" style="max-height:150px; cursor:pointer;display:none;"/>
+                                  <div id="initial" class="circle red lighten-1" style="width: 110px;   height: 110px; display: inline-block;   vertical-align: middle;   text-align: center;   font-size: 1.5rem;   color: #fff;   font-weight: 300; position: relative; cursor:pointer;"><span style="position: absolute;top: 25px;left: 42px;font-size: 40px;">{{user.name[0]}}</span></div>
+                                {% endif %}
+                                <input class="btn btn-success" type='file' id="picture" name="picture" style="display:none;"/>
+                            </label>
+                        </div>                      
+            </div>
+
+            <div class="col s12 m9">
+              <div class="">
+                  <div class="row">
+                      <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+                      <div class="row">
+                        <div class="input-field col s6">
+                          <input id="name" name="name" type="text" value="{{user.name}}">
+                          <label for="name">Name</label>
+                        </div>
+                      
+                        <div class="input-field col s6">
+                          <input id="last_name" name="last_name" type="text" value="{{user.last_name}}">
+                          <label for="last_name">Lastname</label>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="input-field col s6 m4">
+                          <input id="phone" name="phone" type="tel" value="{{user.phone}}">
+                          <label for="phone">Phone</label>
+                        </div>
+                        <div class="input-field col s6 m4">
+                          <select id="gender" name="gender">
+                            {% if user.gender == '' or user.gender == 'male' %}
+                              <option value="male" selected>Male</option>
+                              <option value="female">Female</option>
+                            {% else %}
+                              <option value="male">Male</option>
+                              <option value="female" selected>Female</option>
+                            {% endif %}
+                          </select>
+                          <label>Gender</label>
+                        </div>                        
+                        <div class="input-field col s6 m4">
+                          <input id="birth" name="birth" type="date" class="datepicker" value="{{user.birth}}">
+                          <label for="birth">Birthday</label>
+                        </div>
+                        <div class="right">
+                          <p>
+                            <input type="checkbox" class="filled-in" id="filled-in-box" checked="{{user.activated}}" name="activated">
+                            <label for="filled-in-box">Activated</label>
+                          </p>
+                        </div>
+                      </div>
+                      <div class="row">
+                          <div class="input-field col s12 center">
+                            <button class="waves-effect waves-light light-blue white-text btn right" id="submit_profile_form" >Save changes
+                              <i class="mdi-content-send right"></i>
+                            </button>                           
+                          </div>
+                      </div>
+                  </div>
+              </div>
+            </div>
+
+      </form>
+      </div>
+      </div>
+    </div>
+  
+{% endblock %}
+
+
+{% block page_floatings %}
+{% endblock %}
+
+
+{% block page_scripts %}
+
+<script type="text/javascript">
+
+    document.querySelector('#submit_profile_form').addEventListener('click', function() { 
+            document.getElementById("form_edit_profile").submit()
+    });
+
+    function readURL(input) {
+          if (input.files && input.files[0]) {
+              var reader = new FileReader();
+              
+              reader.onload = function (e) {
+                  $('#blah').attr('src', e.target.result);
+                  $('#initial').hide();
+                  $('#blah').show();
+              }
+              
+              reader.readAsDataURL(input.files[0]);
+              // $( '#user_picture_form' ).submit();
+          }
+      }
+      
+      $("#picture").change(function(){
+          readURL(this);
+      });
+  </script>
+
+{% endblock %}

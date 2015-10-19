@@ -1,0 +1,47 @@
+{% extends base_layout %}
+
+<!-- ADD PAGE HEAD ELEMENTS -->
+{% block title %}<title></title>{% endblock %}
+   
+{% block page_css %}
+{% endblock %}
+
+{% block page_components %}
+{% endblock %}
+
+
+
+
+
+<!-- ADD PAGE BODY ELEMENTS-->
+{% block sidebar_left %}
+{% endblock %}
+
+{% block breadcrums %}
+{% endblock %}
+
+{% block page_content %}
+	<div class="section">
+    <div class="container">
+      <div class="row">
+        
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block page_floatings %}
+{% endblock %}
+
+{% block sidebar_right %}
+{% endblock %}
+
+{% block page_footer %}
+{% endblock %}
+
+
+
+
+<!-- ADD PAGE SCRIPT ELEMENTS-->
+{% block page_scripts %}
+{% endblock %}

@@ -1,0 +1,36 @@
+{% extends landing_layout %}
+
+{% block title %}<title>MBoilerplate » Blog Post</title>{% endblock %}
+
+{% block header_content %}
+<div class="parallax-container z-depth-3">
+	<div class="section no-pad-bot">
+	  <div class="container">
+	    <br><br>
+	    <h1 class="header center {{brand_color}}-text text-lighten-2 " >{{title}}</h1>
+	    <div class="row center">
+	      <h5 class="header col s12 white-text light">{{subtitle}}</h5>
+	      <h6 class="header col s12 white-text light center"> by {{author}}</h6>
+	    </div>
+	    <div class="row center">
+	    </div>
+	    <br>
+	    <br>
+	  </div>
+	</div>
+	<div class="parallax"><img src="/blobstore/serve/{{blob_key}}/" alt="Unsplashed background img 1" style="display: block; transform: translate3d(-50%, 351px, 0px); -webkit-filter: brightness(70%);"></div>
+</div>
+{% endblock %}
+
+{% block body_content %}
+<div class="container">
+	<div class="section">
+		<div class="row" style="padding:60px;">
+			{{content}}
+		</div>
+		<div class="col s12 center">
+		  <a style="margin-bottom:30px;" href="{{uri_for("blog")}}" class="waves-effect waves-light {{brand_color}} white-text btn-large "><i class="mdi-navigation-arrow-back left"></i>Back to blog</a>
+		</div>
+	</div>
+</div>
+{% endblock %}

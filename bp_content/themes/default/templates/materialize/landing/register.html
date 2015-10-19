@@ -1,0 +1,74 @@
+{% extends landing_layout %}
+
+{% block title %}
+	<title>MBoilerplate » Register</title>
+{% endblock %}
+
+{% block page_css %}
+	<style type="text/css">
+		#nav-register{
+			display: none!important;
+		}
+	</style>
+{% endblock %}
+
+
+{% block header_content %}
+	<!-- START CONTENT -->
+	<div class="parallax-container z-depth-3" style="height:auto;">
+		<div class="section no-pad-bot" style="padding-bottom: 40px;">
+		  <div class="container center row" style="margin-top: 80px;opacity: 0.8;">
+		    <div class="white light-blue-text center col s10 m6 offset-m3 offset-s1" style="opacity: 1; top: 0px;">
+		      <div class="modal-content">
+	        	{% if is_referral %}									          
+              		<form id="form_register" action="/referral/" method="post">				          	
+		        {% else %}
+              		<form id="form_register" action="/register/" method="post">				          	
+		        {% endif %} 
+				        <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+				        <div class="row">
+				          <div class="input-field col s12 center">
+				            {% if is_referral %}<p class="center login-form-text">Do as {{_username}} ({{_email}}) and join the community now !</p>
+				            {% else %}<p class="center login-form-text">Join the community now !</p>{% endif %} 
+				          </div>
+				        </div>
+				        <div class="row margin">
+				          <div class="input-field col s12">
+				            <i class="mdi-social-person-outline prefix"></i>
+				            <input id="r_name" name="name" type="text">
+				            <label for="name" class="center-align">Name</label>
+				          </div>
+				        </div>
+				        <div class="row margin">
+				          <div class="input-field col s12">
+				            <i class="mdi-communication-email prefix"></i>
+				            <input id="r_email" name="email" type="email" class="validate">
+				            <label for="email" class="center-align">Email</label>
+				          </div>
+				        </div>
+				        <div class="row margin">
+				          <div class="input-field col s12">
+				            <i class="mdi-action-lock-outline prefix"></i>
+				            <input id="r_password" name="password" type="password">
+				            <label for="password">Password</label>
+				          </div>
+				        </div>
+				        <div class="row margin">
+				          <div class="input-field col s12">
+				        	{{captchahtml | safe}}
+				          </div>
+				        </div>
+				        <div class="row">
+				          <div class="input-field col s12">
+				            <a class="btn waves-effect waves-light col s12" style="cursor:pointer;" onclick="sendForm('form_register')">Register Now</a>
+				          </div>
+				        </div>
+				      </form>
+			      </div>
+			    </div>
+		  </div>
+		</div>
+		<div class="parallax"><img src="/{{theme}}/materialize/images/landing/black_mac.png" alt="Unsplashed background img 1" style="display: block; transform: translate3d(-50%, 351px, 0px);"></div>
+	</div>
+{% endblock %}
+

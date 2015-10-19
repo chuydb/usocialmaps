@@ -1,0 +1,172 @@
+{% extends base_layout %}
+
+<!-- ADD PAGE HEAD ELEMENTS -->
+{% block title %}<title>MBoilerplate » Settings Profile</title>{% endblock %}
+   
+{% block page_css %}
+	<style shim-shadowdom>
+	    paper-tabs {
+	      background-color: transparent;
+	      color: #fff;
+	      cursor:pointer;
+	    }
+
+	    paper-tabs[noink][nobar] paper-tab.core-selected {
+	      color: #fff;      
+	    }
+
+	    paper-tabs::shadow #selectionBar {
+	      background-color: rgba(255, 255, 255, 1);
+	    }
+
+	    paper-tabs paper-tab::shadow #ink {
+	      color: rgba(255, 255, 255, 1);
+	    }
+
+	    paper-tab {
+	      cursor:pointer;
+	    }
+  	</style>
+{% endblock %}
+
+{% block page_components %}
+    <link href="/boilerplate/webcomponents/bower_components/paper-tabs/paper-tabs.html" rel="import">
+{% endblock %}
+
+
+<!-- ADD PAGE BODY ELEMENTS-->
+{% block breadcrums %}
+	<!--breadcrumbs start-->
+    <div id="breadcrumbs-wrapper" class=" grey lighten-3">
+      <div class="container">
+        <div class="row">
+          <div class="col s12 m12 l12">
+            <h5 class="breadcrumbs-title">Profile</h5>
+          </div>
+        </div>
+        <paper-tabs id="scrollableTabs" selected="0" scrollable style="margin-left: -20px;background-color: #03A9F4;width: 110%;   margin-top: 5px;">
+          <paper-tab onclick="window.open('{{ uri_for("materialize-settings-profile") }}', '_top')">Profile</paper-tab>
+          <paper-tab onclick="window.open('{{ uri_for("materialize-settings-address") }}', '_top')">Address</paper-tab>
+          <paper-tab onclick="window.open('{{ uri_for("materialize-settings-referrals") }}', '_top')">Referrals</paper-tab>
+          <paper-tab onclick="window.open('{{ uri_for("materialize-settings-account") }}', '_top')">Account</paper-tab>
+      </paper-tabs>
+      </div>
+    </div>
+    <!--breadcrumbs end-->
+{% endblock %}
+
+{% block page_content %}
+	<div class="section">
+		<div class="container">
+		<div class="row light-blue-text text-darken-4">
+	        <form class="col s12" id="form_edit_profile" action="{{ url|safe }}" enctype="multipart/form-data" method="post">
+				<div class="col s12 m3 center" style="margin-top:8px;">
+		                <div class="form-group">
+		                    <label class="controls">
+		                    <span class="col s12" style="font-size: 1.1em;font-family: roboto-light;margin-bottom: 10px;">Click on image to update.</span>
+		                        {% if has_picture %}
+		                        	<img id="blah" src="/media/serve/profile/{{user_id}}/" alt="your image" class="circle responsive-img valign z-depth-1" style="max-height:150px; cursor:pointer;border: 1px solid rgb(3, 169, 244);"/>
+		                        {% else %}
+		                        	<img id="blah" src="" alt="your image" class="circle responsive-img valign valign z-depth-1" style="max-height:150px; cursor:pointer;display:none;"/>
+		                        	<div id="initial" class="circle red lighten-1" style="width: 110px;   height: 110px; display: inline-block;   vertical-align: middle;   text-align: center;   font-size: 1.5rem;   color: #fff;   font-weight: 300; position: relative; cursor:pointer;"><span style="position: absolute;top: 25px;left: 42px;font-size: 40px;">{{ name_i }}</span></div>
+		                        {% endif %}
+		                        <input class="btn btn-success" type='file' id="picture" name="picture" style="display:none;"/>
+		                    </label>
+		                </div>                      
+				</div>
+
+	            <div class="col s12 m9">
+		            <div class="">
+		                <div class="row">
+		                    <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+		                    <div class="row">
+		                      <div class="input-field col s6">
+		                        <input id="name" name="name" type="text" value="{{name}}">
+		                        <label for="name">Name</label>
+		                      </div>
+		                    
+		                      <div class="input-field col s6">
+		                        <input id="last_name" name="last_name" type="text" value="{{last_name}}">
+		                        <label for="last_name">Lastname</label>
+		                      </div>
+		                    </div>
+		                    <div class="row">
+		                      <div class="input-field col s6 m4">
+		                        <input id="phone" name="phone" type="tel" value="{{phone}}">
+		                        <label for="phone">Phone</label>
+		                      </div>
+		                      <div class="input-field col s6 m4">
+		                        <select id="gender" name="gender">
+		                          {% if gender == '' or gender == 'male' %}
+		                          	<option value="male" selected>Male</option>
+		                          	<option value="female">Female</option>
+		                          {% else %}
+		                          	<option value="male">Male</option>
+		                          	<option value="female" selected>Female</option>
+		                          {% endif %}
+		                        </select>
+		                        <label>Gender</label>
+		                      </div>                        
+		                      <div class="input-field col s6 m4">
+		                        <input id="birth" name="birth" type="date" class="datepicker" value="{{birth}}">
+		                        <label for="birth">Birthday</label>
+		                      </div>
+		                    </div>
+		                    <div class="row">
+		                        <div class="input-field col s12 center">
+		                          <button class="waves-effect waves-light light-blue white-text btn right" id="submit_profile_form" >Save changes
+		                            <i class="mdi-content-send right"></i>
+		                          </button>	                          
+		                        </div>
+		                    </div>
+		                </div>
+		            </div>
+		        </div>
+            </form>
+	    </div>
+	    </div>
+   	</div>
+{% endblock %}
+
+{% block disclaimers %}
+{% endblock %}
+
+{% block sidebar_right %}
+{% endblock %}
+
+{% block page_floatings %}
+{% endblock %}
+
+{% block page_footer %}
+{% endblock %}
+
+<!-- ADD PAGE SCRIPT ELEMENTS-->
+{% block page_scripts %}
+	<script type="text/javascript">
+
+		document.querySelector('#submit_profile_form').addEventListener('click', function() { 
+			//document.getElementById("name").value = cleanUpSpecialChars(document.getElementById("name").value);
+            //document.getElementById("last_name").value = cleanUpSpecialChars(document.getElementById("last_name").value);
+            document.getElementById("form_edit_profile").submit()
+		});
+
+		function readURL(input) {
+	        if (input.files && input.files[0]) {
+	            var reader = new FileReader();
+	            
+	            reader.onload = function (e) {
+	                $('#blah').attr('src', e.target.result);
+	                $('#initial').hide();
+	                $('#blah').show();
+	            }
+	            
+	            reader.readAsDataURL(input.files[0]);
+	            // $( '#user_picture_form' ).submit();
+	        }
+	    }
+	    
+	    $("#picture").change(function(){
+	        readURL(this);
+	    });
+	</script>
+{% endblock %}

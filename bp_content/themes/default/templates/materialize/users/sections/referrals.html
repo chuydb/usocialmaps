@@ -1,0 +1,285 @@
+{% extends base_layout %}
+
+<!-- ADD PAGE HEAD ELEMENTS -->
+{% block title %}<title>MBoilerplate » Referrals</title>{% endblock %}
+   
+{% block page_css %}
+ 	<link href="/{{theme}}/materialize/css/prism.css" type="text/css" rel="stylesheet" media="screen,projection">
+    <link href="/{{theme}}/materialize/css/plugins/perfect-scrollbar/perfect-scrollbar.css" type="text/css" rel="stylesheet" media="screen,projection">
+    <link rel="stylesheet" href="/boilerplate/css/multiple-emails.css">
+    <style type="text/css">
+		.multiple_emails-container{
+		  	border-bottom: 1px solid rgba(203, 203, 203, 0.67);
+  			border-radius: 0px;
+		}
+    </style>
+    <style shim-shadowdom>	    
+	    td {
+	        padding: 3px!important;
+	        padding-top:7px!important;
+	    }
+
+	    thead {
+	        border-bottom: 1px dotted rgba(37, 50, 56, 0.1)!important;
+	    }
+
+	    .dataTables_length{
+	      display:none!important;
+	    }
+
+	    .dataTables_info{
+	      display: none!important;
+	    }
+
+	    paper-checkbox.custom-checkbox{
+	        height:4px; margin-left:6px;margin-bottom:10px;
+	    }
+
+	    paper-checkbox.custom-checkbox::shadow #ink[checked] {
+	      color: #FBE4BB;
+	    }
+
+	    paper-checkbox.custom-checkbox::shadow #checkbox.checked {
+	      background-color: #ff6623;
+	      border-color: #ff6623;
+	    }
+	  </style>
+{% endblock %}
+
+{% block page_components %}
+	<link href="/boilerplate/webcomponents/bower_components/core-icon-button/core-icon-button.html" rel="import">
+    <link href="/boilerplate/webcomponents/bower_components/paper-checkbox/paper-checkbox.html" rel="import">
+	<link href="/boilerplate/webcomponents/bower_components/core-icon/core-icon.html" rel="import">
+	<link href="/boilerplate/webcomponents/bower_components/core-icons/communication-icons.html" rel="import">
+    <link href="/boilerplate/webcomponents/bower_components/google-signin/google-signin.html"rel="import" >
+{% endblock %}
+
+
+
+
+
+<!-- ADD PAGE BODY ELEMENTS-->
+{% block breadcrums %}
+ 	<!--breadcrumbs start-->
+    <div id="breadcrumbs-wrapper" class=" grey lighten-3">
+      <div class="container">
+        <div class="row">
+          <div class="col s12 m12 l12">
+            <h5 class="breadcrumbs-title">Invitados</h5>
+            <ol class="breadcrumb">
+                <li><a href="{{ uri_for("materialize-home") }}">Inicio</a></li>
+                <li class="active">Invitados <span style="font-size: 14px;">(<a href="{{ uri_for("materialize-settings-referrals") }}">rastrear invitaciones</a>)</span></li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!--breadcrumbs end-->
+{% endblock %}
+
+{% block page_content %}
+	<div class="section">
+		<div class="container">
+			<div class="row center">
+				<div class="row">
+					<div class="col s12">
+		                <h5 class="grey-text left">Importa tus contactos.</h5>
+					</div>
+					<div class="col s12 m6 offset-m1  card">
+		                <p><google-signin  clientId="706872180157-47cmrgdsj2tm5epqb3ocj8haahnqpdii.apps.googleusercontent.com" scopes="https://www.googleapis.com/auth/contacts.readonly" labelSignin="Importar contactos de google" labelSignout="Desconectar"width="wide" height="tall" style="max-width:290px;"></google-signin> <a id="gselect2"class="waves-effect waves-light btn modal-trigger left" href="#modal1" style="display:none;max-width:166px;"></a></p>
+		                <button onclick="gselect2.click()" class="btn red waves-effect waves-light right" style="margin-top: 20px; margin-bottom:20px; display:none;" id="g-select" name="action">Seleccionar
+	                      <i class="mdi-content-send right"></i>
+	                </button> 
+					</div>
+				</div>
+				<div class="row">
+					<div class="col s12">
+		                <h5 class="grey-text left">Escribe los correos.</h5>
+					</div>
+					<div class="col s12 m6 offset-m1  card">
+						<form id="form_referrals" action="{{ url|safe }}" method="post">
+		                    <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+		                    <div class="input-field col s12">
+			                    <input id="emails" name="emails" type="text" value="">
+			                    <label for="emails">Escribe cada correo separado por un <strong>ENTER</strong>.</label>
+			                </div>
+		                </form>
+		                <button onclick="sendForm('form_referrals')" class="waves-effect waves-light light-blue white-text btn center" style="margin-top: 20px; margin-bottom:20px;" id="connect-btn" name="action">Invitar ahora
+		                      <i class="mdi-content-send right"></i>
+		                </button> 
+					</div>
+				</div>
+				<div class="row">
+					<div class="col s12">
+		                <h5 class="grey-text left">Comparte tu link único.</h5>
+					</div>
+					<div class="col s12 m6 offset-m1  card">
+	                    <center>                           
+	                        <div class="row" >
+	                            <p style="transform: scale(0.85)!important;-webkit-transform: scale(0.85)!important;">
+	                                {{link_referral}}
+	                                <core-icon-button icon="content-copy" id="copy-button" data-clipboard-text="{{link_referral}}" data-clipboard-target="fe_text" title="Clic para copiar." style="margin-left: 10px;">Copiar</core-icon-button>
+	                            </p>
+	                        </div>
+	                        <div class="row">
+	                            <div class="col s4" style="margin-bottom:20px; padding-top: 12px;border: 1px solid lightblue;border-radius: 4px;width: 110px;margin-left: 40px;background: rgba(0, 173, 238, 0.32);padding-bottom: 8px;">
+		                            <a class="twitter-share-button" href="https://twitter.com/share?url={{link_referral}}&text=Tú como yo ahorra en tu recibo de luz con @invictusmx. Crea tu cuenta gratis !&hashtags=invictusmx "
+		                              data-size="large"
+		                              data-count="none" >
+		                            Tweet
+		                            </a>
+	                            </div>
+	                            <script>
+	                            	window.twttr=(function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],t=window.twttr||{};if(d.getElementById(id))return;js=d.createElement(s);js.id=id;js.src="https://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);t._e=[];t.ready=function(f){t._e.push(f);};return t;}(document,"script","twitter-wjs"));
+	                            </script>
+
+	                            <div class="col s4" style="margin-bottom:20px; -webkit-transform: scale(1.29);transform: scale(1.29);margin-top: 6px;margin-left: 30px;padding: 10px; border: 1px solid rgb(73, 101, 181); border-radius: 4px;max-width: 100px;background: rgb(60, 86, 161);">                            
+		                            <div class="fb-share-button" data-href="{{link_referral}}" data-layout="button"></div>
+		                            <div id="fb-root"></div>
+	                            </div>
+	                            <script>
+		                            (function(d, s, id) {
+		                              var js, fjs = d.getElementsByTagName(s)[0];
+		                              if (d.getElementById(id)) return;
+		                              js = d.createElement(s); js.id = id;
+		                              js.src = "//connect.facebook.net/es_LA/sdk.js#xfbml=1&appId=417725118380572&version=v2.0";
+		                              fjs.parentNode.insertBefore(js, fjs);
+		                            }(document, 'script', 'facebook-jssdk'));
+	                            </script>   
+
+	                            <div class="col s4" style="margin-bottom:20px; -webkit-transform: scale(1.15);transform: scale(1.15);margin-top: 3px;padding-top: 9px; border: 1px solid rgb(221, 75, 56); border-radius: 4px;width: 110px;background: rgb(221, 75, 56);margin-left: 38px;padding-bottom: 7px;">
+	                                <div class="g-plus" data-action="share" data-annotation="none" data-height="24" data-href="{{link_referral}}"></div>
+	                            </div>
+	                            <script src="https://apis.google.com/js/platform.js" async defer>{lang: 'es-419'}</script>                         
+	                        </div>
+	                    </center> 
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div id="modal1" class="modal">
+      <div class="modal-content" style="height:80%">
+        <h6 style="text-align:center; border-bottom:1px solid #ff6623; padding-bottom:18px;">Selecciona los contactos que deseas invitar.</h6>
+	    <input type="text" id="search" placeholder="  Buscar" style="background: white; border: 1px solid lightgray; font-size:14px;">                        
+	    <div id="google_contacts" style="height: 200px;overflow-y: scroll;margin-top: -8px;padding: 10px;border: 1px solid lightgray;background:white;"></div>
+      </div>
+      <div class="modal-footer center">
+       <h6 class="indicator-title" >Total seleccionados <core-icon icon="communication:email" style="fill:#ff6623; height:16px; margin-top:-5px"></core-icon>: <span id="indicator" class="indicator">0</span></h6> 
+      	<a id="gsend" href="#" class="waves-effect waves-orange btn-flat modal-action modal-close" onclick="sendForm('form_referrals')" style="display:none; font-size:16px; max-height: 40px!important; cursor:pointer;">Enviar invitaciones</a>
+		<button onclick="gsend.click()" class="btn waves-effect waves-light right" name="action" style="background-color: #ff6623;">Enviar
+              <i class="mdi-content-send right"></i>
+        </button>
+      </div>
+    </div>
+{% endblock %}
+
+{% block sidebar_right %}
+{% endblock %}
+
+{% block page_floatings %}
+{% endblock %}
+
+
+{% block page_footer %}
+{% endblock %}
+
+
+
+
+<!-- ADD PAGE SCRIPT ELEMENTS-->
+{% block page_scripts %}
+	<script src="/{{theme}}/materialize/js/plugins/multiple-emails/multiple-emails.js"></script>
+	<script src="/{{theme}}/materialize/js/plugins/zero-clipboard/ZeroClipboard.js"></script>
+	<script type="text/javascript">
+		  var contact_count = 0;
+		  var first_time = true;
+		  document.querySelector('google-signin').addEventListener('google-signin-success', function(e) {
+		    console.log(e.type, e.detail.result, e.detail.gapi);
+		    if (first_time){
+		        url = "https://www.google.com/m8/feeds/contacts/default/full?access_token="+ e.detail.result.access_token + "&max-results=999999999&alt=json&orderby=lastmodified";
+		        $.get(url, 
+		            function( data ) {
+		                console.log(data);
+		                html = '<table class="bordered" id="table"><thead><tr><th data-field="name"></th><th data-field="email"></th><th data-field=""></th></tr></thead><tbody>';
+		                for (entry in data.feed.entry) { 
+		                    if (data.feed.entry[entry].gd$email && data.feed.entry[entry].title && data.feed.entry[entry].content)
+		                        html += '<tr><td><paper-checkbox is="core-input" name="'+data.feed.entry[entry].gd$email[0].address+'" id="'+data.feed.entry[entry].gd$email[0].address+'" for style="height: 14px;padding-left: 5px;" class="custom-checkbox" onchange="addContact(this);" value="off"></paper-checkbox></td><td>' + data.feed.entry[entry].title.$t + '(' + data.feed.entry[entry].content.$t  + ')</td><td>' + data.feed.entry[entry].gd$email[0].address + '</td></tr>';
+		                    else if (data.feed.entry[entry].gd$email && data.feed.entry[entry].title)
+		                        html += '<tr><td><paper-checkbox is="core-input" name="'+data.feed.entry[entry].gd$email[0].address+'" id="'+data.feed.entry[entry].gd$email[0].address+'" for style="height: 14px;padding-left: 5px;" class="custom-checkbox" onchange="addContact(this);" value="off"></paper-checkbox></td><td>' + data.feed.entry[entry].title.$t + '</td><td>' + data.feed.entry[entry].gd$email[0].address + '</td></tr>';
+		                    else if (data.feed.entry[entry].gd$email)
+		                        html += '<tr><td><paper-checkbox is="core-input" name="'+data.feed.entry[entry].gd$email[0].address+'" id="'+data.feed.entry[entry].gd$email[0].address+'" for style="height: 14px;padding-left: 5px;" class="custom-checkbox" onchange="addContact(this);" value="off"></paper-checkbox></td><td> - ()</td><td>' + data.feed.entry[entry].gd$email[0].address + '</td></tr>';
+		                }
+		                html += '</tbody></table>';
+		                document.getElementById("google_contacts").innerHTML = html;
+		                document.getElementById("g-select").style.display = "block";
+
+		                var $rows = $('#table tr');
+		                 $('#search').keyup(function() {
+		                     var val = $.trim($(this).val()).replace(/ +/g, ' ').toLowerCase();
+
+		                     $rows.show().filter(function() {
+		                         var text = $(this).text().replace(/\s+/g, ' ').toLowerCase();
+		                         return !~text.indexOf(val);
+		                     }).hide();
+		                 });
+		            }
+		        );
+		    }
+		    first_time = !first_time;
+		  });
+
+		  function addContact(element){
+		    if (document.getElementById(element.id).checked){
+		        document.getElementById('emails').value += element.id + ",";
+		        contact_count += 1;
+		    }
+		    else{
+		        var removal = element.id + ",";
+		        document.getElementById('emails').value = document.getElementById('emails').value.replace(removal,"");
+		        contact_count -= 1;
+		    }
+		    document.getElementById('indicator').innerHTML = contact_count/2;    
+		  }
+
+	</script>
+	<script>
+		var client = new ZeroClipboard( document.getElementById("copy-button") );
+
+	    client.on( "ready", function( readyEvent ) {
+	      // alert( "ZeroClipboard SWF is ready!" );
+
+	      client.on( "aftercopy", function( event ) {
+	        event.target.style.opacity = "0.3";
+	        // alert("Copied text to clipboard: " + event.data["text/plain"] );
+	      } );
+	    } );
+
+	    function sendForm(formID){
+	        if (document.getElementById('emails').value != '' && document.getElementById('emails').value != '[]'){
+	            document.getElementById(formID).submit();
+	        }else
+            	Materialize.toast('<span class="toast-warning">Por favor agrega al menos 1 email.</span>', 4500);
+	            
+	    }
+
+	    $().ready(function() {
+	        $('#emails').multiple_emails();
+	        $('#emails').change( function(){            
+	            var _emails = $('#emails').val();
+	            console.log(_emails);
+	            if ( _emails.length > 0 )
+	                document.getElementById("connect-btn").disabled = false;
+	            else
+	                document.getElementById("connect-btn").disabled = true;
+	        });
+	        $('#form_referrals').on("keyup keypress", function(e) {
+			  var code = e.keyCode || e.which; 
+			  if (code  == 13) {               
+			    e.preventDefault();
+			    return false;
+			  }
+			});
+	    });
+	</script>
+{% endblock %}

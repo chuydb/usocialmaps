@@ -1,0 +1,103 @@
+{% extends 'admin_base.html' %}
+
+{% block breadcrums %}
+<!--breadcrumbs start-->
+<div id="breadcrumbs-wrapper" class=" grey lighten-3" style="  min-height: 70px;">
+    <div class="container">
+        <div class="row">
+          <div class="col s12 m12 l12">
+            <ol class="breadcrumb" style="font-size: 29px;">
+                <li>Tools</li>
+                <li class="active">Media</li>
+            </ol>
+          </div>
+        </div>
+    </div>
+</div>
+<!--breadcrumbs end-->
+{% endblock %}
+
+
+{% block page_content %}
+<div class="section">
+<div class="container">
+<div class="container">
+    <div class="row">
+      <div class="col s12 m12 l12">
+          <h4 class="header">Captioned Photos</h4>
+      </div>
+      <div class="row">
+          <div class="col s12 m8 l9">
+            <img class="materialboxed" width="650" src="/{{theme}}/materialize/images/sample-1.jpg" alt="sample" data-caption="A picture of some deer and tons of trees">
+          </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col s12 m12 l12">
+          <h4 class="header">Responsive Videos</h4>
+      </div>
+      <div class="row">
+        <div class="col s12 m8 l9">
+          <div class="card-panel">
+            <video width="100%" controls="">
+              <source src="http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4" type="video/mp4">
+            </video>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col s12 m12 l12">
+          <h4 class="header">Beautiful Touch-responsive Sliders</h4>
+      </div>
+    </div>
+    <div class="row">
+      <div class="slider">
+          <ul class="slides">
+            <li>
+              <img src="http://lorempixel.com/580/250/nature/1" alt="img-1">
+              <!-- random image -->
+              <div class="caption center-align">
+                <h3>This is our big Tagline!</h3>
+                <h5 class="light grey-text text-lighten-3">Here's our small slogan.</h5>
+              </div>
+            </li>
+            <li>
+              <img src="http://lorempixel.com/580/250/nature/2" alt="img-2">
+              <!-- random image -->
+              <div class="caption left-align">
+                <h3>Left Aligned Caption</h3>
+                <h5 class="light grey-text text-lighten-3">Here's our small slogan.</h5>
+              </div>
+            </li>
+            <li>
+              <img src="http://lorempixel.com/580/250/nature/3" alt="img-3">
+              <!-- random image -->
+              <div class="caption right-align">
+                <h3>Right Aligned Caption</h3>
+                <h5 class="light grey-text text-lighten-3">Here's our small slogan.</h5>
+              </div>
+            </li>
+            <li>
+              <img src="http://lorempixel.com/580/250/nature/4" alt="img-4">
+              <!-- random image -->
+              <div class="caption center-align">
+                <h3>This is our big Tagline!</h3>
+                <h5 class="light grey-text text-lighten-3">Here's our small slogan.</h5>
+              </div>
+            </li>
+          </ul>
+      </div>
+    </div>
+</div>
+</div>
+</div>
+{% endblock %}
+
+
+{% block page_floatings %}
+{% endblock %}
+
+
+{% block page_scripts %}
+{% endblock %}

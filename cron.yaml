@@ -1,0 +1,7 @@
+cron:
+- description: delete old user tokens
+  url: /admin/crontasks/cleanuptokens
+  schedule: every monday 01:00
+# - description: welcome messaging
+#   url: /cronjob-welcome/
+#   schedule: every day 13:00

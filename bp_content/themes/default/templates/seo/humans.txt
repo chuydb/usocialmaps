@@ -1,0 +1,22 @@
+# humanstxt.org/
+# The humans responsible & technology colophon
+
+# TEAM
+
+    <name> -- <role> -- <twitter>
+	Jesus Cepeda -- The Mechanic -- @chuycepeda
+	
+# THANKS
+
+    @ebidel for the Polymer Project
+	@coto for the GaeBoilerplate
+	@materializecss for the Material Design heavy lifting
+
+# TECHNOLOGY COLOPHON
+
+    HTML5, CSS3, Materialize
+    jQuery, Modernizr
+	Webcomponents, Polymer
+	Python, GAEBoilerplate
+	WebApp2, Jinja2
+	IDE: Brackets, Sublime Text

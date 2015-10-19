@@ -1,0 +1,119 @@
+{% extends base_layout %}
+
+<!-- ADD PAGE HEAD ELEMENTS -->
+{% block title %}<title>MBoilerplate » Change email</title>{% endblock %}
+   
+{% block page_css %}
+<style shim-shadowdom>
+    paper-tabs {
+      background-color: transparent;
+      color: #fff;
+      cursor:pointer;
+    }
+
+    paper-tabs[noink][nobar] paper-tab.core-selected {
+      color: #fff;      
+    }
+
+    paper-tabs::shadow #selectionBar {
+      background-color: rgba(255, 255, 255, 1);
+    }
+
+    paper-tabs paper-tab::shadow #ink {
+      color: rgba(255, 255, 255, 1);
+    }
+
+    paper-tab {
+      cursor:pointer;
+    }
+  </style>
+{% endblock %}
+
+{% block page_components %}
+    <link href="/boilerplate/webcomponents/bower_components/paper-tabs/paper-tabs.html" rel="import">
+{% endblock %}
+
+
+
+
+
+<!-- ADD PAGE BODY ELEMENTS-->
+{% block breadcrums %}
+	<!--breadcrumbs start-->
+    <div id="breadcrumbs-wrapper" class=" grey lighten-3">
+      <div class="container">
+        <div class="row">
+          <div class="col s12 m12 l12">
+            <h5 class="breadcrumbs-title">Change email</h5>
+          </div>
+        </div>
+        <paper-tabs id="scrollableTabs" selected="0" scrollable style="margin-left: -20px;background-color: #03A9F4;width: 110%;   margin-top: 5px;">
+          <paper-tab onclick="window.open('{{ uri_for("materialize-settings-profile") }}', '_top')">Profile</paper-tab>
+          <paper-tab onclick="window.open('{{ uri_for("materialize-settings-address") }}', '_top')">Address</paper-tab>
+          <paper-tab onclick="window.open('{{ uri_for("materialize-settings-referrals") }}', '_top')">Referrals</paper-tab>
+      </paper-tabs>
+      </div>
+    </div>
+    <!--breadcrumbs end-->
+{% endblock %}
+
+{% block page_content %}
+  <div class="section">
+    <div class="container">
+    <div class="row">
+      <div class="col s12 center" style="margin-top:8px;">
+        <div class="row" style="margin-left:0px;">
+            <div class="input-field col s12">
+              <i class="mdi-communication-email prefix" style="color:#000000"></i>
+              <input id="current_email" type="email" value="{{email}}" disabled>
+              <label for="current_email">Email actual</label>
+            </div>
+        </div>
+        <form id="form_edit_email" action="{{ url|safe }}" method="post" class="col s12">
+          <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+          <div class="row">
+            <div class="input-field col s12">
+              <i class="mdi-communication-email prefix" style="color:#00BCD4"></i>
+              <input id="new_email" name="new_email" type="email" class="validate">
+              <label for="new_email">Email nuevo</label>
+            </div>
+          </div>
+          <div class="row">
+            <div class="input-field col s12">
+              <i class="mdi-action-lock-outline prefix" style="color:#00BCD4"></i>
+              <input id="password" name="password" type="password" class="required">
+              <label for="password">Escribe tu contraseña</label>
+            </div>
+          </div>
+          <div class="row">
+            <div class="row">
+              <div class="input-field col s12">
+                <button class="btn cyan waves-effect waves-light right" type="submit" name="action">Cambiar
+                  <i class="mdi-content-send right"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block sidebar_right %}
+{% endblock %}
+
+{% block page_floatings %}
+{% endblock %}
+
+
+{% block page_footer %}
+{% endblock %}
+
+
+
+
+<!-- ADD PAGE SCRIPT ELEMENTS-->
+{% block page_scripts %}
+{% endblock %}

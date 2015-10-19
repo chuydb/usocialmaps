@@ -1,0 +1,115 @@
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<div align="center">
+  <table cellpadding="0" cellspacing="0" border="0" style="background-color: #FFFFFF;width:554px;margin:0px auto;padding:0px;border-spacing:0;border-collapse:collapse">
+    <tbody>
+      <tr>
+        <td style="width:24px;background-color: #FFFFFF;"></td>
+        <td style="background-color: #FFFFFF;padding:15px 10px">
+          <center>
+          <a href="http://mboilerplate.appspot.com/" target="_blank">
+            <img src="http://mboilerplate.appspot.com/default/materialize/images/favicon/fav-gray.png" height="40px">
+          </a>
+          </center>
+        </td>
+        <td style="width:24px;background-color: #FFFFFF;"></td>
+      </tr>
+      <tr style="height:10px">
+        <td></td>
+      </tr>
+      <tr>
+        <td style="width:24px"></td>
+        <td style="background-color:#ffffff;padding:15px;color:#494949; border-radius:3px">
+          <div style="text-align:center">                            
+                  <img src="http://mboilerplate.appspot.com/default/materialize/images/emails/update.png" style="max-width:547px;">
+            </div>
+            <h1 style="min-height:48px;margin:0;color: #657D8D;font-size:20px;font-weight: 700;line-height:48px;margin-left: 20px;font-family:roboto">¡Bienvenido!</h1>
+          <table cellpadding="0" cellspacing="0" border="0" style="width:552px;margin:-16px auto;padding:0px;background-color:#ffffff;border-spacing:0;border-collapse:collapse">
+            <tbody>
+              <tr height="20" style="height:20px">
+                <td width="0" height="20" valign="middle" style="width:0px;height:20px"></td>
+              </tr>
+              <tr>
+                <td width="552" valign="middle" style="width:552px">
+                  <table cellpadding="0" cellspacing="0" border="0" width="552" style="width:552px;margin:-16px auto;padding:0px;background-color:#ffffff;border-spacing:0;border-collapse:collapse">
+                    <tbody>
+                      <tr>
+                        <td width="20" valign="middle" style="width:20px"></td>
+                        <td width="512" valign="middle" style="width:512px">
+                          <h3 style="margin: 20px 0 25px;color: #657D8D;font-size:20px;font-weight:400;line-height:24px;letter-spacing:0.35px;font-family: roboto; ">Hola, {{username}}</h3>
+                          <p style="margin:0 0 22px;font-size:14px;line-height:24px;letter-spacing:.5px;font-family:roboto-light;color: #657D8D;">¡Estamos felices de que hayas tomado el primer paso para empezar a ahorrar dinero y electricidad! ;)</p>                          
+                          <p style="margin:0 0 22px;font-size:14px;line-height:24px;letter-spacing:.5px;font-family:roboto-light;color: #657D8D;">Te recordamos que en Invictus podrás monitorear tu recibo de luz y conocer nuevas soluciones para ahorrar. ¡Quedan muchas sorpresas por descubrir! Sólo necesitamos que confirmes tu correo electrónico.</p>
+                          <div style="text-align:center"><u></u>
+                            <table cellspacing="0" cellpadding="0" style="margin-left:auto;margin-right:auto; margin-top: 50px;">
+                              <tbody>
+                                <tr>
+                                  <td align="center" width="290" height="50" bgcolor="" style="border-radius: 8px;border: 1px solid #03A9F4; cursor:pointer;background-color: #03A9F4;" onclick=""><a href="{{confirmation_url}}" style="color: #ffffff;font-size:18px;font-family: roboto;text-decoration:none; letter-spacing:1px" target="_blank">Confirmar mi correo</a>
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table><u></u>
+                          </div>
+                          <p style="margin:45px 0 22px;font-size:14px;line-height:24px;letter-spacing:.5px;font-family:roboto-light;color: #657D8D;">Esperamos que tengas un bonito día ;)</p>    
+                          <p style="margin:0 0 -5px;font-size:14px;line-height:24px;letter-spacing:.5px;font-family:roboto-light;color: #657D8D;">Truly yours,</p>
+                          <p style="margin:0 0 -5px;font-size:14px;line-height:24px;letter-spacing:.5px;font-family:roboto-light;color:#03A9F4">Mboilerplate Team.</p>                          
+                          <div style="margin-top: 50px;padding:0px 15px 5px;color: #5A5858;font-size: 13px;line-height:24px;">                         
+                            <p style="font-family: roboto;font-size:14px;text-align:center; letter-spacing:0.5px;color: #657D8D;">Doubts? Check our </span><a href="{{uri_for("faq")}}" style="color:#03A9F4;text-decoration:none" target="_blank">FAQ</a>.</p>
+                          </div>
+                          
+                          <div align="center">
+                            <table cellpadding="0" cellspacing="0" border="0" style="margin:auto;background-color: #FFF;width:500px;font-size:11px;font-weight:400;color:#ffffff;margin-top: 30px;">
+                              <tbody>
+                                <tr>
+                                  <td style="width:200px;padding:0px 0px;border-top: 1px solid rgb(223, 223, 223);">
+                                    <table cellpadding="0" cellspacing="0" border="0" style="margin: auto;padding: 8px 0px 8px 0px;">
+                                      <tbody>
+                                        <tr>
+                                        <td style="text-align:center;padding:0px 10px">
+                                            <a href="{{uri_for("contact")}}" title="Contáctanos" target="_blank">
+                                              <img alt="Contáctanos" title="Contáctanos" border="0" src="http://mboilerplate.appspot.com/default/materialize/images/emails/mail_bl.png" height="30px" style="display:block;margin:auto">
+                                            </a>
+                                          </td>
+                                          <td style="text-align:center;padding:0px 10px">
+                                            <a href="http://twitter.com/" title="Comparte en Twitter" target="_blank">
+                                              <img alt="Comparte en Twitter" title="Comparte en Twitter" border="0" src="http://mboilerplate.appspot.com/default/materialize/images/emails/tw_bl.png" height="30px" style="display:block;margin:auto">
+                                            </a>
+                                          </td>
+                                          <td style="text-align:center;padding:0px 10px">
+                                            <a href="http://www.facebook.com/" title="Comparte en Facebook" target="_blank">
+                                              <img alt="Comparte en Facebook" border="0" title="Invictus Facebook" src="http://mboilerplate.appspot.com/default/materialize/images/emails/fb_bl.png" height="30px" style="display:block;margin:auto">
+                                            </a>
+                                          </td><td style="text-align:center;padding:0px 10px">
+                                            <a href="https://www.linkedin.com/" title="Ver en LinkedIn" target="_blank">
+                                              <img alt="Ver en LinkedIn" border="0" title="Ver en LinkedIn" src="http://mboilerplate.appspot.com/default/materialize/images/emails/in_bl.png" height="30px" style="display:block;margin:auto">
+                                            </a>
+                                          </td>
+                                        </tr>
+                                      </tbody>
+                                    </table>
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </div>
+                        </td>
+                        <td width="20" valign="middle" style="width:20px"></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </td>
+              </tr>
+              <tr height="20" style="height:20px">
+                
+              </tr>
+            </tbody>
+          </table>
+        </td>
+        <td style="width:24px"></td>
+      </tr>
+      <tr>
+        <td colspan="3">
+          
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
