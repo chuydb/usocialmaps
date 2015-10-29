@@ -148,7 +148,7 @@ class AdminUserEditHandler(BaseHandler):
             activated = True if 'on' in self.request.get('activated') else False
 
             try:
-                user_info = self.user_model.get_by_id(long(self.user_id))
+                user_info = self.user_model.get_by_id(long(user_id))
                 user_info.name = name
                 user_info.activated = activated
                 user_info.last_name = last_name

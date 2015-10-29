@@ -1,4 +1,4 @@
-welcome_message = unicode('Bienvenido a tu portal de atención.','utf-8')
+welcome_message = unicode('Welcome to your social maps portal.','utf-8')
 user_pass_mismatch = unicode('User and password mismatch, please retry.','utf-8')
 post_error = unicode('Oops! Something went wrong, please retry.','utf-8')
 inactive_account = unicode('Hey! Haven\'t checked your email? Activate your account to procede.','utf-8')
