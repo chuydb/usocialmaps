@@ -59,696 +59,6 @@ class LoginRequiredHandler(BaseHandler):
         continue_url = self.request.get_all('continue')
         self.redirect(users.create_login_url(dest_url=continue_url))
 
-#original login handler
-    # class LoginHandler(BaseHandler):
-    #     """
-    #     Handler for authentication
-    #     """
-
-    #     def get(self):
-    #         """ Returns a simple HTML form for login """
-
-    #         if self.user:
-    #             self.redirect_to('home')
-    #         params = {
-    #             'captchahtml': captchaBase(self),
-    #         }
-    #         continue_url = self.request.get('continue').encode('ascii', 'ignore')
-    #         params['continue_url'] = continue_url
-    #         return self.render_template('login.html', **params)
-
-    #     def post(self):
-    #         """
-    #         username: Get the username from POST dict
-    #         password: Get the password from POST dict
-    #         """
-
-    #         if not self.form.validate():
-    # 			_message = _(messages.post_error)
-    # 			self.add_message(_message, 'danger')
-    # 			return self.get()
-    #         username = self.form.username.data.lower()
-    #         continue_url = self.request.get('continue').encode('ascii', 'ignore')
-
-    #         try:
-    #             if utils.is_email_valid(username):
-    #                 user = self.user_model.get_by_email(username)
-    #                 if user:
-    #                     auth_id = user.auth_ids[0]
-    #                 else:
-    #                     raise InvalidAuthIdError
-    #             else:
-    #                 auth_id = "own:%s" % username
-    #                 user = self.user_model.get_by_auth_id(auth_id)
-                
-    #             password = self.form.password.data.strip()
-    #             remember_me = True if str(self.request.POST.get('remember_me')) == 'on' else False
-
-    #             # Password to SHA512
-    #             password = utils.hashing(password, self.app.config.get('salt'))
-
-    #             # Try to login user with password
-    #             # Raises InvalidAuthIdError if user is not found
-    #             # Raises InvalidPasswordError if provided password
-    #             # doesn't match with specified user
-    #             self.auth.get_user_by_password(
-    #                 auth_id, password, remember=remember_me)
-
-    #             # if user account is not activated, logout and redirect to home
-    #             if (user.activated == False):
-    #                 # logout
-    #                 self.auth.unset_session()
-
-    #                 # redirect to home with error message
-    #                 resend_email_uri = self.uri_for('resend-account-activation', user_id=user.get_id(),
-    #                                                 token=self.user_model.create_resend_token(user.get_id()))
-    #                 message = _(messages.inactive_account) + ' ' + resend_email_uri
-    #                 self.add_message(message, 'danger')
-    #                 return self.redirect_to('login')
-    #             else:
-    #                 try:
-    #                     user.last_login = utils.get_date_time()
-    #                     user.put()
-    #                 except (apiproxy_errors.OverQuotaError, BadValueError):
-    #                     logging.error("Error saving Last Login in datastore")
-
-    #             # check twitter association in session
-    #             twitter_helper = twitter.TwitterAuth(self)
-    #             twitter_association_data = twitter_helper.get_association_data()
-    #             if twitter_association_data is not None:
-    #                 if models.SocialUser.check_unique(user.key, 'twitter', str(twitter_association_data['id'])):
-    #                     social_user = models.SocialUser(
-    #                         user=user.key,
-    #                         provider='twitter',
-    #                         uid=str(twitter_association_data['id']),
-    #                         extra_data=twitter_association_data
-    #                     )
-    #                     social_user.put()
-
-    #             # check facebook association
-    #             fb_data = None
-    #             try:
-    #                 fb_data = json.loads(self.session['facebook'])
-    #             except:
-    #                 pass
-
-    #             if fb_data is not None:
-    #                 if models.SocialUser.check_unique(user.key, 'facebook', str(fb_data['id'])):
-    #                     social_user = models.SocialUser(
-    #                         user=user.key,
-    #                         provider='facebook',
-    #                         uid=str(fb_data['id']),
-    #                         extra_data=fb_data
-    #                     )
-    #                     social_user.put()
-
-    #             # check linkedin association
-    #             li_data = None
-    #             try:
-    #                 li_data = json.loads(self.session['linkedin'])
-    #             except:
-    #                 pass
-
-    #             if li_data is not None:
-    #                 if models.SocialUser.check_unique(user.key, 'linkedin', str(li_data['id'])):
-    #                     social_user = models.SocialUser(
-    #                         user=user.key,
-    #                         provider='linkedin',
-    #                         uid=str(li_data['id']),
-    #                         extra_data=li_data
-    #                     )
-    #                     social_user.put()
-
-    #             # end linkedin
-
-    #             if self.app.config['log_visit']:
-    #                 try:
-    #                     logVisit = models.LogVisit(
-    #                         user=user.key,
-    #                         uastring=self.request.user_agent,
-    #                         ip=self.request.remote_addr,
-    #                         timestamp=utils.get_date_time()
-    #                     )
-    #                     logVisit.put()
-    #                 except (apiproxy_errors.OverQuotaError, BadValueError):
-    #                     logging.error("Error saving Visit Log in datastore")
-    #             if continue_url:
-    #                 self.redirect(continue_url)
-    #             else:
-    #                 self.redirect_to('home')
-    #         except (InvalidAuthIdError, InvalidPasswordError), e:
-    #             # Returns error message to self.response.write in
-    #             # the BaseHandler.dispatcher
-    #             message = _(messages.user_pass_mismatch)
-    #             self.add_message(message, 'danger')
-    #             self.redirect_to('login', continue_url=continue_url) if continue_url else self.redirect_to('login')
-
-    #     @webapp2.cached_property
-    #     def form(self):
-    #         return forms.LoginForm(self)
-
-class SocialLoginHandler(BaseHandler):
-    """
-    Handler for Social authentication
-    """
-
-    def get(self, provider_name):
-        provider = self.provider_info[provider_name]
-
-        if not self.app.config.get('enable_federated_login'):
-            message = _('Federated login is disabled.')
-            self.add_message(message, 'warning')
-            return self.redirect_to('login')
-        callback_url = "%s/social_login/%s/complete" % (self.request.host_url, provider_name)
-
-        if provider_name == "twitter":
-            twitter_helper = twitter.TwitterAuth(self, redirect_uri=callback_url)
-            self.redirect(twitter_helper.auth_url())
-
-        elif provider_name == "facebook":
-            self.session['linkedin'] = None
-            perms = ['email', 'publish_stream']
-            self.redirect(facebook.auth_url(self.app.config.get('fb_api_key'), callback_url, perms))
-
-        elif provider_name == 'linkedin':
-            self.session['facebook'] = None
-            authentication = linkedin.LinkedInAuthentication(
-                self.app.config.get('linkedin_api'),
-                self.app.config.get('linkedin_secret'),
-                callback_url,
-                [linkedin.PERMISSIONS.BASIC_PROFILE, linkedin.PERMISSIONS.EMAIL_ADDRESS])
-            self.redirect(authentication.authorization_url)
-
-        elif provider_name == "github":
-            scope = 'gist'
-            github_helper = github.GithubAuth(self.app.config.get('github_server'),
-                                              self.app.config.get('github_client_id'), \
-                                              self.app.config.get('github_client_secret'),
-                                              self.app.config.get('github_redirect_uri'), scope)
-            self.redirect(github_helper.get_authorize_url())
-
-        elif provider_name in models.SocialUser.open_id_providers():
-            continue_url = self.request.get('continue_url')
-            if continue_url:
-                dest_url = self.uri_for('social-login-complete', provider_name=provider_name, continue_url=continue_url)
-            else:
-                dest_url = self.uri_for('social-login-complete', provider_name=provider_name)
-            try:
-                login_url = users.create_login_url(federated_identity=provider['uri'], dest_url=dest_url)
-                self.redirect(login_url)
-            except users.NotAllowedError:
-                self.add_message('You must enable Federated Login Before for this application.<br> '
-                                 '<a href="http://appengine.google.com" target="_blank">Google App Engine Control Panel</a> -> '
-                                 'Administration -> Application Settings -> Authentication Options', 'danger')
-                self.redirect_to('login')
-
-        else:
-            message = _('%s authentication is not yet implemented.' % provider.get('label'))
-            self.add_message(message, 'warning')
-            self.redirect_to('login')
-
-class CallbackSocialLoginHandler(BaseHandler):
-    """
-    Callback (Save Information) for Social Authentication
-    """
-
-    def get(self, provider_name):
-        if not self.app.config.get('enable_federated_login'):
-            message = _('Federated login is disabled.')
-            self.add_message(message, 'warning')
-            return self.redirect_to('login')
-        continue_url = self.request.get('continue_url')
-        if provider_name == "twitter":
-            oauth_token = self.request.get('oauth_token')
-            oauth_verifier = self.request.get('oauth_verifier')
-            twitter_helper = twitter.TwitterAuth(self)
-            user_data = twitter_helper.auth_complete(oauth_token,
-                                                     oauth_verifier)
-            logging.info('twitter user_data: ' + str(user_data))
-            if self.user:
-                # new association with twitter
-                user_info = self.user_model.get_by_id(long(self.user_id))
-                if models.SocialUser.check_unique(user_info.key, 'twitter', str(user_data['user_id'])):
-                    social_user = models.SocialUser(
-                        user=user_info.key,
-                        provider='twitter',
-                        uid=str(user_data['user_id']),
-                        extra_data=user_data
-                    )
-                    social_user.put()
-
-                    message = _('Twitter association added.')
-                    self.add_message(message, 'success')
-                else:
-                    message = _('This Twitter account is already in use.')
-                    self.add_message(message, 'danger')
-                if continue_url:
-                    self.redirect(continue_url)
-                else:
-                    self.redirect_to('edit-profile')
-            else:
-                # login with twitter
-                social_user = models.SocialUser.get_by_provider_and_uid('twitter',
-                                                                        str(user_data['user_id']))
-                if social_user:
-                    # Social user exists. Need authenticate related site account
-                    user = social_user.user.get()
-                    self.auth.set_session(self.auth.store.user_to_dict(user), remember=True)
-                    if self.app.config['log_visit']:
-                        try:
-                            logVisit = models.LogVisit(
-                                user=user.key,
-                                uastring=self.request.user_agent,
-                                ip=self.request.remote_addr,
-                                timestamp=utils.get_date_time()
-                            )
-                            logVisit.put()
-                        except (apiproxy_errors.OverQuotaError, BadValueError):
-                            logging.error("Error saving Visit Log in datastore")
-                    if continue_url:
-                        self.redirect(continue_url)
-                    else:
-                        self.redirect_to('home')
-                else:
-                    uid = str(user_data['user_id'])
-                    email = str(user_data.get('email'))
-                    self.create_account_from_social_provider(provider_name, uid, email, continue_url, user_data)
-
-        # github association
-        elif provider_name == "github":
-            # get our request code back from the social login handler above
-            code = self.request.get('code')
-
-            # create our github auth object
-            scope = 'gist'
-            github_helper = github.GithubAuth(self.app.config.get('github_server'),
-                                              self.app.config.get('github_client_id'), \
-                                              self.app.config.get('github_client_secret'),
-                                              self.app.config.get('github_redirect_uri'), scope)
-
-            # retrieve the access token using the code and auth object
-            access_token = github_helper.get_access_token(code)
-            user_data = github_helper.get_user_info(access_token)
-            logging.info('github user_data: ' + str(user_data))
-            if self.user:
-                # user is already logged in so we set a new association with twitter
-                user_info = self.user_model.get_by_id(long(self.user_id))
-                if models.SocialUser.check_unique(user_info.key, 'github', str(user_data['login'])):
-                    social_user = models.SocialUser(
-                        user=user_info.key,
-                        provider='github',
-                        uid=str(user_data['login']),
-                        extra_data=user_data
-                    )
-                    social_user.put()
-
-                    message = _('Github association added.')
-                    self.add_message(message, 'success')
-                else:
-                    message = _('This Github account is already in use.')
-                    self.add_message(message, 'danger')
-                self.redirect_to('edit-profile')
-            else:
-                # user is not logged in, but is trying to log in via github
-                social_user = models.SocialUser.get_by_provider_and_uid('github', str(user_data['login']))
-                if social_user:
-                    # Social user exists. Need authenticate related site account
-                    user = social_user.user.get()
-                    self.auth.set_session(self.auth.store.user_to_dict(user), remember=True)
-                    if self.app.config['log_visit']:
-                        try:
-                            logVisit = models.LogVisit(
-                                user=user.key,
-                                uastring=self.request.user_agent,
-                                ip=self.request.remote_addr,
-                                timestamp=utils.get_date_time()
-                            )
-                            logVisit.put()
-                        except (apiproxy_errors.OverQuotaError, BadValueError):
-                            logging.error("Error saving Visit Log in datastore")
-                    self.redirect_to('home')
-                else:
-                    uid = str(user_data['id'])
-                    email = str(user_data.get('email'))
-                    self.create_account_from_social_provider(provider_name, uid, email, continue_url, user_data)
-        #end github
-
-        # facebook association
-        elif provider_name == "facebook":
-            code = self.request.get('code')
-            callback_url = "%s/social_login/%s/complete" % (self.request.host_url, provider_name)
-            token = facebook.get_access_token_from_code(code, callback_url, self.app.config.get('fb_api_key'),
-                                                        self.app.config.get('fb_secret'))
-            access_token = token['access_token']
-            fb = facebook.GraphAPI(access_token)
-            user_data = fb.get_object('me')
-            logging.info('facebook user_data: ' + str(user_data))
-            if self.user:
-                # new association with facebook
-                user_info = self.user_model.get_by_id(long(self.user_id))
-                if models.SocialUser.check_unique(user_info.key, 'facebook', str(user_data['id'])):
-                    social_user = models.SocialUser(
-                        user=user_info.key,
-                        provider='facebook',
-                        uid=str(user_data['id']),
-                        extra_data=user_data
-                    )
-                    social_user.put()
-
-                    message = _('Facebook association added!')
-                    self.add_message(message, 'success')
-                else:
-                    message = _('This Facebook account is already in use!')
-                    self.add_message(message, 'danger')
-                if continue_url:
-                    self.redirect(continue_url)
-                else:
-                    self.redirect_to('edit-profile')
-            else:
-                # login with Facebook
-                social_user = models.SocialUser.get_by_provider_and_uid('facebook',
-                                                                        str(user_data['id']))
-                if social_user:
-                    # Social user exists. Need authenticate related site account
-                    user = social_user.user.get()
-                    self.auth.set_session(self.auth.store.user_to_dict(user), remember=True)
-                    if self.app.config['log_visit']:
-                        try:
-                            logVisit = models.LogVisit(
-                                user=user.key,
-                                uastring=self.request.user_agent,
-                                ip=self.request.remote_addr,
-                                timestamp=utils.get_date_time()
-                            )
-                            logVisit.put()
-                        except (apiproxy_errors.OverQuotaError, BadValueError):
-                            logging.error("Error saving Visit Log in datastore")
-                    if continue_url:
-                        self.redirect(continue_url)
-                    else:
-                        self.redirect_to('home')
-                else:
-                    uid = str(user_data['id'])
-                    email = str(user_data.get('email'))
-                    self.create_account_from_social_provider(provider_name, uid, email, continue_url, user_data)
-
-                    # end facebook
-        # association with linkedin
-        elif provider_name == "linkedin":
-            callback_url = "%s/social_login/%s/complete" % (self.request.host_url, provider_name)
-            authentication = linkedin.LinkedInAuthentication(
-                self.app.config.get('linkedin_api'),
-                self.app.config.get('linkedin_secret'),
-                callback_url,
-                [linkedin.PERMISSIONS.BASIC_PROFILE, linkedin.PERMISSIONS.EMAIL_ADDRESS])
-            authentication.authorization_code = self.request.get('code')
-            access_token = authentication.get_access_token()
-            link = linkedin.LinkedInApplication(authentication)
-            u_data = link.get_profile(selectors=['id', 'first-name', 'last-name', 'email-address'])
-            user_data = {
-                'first_name': u_data.get('firstName'),
-                'last_name': u_data.get('lastName'),
-                'id': u_data.get('id'),
-                'email': u_data.get('emailAddress')}
-            self.session['linkedin'] = json.dumps(user_data)
-            logging.info('linkedin user_data: ' + str(user_data))
-
-            if self.user:
-                # new association with linkedin
-                user_info = self.user_model.get_by_id(long(self.user_id))
-                if models.SocialUser.check_unique(user_info.key, 'linkedin', str(user_data['id'])):
-                    social_user = models.SocialUser(
-                        user=user_info.key,
-                        provider='linkedin',
-                        uid=str(user_data['id']),
-                        extra_data=user_data
-                    )
-                    social_user.put()
-
-                    message = _('Linkedin association added!')
-                    self.add_message(message, 'success')
-                else:
-                    message = _('This Linkedin account is already in use!')
-                    self.add_message(message, 'danger')
-                if continue_url:
-                    self.redirect(continue_url)
-                else:
-                    self.redirect_to('edit-profile')
-            else:
-                # login with Linkedin
-                social_user = models.SocialUser.get_by_provider_and_uid('linkedin',
-                                                                        str(user_data['id']))
-                if social_user:
-                    # Social user exists. Need authenticate related site account
-                    user = social_user.user.get()
-                    self.auth.set_session(self.auth.store.user_to_dict(user), remember=True)
-                    if self.app.config['log_visit']:
-                        try:
-                            logVisit = models.LogVisit(
-                                user=user.key,
-                                uastring=self.request.user_agent,
-                                ip=self.request.remote_addr,
-                                timestamp=utils.get_date_time()
-                            )
-                            logVisit.put()
-                        except (apiproxy_errors.OverQuotaError, BadValueError):
-                            logging.error("Error saving Visit Log in datastore")
-                    if continue_url:
-                        self.redirect(continue_url)
-                    else:
-                        self.redirect_to('home')
-                else:
-                    uid = str(user_data['id'])
-                    email = str(user_data.get('email'))
-                    self.create_account_from_social_provider(provider_name, uid, email, continue_url, user_data)
-
-                    #end linkedin
-
-        # google, myopenid, yahoo OpenID Providers
-        elif provider_name in models.SocialUser.open_id_providers():
-            provider_display_name = models.SocialUser.PROVIDERS_INFO[provider_name]['label']
-            # get info passed from OpenID Provider
-            from google.appengine.api import users
-
-            current_user = users.get_current_user()
-            if current_user:
-                if current_user.federated_identity():
-                    uid = current_user.federated_identity()
-                else:
-                    uid = current_user.user_id()
-                email = current_user.email()
-            else:
-                message = _('No user authentication information received from %s. '
-                            'Please ensure you are logging in from an authorized OpenID Provider (OP).'
-                            % provider_display_name)
-                self.add_message(message, 'danger')
-                return self.redirect_to('login', continue_url=continue_url) if continue_url else self.redirect_to(
-                    'login')
-            if self.user:
-                # add social account to user
-                user_info = self.user_model.get_by_id(long(self.user_id))
-                if models.SocialUser.check_unique(user_info.key, provider_name, uid):
-                    social_user = models.SocialUser(
-                        user=user_info.key,
-                        provider=provider_name,
-                        uid=uid
-                    )
-                    social_user.put()
-
-                    message = _('%s association successfully added.' % provider_display_name)
-                    self.add_message(message, 'success')
-                else:
-                    message = _('This %s account is already in use.' % provider_display_name)
-                    self.add_message(message, 'danger')
-                if continue_url:
-                    self.redirect(continue_url)
-                else:
-                    self.redirect_to('edit-profile')
-            else:
-                # login with OpenID Provider
-                social_user = models.SocialUser.get_by_provider_and_uid(provider_name, uid)
-                if social_user:
-                    # Social user found. Authenticate the user
-                    user = social_user.user.get()
-                    self.auth.set_session(self.auth.store.user_to_dict(user), remember=True)
-                    if self.app.config['log_visit']:
-                        try:
-                            logVisit = models.LogVisit(
-                                user=user.key,
-                                uastring=self.request.user_agent,
-                                ip=self.request.remote_addr,
-                                timestamp=utils.get_date_time()
-                            )
-                            logVisit.put()
-                        except (apiproxy_errors.OverQuotaError, BadValueError):
-                            logging.error("Error saving Visit Log in datastore")
-                    if continue_url:
-                        self.redirect(continue_url)
-                    else:
-                        self.redirect_to('home')
-                else:
-                    self.create_account_from_social_provider(provider_name, uid, email, continue_url)
-        else:
-            message = _('This authentication method is not yet implemented.')
-            self.add_message(message, 'warning')
-            self.redirect_to('login', continue_url=continue_url) if continue_url else self.redirect_to('login')
-
-    def create_account_from_social_provider(self, provider_name, uid, email=None, continue_url=None, user_data=None):
-        """Social user does not exist yet so create it with the federated identity provided (uid)
-        and create prerequisite user and log the user account in
-        """
-        provider_display_name = models.SocialUser.PROVIDERS_INFO[provider_name]['label']
-        if models.SocialUser.check_unique_uid(provider_name, uid):
-            # create user
-            # Returns a tuple, where first value is BOOL.
-            # If True ok, If False no new user is created
-            # Assume provider has already verified email address
-            # if email is provided so set activated to True
-            auth_id = "%s:%s" % (provider_name, uid)
-            if email:
-                unique_properties = ['email']
-                user_info = self.auth.store.user_model.create_user(
-                    auth_id, unique_properties, email=email,
-                    activated=True
-                )
-            else:
-                user_info = self.auth.store.user_model.create_user(
-                    auth_id, activated=True
-                )
-            if not user_info[0]: #user is a tuple
-                message = _('The account %s is already in use.' % provider_display_name)
-                self.add_message(message, 'danger')
-                return self.redirect_to('register')
-
-            user = user_info[1]
-
-            # create social user and associate with user
-            social_user = models.SocialUser(
-                user=user.key,
-                provider=provider_name,
-                uid=uid,
-            )
-            if user_data:
-                social_user.extra_data = user_data
-                self.session[provider_name] = json.dumps(user_data) # TODO is this needed?
-            social_user.put()
-            # authenticate user
-            self.auth.set_session(self.auth.store.user_to_dict(user), remember=True)
-            if self.app.config['log_visit']:
-                try:
-                    logVisit = models.LogVisit(
-                        user=user.key,
-                        uastring=self.request.user_agent,
-                        ip=self.request.remote_addr,
-                        timestamp=utils.get_date_time()
-                    )
-                    logVisit.put()
-                except (apiproxy_errors.OverQuotaError, BadValueError):
-                    logging.error("Error saving Visit Log in datastore")
-
-            message = _('Welcome!  You have been registered as a new user '
-                        'and logged in through {}.').format(provider_display_name)
-            self.add_message(message, 'success')
-        else:
-            message = _('This %s account is already in use.' % provider_display_name)
-            self.add_message(message, 'danger')
-        if continue_url:
-            self.redirect(continue_url)
-        else:
-            self.redirect_to('edit-profile')
-
-class DeleteSocialProviderHandler(BaseHandler):
-    """
-    Delete Social association with an account
-    """
-
-    @user_required
-    def post(self, provider_name):
-        if self.user:
-            user_info = self.user_model.get_by_id(long(self.user_id))
-            if len(user_info.get_social_providers_info()['used']) > 1 and user_info.password is not None:
-                social_user = models.SocialUser.get_by_user_and_provider(user_info.key, provider_name)
-                if social_user:
-                    social_user.key.delete()
-                    message = _('%s successfully disassociated.' % provider_name)
-                    self.add_message(message, 'success')
-                else:
-                    message = _('Social account on %s not found for this user.' % provider_name)
-                    self.add_message(message, 'danger')
-            else:
-                message = ('Social account on %s cannot be deleted for user.'
-                           '  Please create a username and password to delete social account.' % provider_name)
-                self.add_message(message, 'danger')
-        self.redirect_to('edit-profile')
-
-class SendEmailHandler(BaseHandler):
-    """
-    Core Handler for sending Emails
-    Use with TaskQueue
-    """
-
-    @taskqueue_method
-    def post(self):
-
-        from google.appengine.api import mail, app_identity
-        from lib import sendgrid
-        from lib.sendgrid import SendGridError, SendGridClientError, SendGridServerError 
-
-        to = self.request.get("to")
-        subject = self.request.get("subject")
-        body = self.request.get("body")
-        sender = self.request.get("sender")
-
-        if sender != '' or not utils.is_email_valid(sender):
-            if utils.is_email_valid(self.app.config.get('contact_sender')):
-                sender = self.app.config.get('contact_sender')
-            else:
-                app_id = app_identity.get_application_id()
-                sender = "MBoilerplate Mail <no-reply@%s.appspotmail.com>" % (app_id)
-
-        if self.app.config['log_email']:
-            try:
-                logEmail = models.LogEmail(
-                    sender=sender,
-                    to=to,
-                    subject=subject,
-                    body=body,
-                    when=utils.get_date_time("datetimeProperty")
-                )
-                logEmail.put()
-            except (apiproxy_errors.OverQuotaError, BadValueError):
-                logging.error("Error saving Email Log in datastore")
-
-
-
-
-        #using appengine email 
-        try:            
-            message = mail.EmailMessage()
-            message.sender = sender
-            message.to = to
-            message.subject = subject
-            message.html = body
-            message.send()
-            logging.info("... sending email to: %s ..." % to)
-        except Exception, e:
-            logging.error("Error sending email: %s" % e)
-
-
-        # using sendgrid
-        # try:
-        #     sg = sendgrid.SendGridClient(self.app.config.get('sendgrid_login'), self.app.config.get('sendgrid_passkey'))
-        #     logging.info("sending with sendgrid client: %s" % sg)
-        #     message = sendgrid.Mail()
-        #     message.add_to(to)
-        #     message.set_subject(subject)
-        #     message.set_html(body)
-        #     message.set_text(body)
-        #     message.set_from(sender)
-        #     status, msg = sg.send(message)
-        # except Exception, e:
-        #     logging.error("Error sending email: %s" % e)
-
 class PasswordResetHandler(BaseHandler):
     """
     Password Reset Handler with Captcha
@@ -801,6 +111,8 @@ class PasswordResetHandler(BaseHandler):
                 "email": user.email,
                 "reset_password_url": reset_url,
                 "support_url": self.uri_for("contact", _full=True),
+                "twitter_url": self.app.config.get('twitter_url'),
+                "facebook_url": self.app.config.get('facebook_url'),
                 "faq_url": self.uri_for("faq", _full=True),
                 "app_name": self.app.config.get('app_name'),
             }
@@ -856,7 +168,7 @@ class PasswordResetCompleteHandler(BaseHandler):
             # Login User
             self.auth.get_user_by_password(user.auth_ids[0], password)
             self.add_message(_(messages.passwordchange_success), 'success')
-            return self.redirect_to('materialize-home')
+            return self.redirect_to('landing')
 
         else:
             self.add_message(_(messages.passwords_mismatch), 'danger')
@@ -874,196 +186,6 @@ class PasswordResetCompleteHandler(BaseHandler):
     These handlers concern registration in 2 ways: direct, or from referral.
 
 """
-class MaterializeRegisterReferralHandler(BaseHandler):
-    """
-    Handler to process the link of referrals for a given user_id
-    """
-
-    def get(self, user_id):
-        if self.user:
-            self.redirect_to('materialize-home')
-        user = self.user_model.get_by_id(long(user_id))
-
-        if user is not None:
-            params = {
-                'captchahtml': captchaBase(self),
-                '_username': user.name,
-                '_email': user.email,
-                'is_referral' : True
-            }
-            return self.render_template('materialize/landing/register.html', **params)
-        else:
-            return self.redirect_to('landing')
-
-    def post(self, user_id):
-        """ Get fields from POST dict """
-
-        # check captcha
-        response = self.request.POST.get('g-recaptcha-response')
-        remote_ip = self.request.remote_addr
-
-        cResponse = captcha.submit(
-            response,
-            self.app.config.get('captcha_private_key'),
-            remote_ip)
-
-        if cResponse.is_valid:
-            # captcha was valid... carry on..nothing to see here
-            pass
-        else:
-            _message = _(messages.captcha_error)
-            self.add_message(_message, 'danger')
-            return self.get(user_id)
-
-        if not self.form.validate():
-            _message = _(messages.saving_error)
-            logging.info("Form did not passed.")
-            self.add_message(_message, 'danger')
-            return self.get(user_id)
-        name = self.form.name.data.strip()
-        last_name = self.form.last_name.data.strip()
-        email = self.form.email.data.lower()
-        username = email
-        password = self.form.password.data.strip()
-
-
-        aUser = self.user_model.get_by_email(email)
-        if aUser is not None:
-            message = _("Sorry, email %s is already in use." % email)
-            self.add_message(message, 'danger')
-            return self.redirect_to('landing')
-
-
-        # Password to SHA512
-        password = utils.hashing(password, self.app.config.get('salt'))
-
-        # Passing password_raw=password so password will be hashed
-        # Returns a tuple, where first value is BOOL.
-        # If True ok, If False no new user is created
-        unique_properties = ['username', 'email']
-        auth_id = "own:%s" % username
-        referred_user = self.auth.store.user_model.create_user(
-            auth_id, unique_properties, password_raw=password,
-            username=username, name=name, last_name=last_name, email=email,
-            ip=self.request.remote_addr
-        )
-
-        if not referred_user[0]: #user is a tuple
-            if "username" in str(referred_user[1]):
-                message = _(messages.username_exists).format(username)
-            elif "email" in str(referred_user[1]):
-                message = _(messages.email_exists).format(email)
-            else:
-                message = _(messages.user_exists)
-            self.add_message(message, 'danger')
-            return self.redirect_to('register-referral',user_id=user_id, _full = True)
-        else:
-            # User registered successfully
-            # But if the user registered using the form, the user has to check their email to activate the account ???
-            try:
-                if not referred_user[1].activated:
-                    # send email
-                    subject = _(messages.email_activation_subject)
-                    confirmation_url = self.uri_for("account-activation-referral",
-                                                    ref_user_id=referred_user[1].get_id(),
-                                                    token=self.user_model.create_auth_token(referred_user[1].get_id()),
-                                                    user_id =  user_id,
-                                                    _full=True)
-                    if name != '':
-                        _username = str(name)
-                    else:
-                        _username = str(username)
-                    # load email's template
-                    template_val = {
-                        "app_name": self.app.config.get('app_name'),
-                        "username": _username,
-                        "confirmation_url": confirmation_url,
-                        "support_url": self.uri_for("contact", _full=True),
-						"faq_url": self.uri_for("faq", _full=True)
-                    }
-                    body_path = "emails/account_activation.txt"
-                    body = self.jinja2.render_template(body_path, **template_val)
-
-                    email_url = self.uri_for('taskqueue-send-email')
-                    taskqueue.add(url=email_url, params={
-                        'to': str(email),
-                        'subject': subject,
-                        'body': body,
-                    })
-
-                    
-                    #unlock rewards status for the user who referred this referred_user
-                    already_invited = False;
-                    user = self.user_model.get_by_id(long(user_id))
-                    for reward in user.rewards:
-                        if reward.content == email:
-                            already_invited = True;
-                            break
-
-                    if not already_invited:
-                        reward = models.Rewards(amount = 0,earned = True, category = 'invite',
-                            content = email,timestamp = utils.get_date_time(),status = 'invited')                 
-                        user.rewards.append(reward)
-                        user.put()
-
-                    message = _(messages.register_success)
-                    self.add_message(message, 'success')
-                    return self.redirect_to('landing')
-
-                # If the user didn't register using registration form ???
-                db_user = self.auth.get_user_by_password(referred_user[1].auth_ids[0], password)
-
-                # Check Twitter association in session
-                twitter_helper = twitter.TwitterAuth(self)
-                twitter_association_data = twitter_helper.get_association_data()
-                if twitter_association_data is not None:
-                    if models.SocialUser.check_unique(referred_user[1].key, 'twitter', str(twitter_association_data['id'])):
-                        social_user = models.SocialUser(
-                            user=referred_user[1].key,
-                            provider='twitter',
-                            uid=str(twitter_association_data['id']),
-                            extra_data=twitter_association_data
-                        )
-                        social_user.put()
-
-                #check Facebook association
-                fb_data = json.loads(self.session['facebook'])
-                if fb_data is not None:
-                    if models.SocialUser.check_unique(referred_user.key, 'facebook', str(fb_data['id'])):
-                        social_user = models.SocialUser(
-                            user=referred_user.key,
-                            provider='facebook',
-                            uid=str(fb_data['id']),
-                            extra_data=fb_data
-                        )
-                        social_user.put()
-
-                #check LinkedIn association
-                li_data = json.loads(self.session['linkedin'])
-                if li_data is not None:
-                    if models.SocialUser.check_unique(referred_user.key, 'linkedin', str(li_data['id'])):
-                        social_user = models.SocialUser(
-                            user=referred_user.key,
-                            provider='linkedin',
-                            uid=str(li_data['id']),
-                            extra_data=li_data
-                        )
-                        social_user.put()
-
-                message = _(messages.logged).format(username)
-                self.add_message(message, 'success')
-                return self.redirect_to('materialize-home')
-            except (AttributeError, KeyError), e:
-                logging.error('Unexpected error creating the user %s: %s' % (username, e ))
-                message = _(messages.user_creation_error).format(username)
-                self.add_message(message, 'danger')
-                return self.redirect_to('register-referral',user_id=user_id, _full = True)
-
-    @webapp2.cached_property
-    def form(self):
-        f = forms.RegisterForm(self)
-        return f
-
 class MaterializeRegisterRequestHandler(BaseHandler):
     """
     Handler for Sign Up Users
@@ -1073,7 +195,7 @@ class MaterializeRegisterRequestHandler(BaseHandler):
         """ Returns a simple HTML form for create a new user """
 
         if self.user:
-            self.redirect_to('materialize-home')
+            self.redirect_to('landing')
 
         params = {
             'captchahtml': captchaBase(self),
@@ -1160,6 +282,8 @@ class MaterializeRegisterRequestHandler(BaseHandler):
                         "username": name,
                         "confirmation_url": confirmation_url,
                         "support_url": self.uri_for("contact", _full=True),
+                        "twitter_url": self.app.config.get('twitter_url'),
+                        "facebook_url": self.app.config.get('facebook_url'),
                         "faq_url": self.uri_for("faq", _full=True)
                     }
                     body_path = "emails/account_activation.txt"
@@ -1333,8 +457,8 @@ class MaterializeAccountActivationHandler(BaseHandler):
             user.last_login = utils.get_date_time()
             
             # create unique url for sharing & referrals purposes
-            long_url = self.uri_for("register-referral",user_id=user.get_id(),_full=True)
-            logging.info("Long URL: %s" % long_url)
+            # long_url = self.uri_for("register-referral",user_id=user.get_id(),_full=True)
+            # logging.info("Long URL: %s" % long_url)
             
             #The goo.gl way:
             # post_url = 'https://www.googleapis.com/urlshortener/v1/url'            
@@ -1346,11 +470,11 @@ class MaterializeAccountActivationHandler(BaseHandler):
             # short_url = j['id']
 
             #The bit.ly way:
-            api = bitly.Api(login=self.app.config.get('bitly_login'), apikey=self.app.config.get('bitly_apikey'))
-            short_url=api.shorten(long_url)
-            logging.info("Bitly response: %s" % short_url)
+            # api = bitly.Api(login=self.app.config.get('bitly_login'), apikey=self.app.config.get('bitly_apikey'))
+            # short_url=api.shorten(long_url)
+            # logging.info("Bitly response: %s" % short_url)
 
-            user.link_referral = short_url
+            # user.link_referral = short_url
             reward = models.Rewards(amount = 100,earned = True, category = 'configuration',
                 content = 'Activation',timestamp = utils.get_date_time(),status = 'completed')                 
             user.rewards.append(reward)
@@ -1382,90 +506,6 @@ class MaterializeAccountActivationHandler(BaseHandler):
             self.add_message(message, 'danger')
             return self.redirect_to('landing')
 
-class MaterializeAccountActivationReferralHandler(BaseHandler):
-    """
-    Handler for account activation
-    """
-
-    def get(self, ref_user_id, token, user_id):
-        try:
-            if not self.user_model.validate_auth_token(ref_user_id, token):
-                message = _(messages.used_activation_link)
-                self.add_message(message, 'danger')
-                return self.redirect_to('login')
-
-
-            user = self.user_model.get_by_id(long(user_id))
-            referred_user = self.user_model.get_by_id(long(ref_user_id))
-            
-            # activate the user's account            
-            referred_user.activated = True
-            referred_user.last_login = utils.get_date_time()
-            
-            # create unique url for sharing & referrals purposes
-            long_url = self.uri_for("register-referral",user_id=referred_user.get_id(),_full=True)
-            logging.info("Long URL: %s" % long_url)
-            
-            #The goo.gl way:
-            # post_url = 'https://www.googleapis.com/urlshortener/v1/url'            
-            # payload = {'longUrl': long_url}
-            # headers = {'content-type': 'application/json'}
-            # r = requests.post(post_url, data=json.dumps(payload), headers=headers)
-            # j = json.loads(r.text)
-            # logging.info("Google response: %s" % j)
-            # short_url = j['id']
-
-            #The bit.ly way:
-            api = bitly.Api(login=self.app.config.get('bitly_login'), apikey=self.app.config.get('bitly_apikey'))
-            short_url=api.shorten(long_url)
-            logging.info("Bitly response: %s" % short_url)
-
-
-            referred_user.link_referral = short_url
-            reward = models.Rewards(amount = 100,earned = True, category = 'configuration',
-                content = 'Activation',timestamp = utils.get_date_time(),status = 'completed')                 
-            referred_user.rewards.append(reward)
-            reward = models.Rewards(amount = 20,earned = True, category = 'invite',
-                content = 'Invitee by: ' + user.email,timestamp = utils.get_date_time(),status = 'completed')                 
-            referred_user.rewards.append(reward)
-
-
-            #Role init
-            referred_user.role = 'Admin'
-
-            #Datastore allocation
-            referred_user.put()
-            
-            # assign the referral reward
-            for reward in user.rewards:
-                if reward.content == referred_user.email:
-                    reward.amount = 50;
-                    reward.status = 'joined';
-                    user.put()
-                    break
-
-            # Login User
-            self.auth.get_user_by_token(int(ref_user_id), token)
-
-            # Delete token
-            self.user_model.delete_auth_token(ref_user_id, token)
-
-            # Slack Incoming WebHooks
-            from google.appengine.api import urlfetch
-            urlfetch.fetch(self.app.config.get('slack_webhook_url'), payload='{"channel": "#general", "username": "webhookbot", "text": "Just got a new referred user ! Go surprise him at '+referred_user.email+' and remember to thank '+ user.email +'", "icon_emoji": ":bowtie:"}', method='POST')
-
-
-            message = _(messages.activation_success).format(
-                referred_user.email)
-            self.add_message(message, 'success')
-            self.redirect_to('landing')
-
-        except (AttributeError, KeyError, InvalidAuthIdError, NameError), e:
-            logging.error("Error activating an account: %s" % e)
-            message = _(messages.post_error)
-            self.add_message(message, 'danger')
-            return self.redirect_to('login')
-
 class ResendActivationEmailHandler(BaseHandler):
     """
     Handler to resend activation email
@@ -1494,6 +534,8 @@ class ResendActivationEmailHandler(BaseHandler):
                     "username": user.name,
                     "confirmation_url": confirmation_url,
                     "support_url": self.uri_for("contact", _full=True),
+                    "twitter_url": self.app.config.get('twitter_url'),
+                    "facebook_url": self.app.config.get('facebook_url'),
 					"faq_url": self.uri_for("faq", _full=True)
                 }
                 body_path = "emails/account_activation.txt"
@@ -1514,7 +556,7 @@ class ResendActivationEmailHandler(BaseHandler):
             else:
                 message = _(messages.activation_success)
                 self.add_message(message, 'warning')
-                return self.redirect_to('materialize-home')
+                return self.redirect_to('landing')
 
         except (KeyError, AttributeError), e:
             logging.error("Error resending activation email: %s" % e)
@@ -1550,11 +592,19 @@ def disclaim(_self, **kwargs):
     _params['gender'] = user_info.gender if user_info.gender != None else ""
     _params['birth'] = user_info.birth.strftime("%Y-%m-%d") if user_info.birth != None else ""
     _params['has_picture'] = True if user_info.picture is not None else False
+    _params['has_address'] = True if user_info.address is not None else False
+    _params['address_from'] = False
+    if _params['has_address']:
+        if user_info.address.address_from_coord is not None:
+            lat = str(user_info.address.address_from_coord.lat)
+            lng = str(user_info.address.address_from_coord.lon)
+            _params['address_from_coord'] = lat + "," + lng
+        _params['address_from'] = user_info.address.address_from
     if not _params['has_picture']:
         _params['disclaim'] = True
     _params['link_referral'] = user_info.link_referral
     _params['date'] = date.today().strftime("%Y-%m-%d")
-
+    
     return _params, user_info
 
 
@@ -1788,159 +838,317 @@ class MaterializeLandingContactRequestHandler(BaseHandler):
     def form(self):
         return forms.ContactForm(self)
 
-
-# USER
-class MaterializeHomeRequestHandler(BaseHandler):
+# REPORT
+class MaterializeNewReportHandler(BaseHandler):
     """
     Handler for materialized home
-    """
+    """  
     @user_required
     def get(self):
         """ Returns a simple HTML form for materialize home """
-        ####-------------------- R E D I R E C T I O N S --------------------####
-        if not self.user:
-            return self.redirect_to('login')
-        ####------------------------------------------------------------------####
-
         ####-------------------- P R E P A R A T I O N S --------------------####
-        params, user_info = disclaim(self)
+        if self.user:
+            params, user_info = disclaim(self)
+        else:
+            params = {}
         ####------------------------------------------------------------------####
         
-        return self.render_template('materialize/users/sections/home.html', **params)
+        return self.render_template('materialize/landing/new_report.html', **params)
 
-class MaterializeReferralsRequestHandler(BaseHandler):
+    @user_required
+    def post(self):
+        """ Get fields from POST dict """
+                        
+        address_from = self.request.get('address_from')
+        address_from_coord = self.request.get('address_from_coord')
+        catGroup = self.request.get('catGroup')
+        subCat = self.request.get('subCat')
+        description = self.request.get('description')
+        title = self.request.get('title')
+        
+        try:
+            user_report = models.Report()
+            user_report.user_id = int(self.user_id) if int(self.user_id) is not None else -1
+            user_report.address_from_coord = ndb.GeoPt(address_from_coord)
+            user_report.address_from = address_from
+            user_report.title = title
+            user_report.description = description
+            user_report.likeability = catGroup
+            user_report.feeling  = subCat
+            user_report.put()
+            
+            #PUSH TO CARTODB
+            from google.appengine.api import urlfetch
+            import urllib
+            api_key = self.app.config.get('cartodb_apikey')
+            cartodb_domain = self.app.config.get('cartodb_user')
+            cartodb_table = self.app.config.get('cartodb_reports_table')
+            #INSERT
+            unquoted_url = ("https://%s.cartodb.com/api/v2/sql?q=INSERT INTO %s (the_geom, title, description, address, image_url, likeability, feeling, follows, uuid, created) VALUES (ST_GeomFromText('POINT(%s %s)', 4326),'%s','%s','%s','%s','%s','%s',%s,'%s','%s')&api_key=%s" % (cartodb_domain, cartodb_table, user_report.address_from_coord.lon, user_report.address_from_coord.lat, user_report.title,user_report.description,user_report.address_from,user_report.image_url,user_report.likeability,user_report.feeling,user_report.follows,user_report.key.id(), user_report.created.strftime("%Y-%m-%d"),api_key)).encode('utf8')
+            url = urllib.quote(unquoted_url, safe='~@$&()*!+=:;,.?/\'')
+            t = urlfetch.fetch(url)
+            logging.info("t: %s" % t.content)
+
+            #SELECT CARTODB_ID & ASSIGN
+            cl = CartoDBAPIKey(api_key, cartodb_domain)
+            response = cl.sql('select cartodb_id from %s order by cartodb_id desc limit 1' % cartodb_table)
+            user_report.cdb_id = response['rows'][0]['cartodb_id']
+
+            user_report.put()
+
+            if hasattr(self.request.POST['file'], 'filename'):
+                #create attachment
+                from google.appengine.api import urlfetch
+                from poster.encode import multipart_encode, MultipartParam
+                
+                urlfetch.set_default_fetch_deadline(45)
+
+                payload = {}
+                upload_url = blobstore.create_upload_url('/report/image/upload/%s' %(user_report.key.id()))
+                file_data = self.request.POST['file']
+                payload['file'] = MultipartParam('file', filename=file_data.filename,
+                                                         filetype=file_data.type,
+                                                         fileobj=file_data.file)
+                data,headers= multipart_encode(payload)
+                t = urlfetch.fetch(url=upload_url, payload="".join(data), method=urlfetch.POST, headers=headers)
+                
+                logging.info('t.content: %s' % t.content)
+                
+                if t.content == 'success':
+                    message = _(messages.report_success)
+                    self.add_message(message, 'success')
+                    return self.redirect_to('materialize-report-success')
+                else:
+                    message = _(messages.attach_error)
+                    self.add_message(message, 'danger')            
+                    return self.get()                    
+            else:
+                message = _(messages.report_success)
+                self.add_message(message, 'success')
+                return self.redirect_to('materialize-report-success')
+
+        except Exception as e:
+            logging.info('error in post: %s' % e)
+            message = _(messages.saving_error)
+            self.add_message(message, 'danger')
+            return self.get()
+
+class MaterializeReportUploadImageHandler(blobstore_handlers.BlobstoreUploadHandler):
+    def post(self, report_id):
+        try:
+            logging.info(self.get_uploads()[0])
+            logging.info('attaching file to report_id: %s' %report_id)
+            upload = self.get_uploads()[0]
+            report = models.Report.get_by_id(long(report_id))
+            # report.attachment = upload.key()
+            report.image_url = self.uri_for('blob-serve', photo_key = upload.key(), _full=True)
+            report.put()
+
+            if report.cdb_id != -1:
+                #UPDATE CARTODB
+                from google.appengine.api import urlfetch
+                import urllib
+                api_key = self.app.config.get('cartodb_apikey')
+                cartodb_domain = self.app.config.get('cartodb_user')
+                cartodb_table = self.app.config.get('cartodb_reports_table')
+                unquoted_url = ("https://%s.cartodb.com/api/v2/sql?q=UPDATE %s SET image_url = '%s' WHERE cartodb_id = %s &api_key=%s" % (cartodb_domain, cartodb_table, report.image_url, report.cdb_id, api_key)).encode('utf8')
+                url = urllib.quote(unquoted_url, safe='~@$&()*!+=:;,.?/\'')
+                t = urlfetch.fetch(url)
+                logging.info("t: %s" % t.content)
+
+            self.response.headers['Content-Type'] = 'text/plain'
+            self.response.out.write('success')
+        except Exception as e:
+            logging.error('something went wrong: %s' % e)
+            self.response.headers['Content-Type'] = 'text/plain'
+            self.response.out.write('error')
+
+class MaterializeNewReportSuccessHandler(BaseHandler):
     """
-        Handler for materialized referrals
+    Handler for materialized home
+    """  
+    def get(self):
+        """ Returns a simple HTML form for materialize home """
+        ####-------------------- P R E P A R A T I O N S --------------------####
+        if self.user:
+            params, user_info = disclaim(self)
+        else:
+            params = {}
+        ####------------------------------------------------------------------####
+        
+        return self.render_template('materialize/landing/new_report_success.html', **params)
+
+class MaterializeFollowRequestHandler(BaseHandler):
+    def post(self):
+        report_id = int(self.request.get('report_id'))
+        user_id = int(self.request.get('user_id'))
+        kind = self.request.get('kind')
+        reportDict = {}
+
+        try:
+            report = models.Report.get_by_cdb(int(report_id))
+            if report:
+                if kind == 'follow':
+                    follower = models.Followers.query(ndb.AND(models.Followers.user_id == long(user_id),models.Followers.report_id == long(report_id)))
+                    if follower.count() == 0 and report:
+                        _u = models.User.get_by_id(long(user_id))
+                        if _u:
+                            follower = models.Followers()
+                            follower.user_id = user_id
+                            follower.report_id = report_id
+                            follower.put()
+                            report.follows += 1
+                            report.put()
+                            #UPDATE CARTO
+                            from google.appengine.api import urlfetch
+                            import urllib
+                            api_key = self.app.config.get('cartodb_apikey')
+                            cartodb_domain = self.app.config.get('cartodb_user')
+                            cartodb_table = self.app.config.get('cartodb_reports_table')
+                            unquoted_url = ("https://%s.cartodb.com/api/v2/sql?q=UPDATE %s SET follows = %s WHERE cartodb_id = %s &api_key=%s" % (cartodb_domain, cartodb_table, report.follows, report_id, api_key)).encode('utf8')
+                            url = urllib.quote(unquoted_url, safe='~@$&()*!+=:;,.?/\'')
+                            t = urlfetch.fetch(url)
+                            reportDict['contents'] = 'follow request successful'
+                    elif follower.count() == 1:
+                        reportDict['contents'] = 'user already following'
+                    reportDict['status'] = 'success'
+                elif kind == 'unfollow':
+                    follower = models.Followers.query(ndb.AND(models.Followers.user_id == long(user_id),models.Followers.report_id == long(report_id)))
+                    if follower.count > 0:
+                        for _f in follower:
+                            _f.key.delete()
+                            report.follows -= 1
+                            report.follows = 0 if report.follows < 0 else report.follows
+                            report.put()
+                            #UPDATE CARTO
+                            from google.appengine.api import urlfetch
+                            import urllib
+                            api_key = self.app.config.get('cartodb_apikey')
+                            cartodb_domain = self.app.config.get('cartodb_user')
+                            cartodb_table = self.app.config.get('cartodb_reports_table')
+                            unquoted_url = ("https://%s.cartodb.com/api/v2/sql?q=UPDATE %s SET follows = %s WHERE cartodb_id = %s &api_key=%s" % (cartodb_domain, cartodb_table, report.follows, report_id, api_key)).encode('utf8')
+                            url = urllib.quote(unquoted_url, safe='~@$&()*!+=:;,.?/\'')
+                            t = urlfetch.fetch(url)
+                    reportDict['status'] = 'success'
+                    reportDict['contents'] = 'unfollow request successful'
+            else:
+                reportDict['status'] = 'success'
+                reportDict['contents'] = 'nothing to do here'
+                reportDict['report_id'] = report_id
+                reportDict['user_id'] = user_id
+                reportDict['kind'] = kind
+        except Exception as e:
+            reportDict['status'] = 'error'
+            reportDict['contents'] = '%s' % e
+            pass
+
+
+
+        self.response.headers.add_header("Access-Control-Allow-Origin", "*")
+        self.response.headers['Content-Type'] = 'application/json'
+        self.response.write(json.dumps(reportDict))
+
+class MaterializeReportCommentsHandler(BaseHandler):
+    def get(self,report_id):
+        reportDict = {}
+        logs = models.Comments.query(models.Comments.report_id == int(report_id))
+        logs = logs.order(-models.Comments.created)
+        
+        html = '<ul class="collection" style="overflow:scroll;">'
+        for log in logs:
+            if log.kind != 'note':
+                user = log.get_user()            
+                if user:
+                    image = user.get_image_url()
+                    initial_letter = user.name[1]
+                    name = user.name
+                else:
+                    image = -1
+                    initial_letter = log.user_email[1]
+                    name = ''
+                html+= '<li class="collection-item avatar" style="overflow:scroll;    text-align: right;">'
+                if image != -1:
+                    html+= '<img src="%s" alt="" class="circle" style="width: 60px;height: 60px;">' % image
+                else:
+                    html+= '<i class="mdi-action-face-unlock circle"></i>'
+                html+= '<span class="title right"><span class="orange-text">%s &lt;%s&gt;</span>:</span><br><p class="right"><span class="light-blue-text">%s</span><br>%s</p>' % (name, log.user_email, log.get_formatted_date(), log.contents)
+                html+= '</li>'
+        html += '</ul>'
+        reportDict['logs'] = {
+            'html': html
+        }
+        self.response.headers.add_header("Access-Control-Allow-Origin", "*")
+        self.response.headers['Content-Type'] = 'application/json'
+        self.response.write(json.dumps(reportDict))
+
+class MaterializeReportsRequestHandler(BaseHandler):
+    """
+        Handler for materialized reports
     """
     @user_required
     def get(self):
         """ returns simple html for a get request """
         params, user_info = disclaim(self)
-        params['link_referral'] = user_info.link_referral
-        return self.render_template('materialize/users/sections/referrals.html', **params)
 
+        user_reports = models.Report.query(models.Report.user_id == int(user_info.key.id()))
+        user_reports = user_reports.order(-models.Report.created)
+        if user_reports is not None:
+            try:
+                params['reports'] = []
+                for report in user_reports:
+                    params['reports'].append((report.key.id(), report.title, report.created, report.address_from_coord, report.address_from, report.description, report.image_url, report.likeability, report.feeling, report.cdb_id, report.follows, report.get_log_count(), '66D7E6', 'own'))
+                try:
+                    follows = models.Followers.query(models.Followers.user_id == int(user_info.key.id()))
+                    for follow in follows:
+                        report = models.Report.get_by_cdb(int(follow.report_id))
+                        if report:
+                            params['reports'].append((report.key.id(), report.title, report.created, report.address_from_coord, report.address_from, report.description, report.image_url, report.likeability, report.feeling, report.cdb_id, report.follows, report.get_log_count(), '66D7E6', 'follow'))
+                except:
+                    pass
+            except (AttributeError, TypeError), e:
+                login_error_message = _(messages.expired_session)
+                logging.error('Error updating profile: %s' % e)
+                self.add_message(login_error_message, 'danger')
+                self.redirect_to('login')
+
+        return self.render_template('materialize/users/reports.html', **params)
+
+    @user_required
     def post(self):
-        """ Get fields from POST dict """
-        user_info = self.user_model.get_by_id(long(self.user_id))
-        message = ''
-
-        if not self.form.validate():
-            message += messages.saving_error
-            self.add_message(message, 'danger')
-            return self.get()
-
-        _emails = self.form.emails.data.replace('"','').replace('[','').replace(']','')
-        logging.info("Referrals' email addresses: %s" % _emails)
-
+        delete = self.request.get('delete')
+        report_id = self.request.get('report_id')
+        
         try:
-            # send email
-            subject = _(messages.email_referral_subject)
-            if user_info.name != '':
-                _username = user_info.name
-            else:
-                _username = user_info.username
-             # load email's template
-            template_val = {
-                "app_name": self.app.config.get('app_name'),
-                "user_email": user_info.email,
-                "user_name": _username,
-                "link_referral" : user_info.link_referral,
-                "support_url": self.uri_for("contact", _full=True),
-                "faq_url": self.uri_for("faq", _full=True)
-            }
-            body_path = "emails/referrals.txt"
-            body = self.jinja2.render_template(body_path, **template_val)
+            if delete == 'confirmed_deletion':
+                report_info = models.Report.get_by_id(long(report_id))
+                if report_info:
+                    report_info.req_deletion = True
+            if delete == 'confirmed_cancelation':
+                report_info = models.Report.get_by_id(long(report_id))
+                if report_info:
+                    report_info.req_deletion = False
+            if delete == 'confirmed_comment':
+                user_info = self.user_model.get_by_id(long(self.user_id))
+                report_info = models.Report.get_by_id(long(report_id))
+                if report_info:
+                    report_info.status = 'answered'
+                    log_info = models.Comments()
+                    log_info.user_email = user_info.email.lower()
+                    log_info.report_id = int(report_id)
+                    log_info.contents = self.request.get('comment')
+                    log_info.put()                
 
-            email_url = self.uri_for('taskqueue-send-email')
-            _email = _emails.split(",")
-            _email = list(set(_email)) #removing duplicates
-
-            for _email_ in _email:
-
-                aUser = self.user_model.get_by_email(_email_)
-                if aUser is not None:
-                    reward = models.Rewards(amount = 0,earned = True, category = 'invite',content = _email_,
-                                            timestamp = utils.get_date_time(),status = 'inelegible')                 
-                    edited_userinfo = False
-                    for rewards in user_info.rewards:
-                        if 'invite' in rewards.category and rewards.content == reward.content:
-                            user_info.rewards[user_info.rewards.index(rewards)] = reward
-                            edited_userinfo = True
-                    if not edited_userinfo:
-                        user_info.rewards.append(reward)
-                else:
-                    taskqueue.add(url=email_url, params={
-                        'to': str(_email_),
-                        'subject': subject,
-                        'body': body,
-                    })
-                    logging.info('Sent referral invitation to %s' % str(_email_))
-                    reward = models.Rewards(amount = 0,earned = True, category = 'invite',content = _email_,
-                                            timestamp = utils.get_date_time(),status = 'invited')                 
-                    edited_userinfo = False
-                    for rewards in user_info.rewards:
-                        if 'invite' in rewards.category and rewards.content == reward.content:
-                            user_info.rewards[user_info.rewards.index(rewards)] = reward
-                            edited_userinfo = True
-                    if not edited_userinfo:
-                        user_info.rewards.append(reward)
-                    
-            user_info.put()
-
-            message += " " + _(messages.invite_success)
-            self.add_message(message, 'success')
+            report_info.put()
+            self.add_message(messages.inquiry_success, 'success')
             return self.get()
-           
-        except (KeyError, AttributeError), e:
-            logging.error("Error resending invitation email: %s" % e)
-            message = _(messages.post_error)
-            self.add_message(message, 'danger')
-            return self.redirect_to('home')
 
-          
-    @webapp2.cached_property
-    def form(self):
-        f = forms.ReferralsForm(self)
-        return f
+        except (AttributeError, KeyError, ValueError), e:
+            logging.error('Error updating report: %s ' % e)
+            self.add_message(messages.saving_error, 'danger')
+            return self.get()
 
 
-class MaterializePolymerRequestHandler(BaseHandler):
-    """
-    Handler for materialized polymer
-    """
-    @user_required
-    def get(self):
-        """ Returns a simple HTML form for materialize home """
-        ####-------------------- R E D I R E C T I O N S --------------------####
-        if not self.user:
-            return self.redirect_to('login')
-        ####------------------------------------------------------------------####
-
-        ####-------------------- P R E P A R A T I O N S --------------------####
-        params, user_info = disclaim(self)
-        ####------------------------------------------------------------------####
-        
-        return self.render_template('materialize/users/sections/polymer.html', **params)
-
-class MaterializeCartoDBRequestHandler(BaseHandler):
-    """
-    Handler for materialized home
-    """
-    @user_required
-    def get(self):
-        """ Returns a simple HTML form for materialize home """
-        ####-------------------- R E D I R E C T I O N S --------------------####
-        if not self.user:
-            return self.redirect_to('login')
-        ####------------------------------------------------------------------####
-
-        ####-------------------- P R E P A R A T I O N S --------------------####
-        params, user_info = disclaim(self)
-        ####------------------------------------------------------------------####
-        
-        return self.render_template('materialize/users/sections/cartodb.html', **params)
-
-
+# USER
 class MaterializeSettingsProfileRequestHandler(BaseHandler):
     """
         Handler for materialized settings profile
@@ -1949,6 +1157,8 @@ class MaterializeSettingsProfileRequestHandler(BaseHandler):
     def get(self):
         """ returns simple html for a get request """
         params, user_info = disclaim(self)
+        if not params['address_from']:
+            params['address_from'] = ""
         return self.render_template('materialize/users/settings/profile.html', **params)
 
     def post(self):
@@ -1963,6 +1173,8 @@ class MaterializeSettingsProfileRequestHandler(BaseHandler):
         gender = self.request.get('gender')
         phone = self.request.get('phone')
         birth = self.request.get('birth')
+        address_from = self.request.get('address_from')
+        address_from_coord = self.request.get('address_from_coord')
         picture = self.request.get('picture') if len(self.request.get('picture'))>1 else None
 
         try:
@@ -1979,6 +1191,11 @@ class MaterializeSettingsProfileRequestHandler(BaseHandler):
                 user_info.phone = phone
                 if picture is not None:
                     user_info.picture = images.resize(picture, width=180, height=180, crop_to_fit=True, quality=100)
+                if address_from is not None:
+                    user_info.address = models.Address()
+                    user_info.address.address_from = address_from
+                    if len(address_from_coord.split(',')) == 2:
+                        user_info.address.address_from_coord = ndb.GeoPt(address_from_coord)
                 user_info.put()
                 message += " " + _(messages.saving_success)
                 self.add_message(message, 'success')
@@ -1999,176 +1216,6 @@ class MaterializeSettingsProfileRequestHandler(BaseHandler):
     @webapp2.cached_property
     def form(self):
         f = forms.SettingsProfileForm(self)
-        return f
-
-class MaterializeSettingsAddressRequestHandler(BaseHandler):
-    """
-        Handler for materialized settings home
-    """
-    @user_required
-    def get(self):
-        """ returns simple html for a get request """
-        params, user_info = disclaim(self)
-        params['zipcode'] = ''
-        params['neighborhood'] = False
-        params['latlng'] = 'null'
-            
-        return self.render_template('materialize/users/settings/address.html', **params)
-
-    def post(self):
-        """ Get fields from POST dict """
-
-        if not self.form.validate():
-            message = _(messages.saving_error)
-            message += "Tip: Asegura que el marcador en el mapa se encuentre en tu zona."
-            self.add_message(message, 'danger')
-            return self.get()
-        zipcode = int(self.form.zipcode.data)
-        ageb = self.form.ageb.data
-        latlng = self.form.latlng.data
-        neighborhood = self.form.neighborhood.data
-        municipality = self.form.municipality.data
-        state = self.form.state.data
-        region = self.form.region.data
-
-        try:
-            user_info = self.user_model.get_by_id(long(self.user_id))
-            try:
-                
-                user_info.address.zipcode = int(zipcode)
-                user_info.address.ageb = ageb
-                user_info.address.neighborhood = neighborhood
-                user_info.address.municipality = municipality
-                user_info.address.state = state
-                user_info.address.region = region
-                user_info.address.latlng = ndb.GeoPt(latlng)
-                user_info.put()
-
-                message = ''                
-                message += " " + _(messages.saving_success)
-                self.add_message(message, 'success')
-                return self.get()
-
-            except (AttributeError, KeyError, ValueError), e:
-                logging.error('Error updating address: ' + e)
-                message = _(messages.saving_error)
-                self.add_message(message, 'danger')
-                return self.get()
-
-        except (AttributeError, TypeError), e:
-            login_error_message = _(messages.expired_session)
-            self.add_message(login_error_message, 'danger')
-            self.redirect_to('login')
-
-    @webapp2.cached_property
-    def form(self):
-        f = forms.AddressForm(self)
-        return f
-
-class MaterializeSettingsReferralsRequestHandler(BaseHandler):
-    """
-        Handler for materialized settings referrals
-    """
-    @user_required
-    def get(self):
-        """ returns simple html for a get request """
-        params, user_info = disclaim(self)
-        params['referrals'] = []
-        rewards = user_info.rewards
-        rewards.reverse
-        unique_emails = []
-        page = 1
-        if self.request.get('p') != '':
-            page = 1 + int(self.request.get('p'))
-        offset = (page - 1)*51
-        last = page*51
-        if last > len(rewards):
-            last = len(rewards)
-        for i in range(offset, last):
-            if 'invite' in rewards[i].category and rewards[i].content != '' and 'Invitado Invictus' not in rewards[i].content and rewards[i].content not in unique_emails:
-                params['referrals'].append(rewards[i])
-                unique_emails.append(rewards[i].content)
-                if rewards[i].status == 'invited':
-                    aUser = self.user_model.get_by_email(rewards[i].content)
-                    if aUser is not None:
-                        params['referrals'][params['referrals'].index(rewards[i])].status = 'inelegible'
-
-        params['page'] = page
-        params['last_page'] = int(len(rewards)/50)
-        params['total'] = len(params['referrals'])
-        params['grand_total'] = int(len(rewards))
-        params['properties'] = ['timestamp','content','status']
-
-        return self.render_template('materialize/users/settings/referrals.html', **params)
-
-    def post(self):
-        """ Get fields from POST dict """
-        user_info = self.user_model.get_by_id(long(self.user_id))
-        message = ''
-
-        if not self.form.validate():
-            message += messages.saving_error
-            self.add_message(message, 'error')
-            return self.get()
-
-        _emails = self.form.emails.data.replace('"','').replace('[','').replace(']','')
-        logging.info("Referrals' email addresses: %s" % _emails)
-
-        try:
-            # send email
-            subject = _(messages.email_referral_subject)
-            if user_info.name != '':
-                _username = user_info.name
-            else:
-                _username = user_info.username
-             # load email's template
-            template_val = {
-                "app_name": self.app.config.get('app_name'),
-                "user_email": user_info.email,
-                "user_name": _username,
-                "link_referral" : user_info.link_referral,
-                "support_url": self.uri_for("contact", _full=True),
-                "faq_url": self.uri_for("faq", _full=True)
-            }
-            body_path = "emails/referrals.txt"
-            body = self.jinja2.render_template(body_path, **template_val)
-
-            email_url = self.uri_for('taskqueue-send-email')
-            _email = _emails.split(",")
-
-            for _email_ in _email:
-                taskqueue.add(url=email_url, params={
-                    'to': str(_email_),
-                    'subject': subject,
-                    'body': body,
-                })
-                reward = models.Rewards(amount = 0,earned = True, category = 'invite',content = _email_,
-                                        timestamp = utils.get_date_time(),status = 'invited')    
-                
-                edited_userinfo = False
-                for rewards in user_info.rewards:
-                    if 'invite' in rewards.category and rewards.content == reward.content:
-                        user_info.rewards[user_info.rewards.index(rewards)] = reward
-                        edited_userinfo = True
-                if not edited_userinfo:
-                    user_info.rewards.append(reward)
-
-                user_info.put()
-
-            message += " " + _(messages.invite_success)
-            self.add_message(message, 'success')
-            return self.get()
-           
-        except (KeyError, AttributeError), e:
-            logging.error("Error resending invitation email: %s" % e)
-            message = _(messages.post_error)
-            self.add_message(message, 'danger')
-            return self.redirect_to('home')
-
-          
-    @webapp2.cached_property
-    def form(self):
-        f = forms.ReferralsForm(self)
         return f
 
 class MaterializeSettingsAccountRequestHandler(BaseHandler):
@@ -2235,6 +1282,8 @@ class MaterializeSettingsEmailRequestHandler(BaseHandler):
                         "new_email": new_email,
                         "confirmation_url": confirmation_url,
                         "support_url": self.uri_for("contact", _full=True),
+                        "twitter_url": self.app.config.get('twitter_url'),
+                        "facebook_url": self.app.config.get('facebook_url'),
                         "faq_url": self.uri_for("faq", _full=True)
                     }
 
@@ -2295,7 +1344,7 @@ class MaterializeEmailChangedCompleteHandler(BaseHandler):
         if verify[0] is None:
             message = _(messages.used_activation_link)
             self.add_message(message, 'warning')
-            self.redirect_to('materialize-home')
+            self.redirect_to('landing')
 
         else:
             # save new email
@@ -2328,7 +1377,7 @@ class MaterializeEmailChangedCompleteHandler(BaseHandler):
             # add successful message and redirect
             message = _(messages.emailchanged_confirm)
             self.add_message(message, 'success')
-            self.redirect_to('materialize-home')
+            self.redirect_to('landing')
 
 class MaterializeSettingsPasswordRequestHandler(BaseHandler):
     """
@@ -2371,6 +1420,8 @@ class MaterializeSettingsPasswordRequestHandler(BaseHandler):
                     "email": user.email,
                     "reset_password_url": self.uri_for("password-reset", _full=True),
                     "support_url": self.uri_for("contact", _full=True),
+                    "twitter_url": self.app.config.get('twitter_url'),
+                    "facebook_url": self.app.config.get('facebook_url'),
                     "faq_url": self.uri_for("faq", _full=True)
                 }
                 email_body_path = "emails/password_changed.txt"
@@ -2459,7 +1510,7 @@ class MaterializeSettingsDeleteRequestHandler(BaseHandler):
                     # display successful message
                     msg = _(messages.account_delete_success)
                     self.add_message(msg, 'success')
-                    return self.redirect_to('materialize-home')
+                    return self.redirect_to('landing')
                 else:
                     message = _(messages.password_wrong)
                     self.add_message(message, 'danger')
@@ -2480,18 +1531,6 @@ class MaterializeSettingsDeleteRequestHandler(BaseHandler):
     @webapp2.cached_property
     def form(self):
         return forms.DeleteAccountForm(self)
-
-class MaterializeTutorialsRequestHandler(BaseHandler):
-    """
-        Handler for materialized terms of use
-    """
-    @user_required
-    def get(self):
-        """ returns simple html for a get request """
-        params, user_info = disclaim(self)
-        return self.render_template('materialize/users/sections/tutorials.html', **params)
-
-
 
 
 """ SMALL MEDIA handlers
@@ -2518,8 +1557,6 @@ class MediaDownloadHandler(BaseHandler):
 
         self.response.headers['Content-Type'] = 'text/plain'
         self.response.out.write('No image')
-
-
 
 
 """ BIG MEDIA handlers
@@ -2557,187 +1594,79 @@ class BlobDownloadHandler(blobstore_handlers.BlobstoreDownloadHandler):
             self.send_blob(photo_key)
 
 
-
-
 """ CRONJOB + TASKQUEUE handlers
 
     These handlers obey to cron.yaml in order to produce recurrent, autonomous tasks
 
 """
-class WelcomeCronjobHandler(BaseHandler):
-    def get(self):
-        welcome_url = self.uri_for('taskqueue-welcome')
-        taskqueue.add(url=welcome_url, params={
-            'offset': 0
-        })
-        
-class WelcomeHandler(BaseHandler):
+
+class SendEmailHandler(BaseHandler):
     """
-    Core Handler for sending users welcome message
+    Core Handler for sending Emails
     Use with TaskQueue
     """
 
     @taskqueue_method
     def post(self):
-        count = 0
-        offset = int(self.request.get("offset"))
-        attempt = 1
-        if (self.request.get("attempt")):
-            attempt = int(self.request.get("attempt")) + 1
 
-        #Case "One taskqueue, many homes"
-        homes = models.Home.query()
-        for home in homes:
-            if home.cfe.rpu != -1 and home.cfe.connected and home.tips_email_counter == 0:
-                logging.info("Welcoming Home ID: %s" % home.key.id())
-                count += 1
-                if count > offset:
-                    try:
-                        for habitant in home.habitant:
-                            user_info = self.user_model.get_by_id(long(habitant))
-                            if user_info != None:
-                                _username = user_info.name
-                                logging.info("Welcome message being sent to: %s" % user_info.email)
-                                subject = messages.email_welcome_subject
-                                template_val = {
-                                    "username": _username,
-                                    "_url": self.uri_for("history", _full=True),
-                                    "support_url": self.uri_for("contact", _full=True),
-                                    "faq_url": self.uri_for("faq", _full=True)
-                                }
-                                body_path = "emails/welcome.txt"
-                                body = self.jinja2.render_template(body_path, **template_val)
-                                email = user_info.email
-                                email_url = self.uri_for('taskqueue-send-email')
-                                
-                                taskqueue.add(url=email_url, params={
-                                    'to': str(user_info.email),
-                                    'subject': subject,
-                                    'body': body,
-                                })
+        from google.appengine.api import mail, app_identity
+        from lib import sendgrid
+        from lib.sendgrid import SendGridError, SendGridClientError, SendGridServerError 
 
-                        home.tips_email_counter = 1
-                        home.tips_email_lastdate = date.today()
-                        home.put()
+        to = self.request.get("to")
+        subject = self.request.get("subject")
+        body = self.request.get("body")
+        sender = self.request.get("sender")
 
-                    except Exception, e:
-                        logging.error("Error welcoming home: %s. Retrying taskqueue in 5 seconds." % e)
-                        logging.info("Attempt number: %s" % attempt)
-                        time.sleep(5)
-                        if attempt < 10:
-                            welcome_url = self.uri_for('taskqueue-welcome')
-                            taskqueue.add(url=welcome_url, params={
-                                'offset': count - 1,
-                                'attempt': attempt,
-                            })
-                        else:
-                            welcome_url = self.uri_for('taskqueue-welcome')
-                            taskqueue.add(url=welcome_url, params={
-                                'offset': count,
-                            })
-                        break
+        if sender != '' or not utils.is_email_valid(sender):
+            if utils.is_email_valid(self.app.config.get('contact_sender')):
+                sender = self.app.config.get('contact_sender')
+            else:
+                app_id = app_identity.get_application_id()
+                sender = "%s Mail <no-reply@%s.appspotmail.com>" % (self.app.config.get('app_name'),app_id)                
+
+        if self.app.config['log_email']:
+            try:
+                logEmail = models.LogEmail(
+                    sender=sender,
+                    to=to,
+                    subject=subject,
+                    body=body,
+                    when=utils.get_date_time("datetimeProperty")
+                )
+                logEmail.put()
+            except (apiproxy_errors.OverQuotaError, BadValueError):
+                logging.error("Error saving Email Log in datastore")
 
 
 
 
-""" REST API preparation handlers
-
-    These handlers obey to interactions with key-holder developers
-
-"""
-class APIIncomingHandler(BaseHandler):
-    """
-    Core Handler for incoming interactions
-    """
-
-    def post(self):
-        KEY = "mwkMqTWFnK0LzJHyfkeBGoS2hr2KG7WhHqSGX0SbDJ4"
-        SECRET = "152731fe2b14da111a72127d642e73c779e530b3"
-        
-        api_key = ""
-        api_secret = ""
-        args = self.request.arguments()
-        for arg in args:
-            logging.info("argument: %s" % arg)
-            for key,value in json.loads(arg).iteritems():
-                if key == "api_key":
-                    api_key = value
-                if key == "api_secret":
-                    api_secret = value
-                if key == "method":
-                    if value == "101":
-                        logging.info("parsing method 101")
-                    elif value == "201":
-                        logging.info("parsing method 201")
-
-                        
-
-        if api_key == KEY and api_secret == SECRET:
-            logging.info("Attempt to receive incoming message with key: %s." % api_key)
-
-            # DO SOMETHING WITH RECEIVED PAYLOAD
-
-        else:
-            logging.info("Attempt to receive incoming message without appropriate key: %s." % api_key)
-            self.abort(403)
-
-class APIOutgoingHandler(BaseHandler):
-    """
-    Core Handler for outgoing interactions with simpplo
-    """
-
-    def post(self):
-        from google.appengine.api import urlfetch
-        
-        KEY = "mwkMqTWFnK0LzJHyfkeBGoS2hr2KG7WhHqSGX0SbDJ4"
-        _URL = ""
+        #using appengine email 
+        try:            
+            message = mail.EmailMessage()
+            message.sender = sender
+            message.to = to
+            message.subject = subject
+            message.html = body
+            message.send()
+            logging.info("... sending email to: %s ..." % to)
+        except Exception, e:
+            logging.error("Error sending email: %s" % e)
 
 
-        api_key = ""
-        api_secret = ""
-        args = self.request.arguments()
-        for arg in args:
-            logging.info("argument: %s" % arg)
-            for key,value in json.loads(arg).iteritems():
-                if key == "api_key":
-                    api_key = value
-                if key == "api_secret":
-                    api_secret = value
-                if key == "method":
-                    if value == "101":
-                        logging.info("parsing method 101")
-                    elif value == "201":
-                        logging.info("parsing method 201")
-                        
-
-        if api_key == KEY:
-            logging.info("Attempt to send outgoing message with appropriate key: %s." % api_key)
-            
-            # DO SOMETHING WITH RECEIVED PAYLOAD
-            #urlfetch.fetch(_URL, payload='', method='POST') 
-
-        else:
-            logging.info("Attempt to send outgoing message without appropriate key: %s." % api_key)
-            self.abort(403)
-       
-class APITestingHandler(BaseHandler):
-    """
-    Core Handler for testing interactions with simpplo
-    """
-
-    def get(self):
-        from google.appengine.api import urlfetch
-        import urllib
-
-        try:
-            _url = self.uri_for('mbapi-out', _full=True)
-            urlfetch.fetch(_url, payload='{"api_key": "mwkMqTWFnK0LzJHyfkeBGoS2hr2KG7WhHqSGX0SbDJ4","channel": "CHANNELHERE","container": "CONTENTSHERE"}', method="POST")
-        except:
-            pass
-        self.response.headers['Content-Type'] = 'text/plain'
-        self.response.out.write('Tests went good... =)')
-
-
+        # using sendgrid
+        # try:
+        #     sg = sendgrid.SendGridClient(self.app.config.get('sendgrid_login'), self.app.config.get('sendgrid_passkey'))
+        #     logging.info("sending with sendgrid client: %s" % sg)
+        #     message = sendgrid.Mail()
+        #     message.add_to(to)
+        #     message.set_subject(subject)
+        #     message.set_html(body)
+        #     message.set_text(body)
+        #     message.set_from(sender)
+        #     status, msg = sg.send(message)
+        # except Exception, e:
+        #     logging.error("Error sending email: %s" % e)
 
 
 """ WEB  static handlers

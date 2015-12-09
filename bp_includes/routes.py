@@ -24,31 +24,26 @@ _routes = [
     RedirectRoute('/register/', handlers.MaterializeRegisterRequestHandler, name='register', strict_slash=True),
     RedirectRoute('/activation/<user_id>/<token>', handlers.MaterializeAccountActivationHandler, name='account-activation', strict_slash=True),
     RedirectRoute('/resend/<user_id>/<token>', handlers.ResendActivationEmailHandler, name='resend-account-activation', strict_slash=True),
-    RedirectRoute('/register/referral/<user_id>/', handlers.MaterializeRegisterReferralHandler, name='register-referral', strict_slash=True),
-    RedirectRoute('/activation/<ref_user_id>/<token>/<user_id>', handlers.MaterializeAccountActivationReferralHandler, name='account-activation-referral', strict_slash=True),
-    #RedirectRoute('/resend/<ref_user_id>/<token>/<user_id>', handlers.ResendActivationEmailReferralHandler, name='resend-account-activation-referral', strict_slash=True),
     RedirectRoute('/login/', handlers.MaterializeLoginRequestHandler, name='login', strict_slash=True),
     RedirectRoute('/logout/', handlers.MaterializeLogoutRequestHandler, name='logout', strict_slash=True),
-    RedirectRoute('/social_login/<provider_name>', handlers.SocialLoginHandler, name='social-login', strict_slash=True),
-    RedirectRoute('/social_login/<provider_name>/complete', handlers.CallbackSocialLoginHandler, name='social-login-complete', strict_slash=True),
-    RedirectRoute('/social_login/<provider_name>/delete', handlers.DeleteSocialProviderHandler, name='delete-social-provider', strict_slash=True),
     RedirectRoute('/password-reset/', handlers.PasswordResetHandler, name='password-reset', strict_slash=True),
     RedirectRoute('/password-reset/<user_id>/<token>', handlers.PasswordResetCompleteHandler, name='password-reset-check', strict_slash=True),
     
     # User
-    RedirectRoute('/user/home/', handlers.MaterializeHomeRequestHandler, name='materialize-home', strict_slash=True),
-    RedirectRoute('/user/referrals/', handlers.MaterializeReferralsRequestHandler, name='materialize-referrals', strict_slash=True),
-    RedirectRoute('/user/polymer/', handlers.MaterializePolymerRequestHandler, name='materialize-polymer', strict_slash=True),
-    RedirectRoute('/user/cartodb/', handlers.MaterializeCartoDBRequestHandler, name='materialize-cartodb', strict_slash=True),
+    RedirectRoute('/user/reports/', handlers.MaterializeReportsRequestHandler, name='materialize-reports', strict_slash=True),
     RedirectRoute('/user/settings/profile/', handlers.MaterializeSettingsProfileRequestHandler, name='materialize-settings-profile', strict_slash=True),
-    RedirectRoute('/user/settings/address/', handlers.MaterializeSettingsAddressRequestHandler, name='materialize-settings-address', strict_slash=True),
     RedirectRoute('/user/settings/email/', handlers.MaterializeSettingsEmailRequestHandler, name='materialize-settings-email', strict_slash=True),
     RedirectRoute('/user/settings/password/', handlers.MaterializeSettingsPasswordRequestHandler, name='materialize-settings-password', strict_slash=True),
     RedirectRoute('/user/settings/delete/', handlers.MaterializeSettingsDeleteRequestHandler, name='materialize-settings-delete', strict_slash=True),
-    RedirectRoute('/user/settings/referrals/', handlers.MaterializeSettingsReferralsRequestHandler, name='materialize-settings-referrals', strict_slash=True),
     RedirectRoute('/user/settings/account/', handlers.MaterializeSettingsAccountRequestHandler, name='materialize-settings-account', strict_slash=True),
-    RedirectRoute('/user/tutorials/', handlers.MaterializeTutorialsRequestHandler, name='materialize-tutorials', strict_slash=True),
     RedirectRoute('/user/change-email/<user_id>/<encoded_email>/<token>', handlers.MaterializeEmailChangedCompleteHandler, name='materialize-email-changed-check', strict_slash=True),
+
+    # Report
+    RedirectRoute('/report/new/', handlers.MaterializeNewReportHandler, name='materialize-report-new', strict_slash=True),
+    RedirectRoute('/report/image/upload/<report_id>', handlers.MaterializeReportUploadImageHandler, name='report-image-upload', strict_slash=True),
+    RedirectRoute('/report/success/', handlers.MaterializeNewReportSuccessHandler, name='materialize-report-success', strict_slash=True),
+    RedirectRoute('/report/comments/<report_id>/', handlers.MaterializeReportCommentsHandler, name='materialize-report-comments', strict_slash=True),
+    RedirectRoute('/report/follow/', handlers.MaterializeFollowRequestHandler, name='materialize-report-follow', strict_slash=True), 
     
     # Statics
     RedirectRoute(r'/robots.txt', handlers.RobotsHandler, name='robots', strict_slash=True),
@@ -56,17 +51,8 @@ _routes = [
     RedirectRoute(r'/sitemap.xml', handlers.SitemapHandler, name='sitemap', strict_slash=True),
     RedirectRoute(r'/crossdomain.xml', handlers.CrossDomainHandler, name='crossdomain', strict_slash=True),
     
-    #Cronjobs
-    RedirectRoute('/cronjob-welcome/', handlers.WelcomeCronjobHandler, name='cronjob-welcome', strict_slash=True),  
-    
     #Taskqueues
     RedirectRoute('/taskqueue-send-email/', handlers.SendEmailHandler, name='taskqueue-send-email', strict_slash=True),
-    RedirectRoute('/taskqueue-welcome/', handlers.WelcomeHandler, name='taskqueue-welcome', strict_slash=True),
-
-    #API
-    RedirectRoute('/mbapi/in/', handlers.APIIncomingHandler, name='mbapi-in', strict_slash=True),
-    RedirectRoute('/mbapi/out/', handlers.APIOutgoingHandler, name='mbapi-out', strict_slash=True),
-    RedirectRoute('/mbapi/test/', handlers.APITestingHandler, name='mbapi-test', strict_slash=True),
 
     # Blob handlers for small media
     RedirectRoute('/media/serve/<kind>/<media_id>/', handlers.MediaDownloadHandler, name='media-serve', strict_slash=True),

@@ -55,13 +55,10 @@ class SecureRequestHandler(BaseHandler):
         except (AttributeError, KeyError), e:
             return "Secure zone error:" + " %s." % e
 
-        
-
-
 class EmailsRequestHandler(BaseHandler):
 
-    @user_required
     def get(self):
+        params = {}
         return self.render_template('emails/emails.html', **params)
 
         

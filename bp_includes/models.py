@@ -10,24 +10,9 @@ class Rewards(ndb.Model):
     timestamp = ndb.StringProperty()                                                                #: when was it assigned
     status = ndb.StringProperty(choices = ['invited','joined','completed','inelegible'])            #: current status of reward
 
-class Notifications(ndb.Model):  
-    sms = ndb.BooleanProperty()
-    email = ndb.BooleanProperty()
-    endpoint = ndb.BooleanProperty()
-    twitter = ndb.StringProperty()
-
 class Address(ndb.Model):
-    ageb = ndb.StringProperty()                                                                     #: Mexico Only - INEGI zone key 
-    region = ndb.StringProperty()                                                                   #: Mexico Only - CFE related region
-    country = ndb.StringProperty()                                                                  #: User Country, initialized by boilerplate... 
-    state = ndb.StringProperty()                                                                    #: Administrative state region
-    municipality = ndb.StringProperty()                                                             #: Administrative municipality region   
-    zipcode = ndb.IntegerProperty()                                                                 #: Administrative zipcode region
-    neighborhood = ndb.StringProperty()                                                             #: Administrative neighborhood region
-    latlng = ndb.GeoPtProperty()                                                                    #: Geocoded lat,lng, from address fields
-    #street = ndb.StringProperty()                                                                  #: Unused
-    #streetnum = ndb.StringProperty()                                                               #: Unused
-    tz = ndb.StringProperty()                                                                       #: User TimeZone, initialized by boilerplate...       
+    address_from_coord = ndb.GeoPtProperty()                                                        #: lat/long address
+    address_from = ndb.StringProperty()                                                             #: text address
     
 class Media(ndb.Model):
     blob_key = ndb.BlobKeyProperty()                                                                #: Refer to https://cloud.google.com/appengine/docs/python/blobstore/
@@ -68,7 +53,6 @@ class User(User):
     link_referral = ndb.StringProperty()                                                           #: Once verified, this link is used for referral sign ups (uses bit.ly)    
     rewards = ndb.StructuredProperty(Rewards, repeated = True)                                     #: Rewards allocation property, includes referral email tracking.    
     role = ndb.StringProperty(choices = ['NA','Member','Admin'], default = 'Admin')                #: Role in account
-    notifications = ndb.StructuredProperty(Notifications)                                          #: Setup of notifications
     picture = ndb.BlobProperty()                                                                   #: User profile picture as an element in datastore of type blob
 	
     @classmethod
@@ -96,23 +80,126 @@ class User(User):
     def delete_resend_token(cls, user_id, token):
         cls.token_model.get_key(user_id, 'resend-activation-mail', token).delete()
 
-    def get_social_providers_names(self):
-        social_user_objects = SocialUser.get_by_user(self.key)
-        result = []
-        for social_user_object in social_user_objects:
-            result.append(social_user_object.provider)
-        return result
-
-    def get_social_providers_info(self):
-        providers = self.get_social_providers_names()
-        result = {'used': [], 'unused': []}
-        for k,v in SocialUser.PROVIDERS_INFO.items():
-            if k in providers:
-                result['used'].append(v)
-            else:
-                result['unused'].append(v)
-        return result
+    def get_image_url(self):
+        if self.picture:
+            return "http://usocialmaps.appspot.com/media/serve/profile/%s/" % self._key.id()
+        else:
+            return -1
 #--------------------------------------- ENDOF   U S E R    M O D E L -----------------------------------------------------          
+
+class Report(ndb.Model):
+    created = ndb.DateTimeProperty(auto_now_add = True)                                                                             #: Creation date on ndb
+    updated = ndb.DateTimeProperty(auto_now = True)                                                                                 #: Modification date on ndb
+    title = ndb.StringProperty()                                                                                                    #: Report title
+    description = ndb.TextProperty()                                                                                                #: Report description
+    address_from_coord = ndb.GeoPtProperty()                                                                                        #: lat/long address for report 
+    address_from = ndb.StringProperty()                                                                                             #: text address for report
+    cdb_id = ndb.IntegerProperty(default = -1)                                                                                      #: ID in CartoDB PostGIS DB
+    user_id = ndb.IntegerProperty(required = True, default = -1)                                                                    #: Reporting user ID
+    image_url = ndb.StringProperty()                                                                                                #: Report media 
+    likeability = ndb.StringProperty()                                                                                              #: Parent category
+    feeling  = ndb.StringProperty()                                                                                                 #: Child category
+    follows = ndb.IntegerProperty(default = 0)                                                                                      #: Followers as votes/relevance for this report
+    via = ndb.StringProperty(choices = ['web','whatsapp','phone','street','networks','office','event','letter'], default = 'web')   #: Report via
+    
+    def get_id(self):
+        return self._key.id()
+
+    def get_user_email(self):
+        user = User.get_by_id(long(self.user_id)) if self.user_id != -1 else None
+        if user:
+            return user.email
+        else:
+            return ''
+
+    def get_user_name(self):
+        user = User.get_by_id(long(self.user_id)) if self.user_id != -1 else None
+        if user:
+            return user.name
+        else:
+            return ''
+
+    def get_user_lastname(self):
+        user = User.get_by_id(long(self.user_id)) if self.user_id != -1 else None
+        if user:
+            return user.last_name
+        else:
+            return ''
+
+    def get_user_address(self):
+        user = User.get_by_id(long(self.user_id)) if self.user_id != -1 else None
+        if user:
+            if user.address:
+                return user.address.address_from
+        else:
+            return ''
+
+    def get_user_phone(self):
+        user = User.get_by_id(long(self.user_id)) if self.user_id != -1 else None
+        if user:
+            return user.phone
+        else:
+            return ''
+
+    def get_human_date(self):
+        d1 = datetime.datetime(self.created.year,self.created.month,self.created.day)
+        d2 = datetime.datetime(datetime.date.today().year,datetime.date.today().month,datetime.date.today().day)
+        diff = (d2-d1).days
+        return str(diff) + " days ago"
+
+    def get_formatted_date(self):
+        return datetime.datetime(self.created.year,self.created.month,self.created.day).strftime("%Y-%m-%d")
+
+    def get_log_count(self):
+        logs = Comments.query(Comments.report_id == self._key.id())
+        return logs.count()
+
+    def get_last_log(self):
+        logs = Comments.query(Comments.report_id == int(self._key.id()))
+        logs = logs.order(-Comments.created)
+        for log in logs:
+            return log.user_email
+            break
+        return '---'
+
+    @classmethod
+    def get_by_cdb(cls, cdb_id):
+        return cls.query(cls.cdb_id == cdb_id).get()
+
+class Comments(ndb.Model):
+    created = ndb.DateTimeProperty(auto_now_add=True)                                               
+    user_email = ndb.StringProperty(required = True)
+    report_id = ndb.IntegerProperty(required = True)
+    contents = ndb.TextProperty(required = True)
+
+    def get_user(self):
+        user = User.get_by_email(self.user_email)
+        if user:
+            return user
+        else:
+            return None
+
+    def get_report(self):
+        report = Report.get_by_id(long(self.report_id))
+        if report:
+            return report
+        else:
+            return None
+
+    def get_formatted_date(self):
+        return datetime.datetime(self.created.year,self.created.month,self.created.day, self.created.hour, self.created.minute, self.created.second).strftime("%Y-%m-%d a las %X %p (GMT-00)")
+
+class Followers(ndb.Model):
+    user_id = ndb.IntegerProperty(required = True)
+    report_id = ndb.IntegerProperty(required = True)
+
+    @classmethod
+    def get_user_follows(cls, user_id):
+        return cls.query(cls.user_id == user_id)
+
+    @classmethod
+    def get_report_follows(cls, report_id):
+        return cls.query(cls.report_id == report_id)
 
 
 class LogVisit(ndb.Model):
@@ -137,58 +224,3 @@ class LogEmail(ndb.Model):
 
     def get_id(self):
         return self._key.id()
-
-class SocialUser(ndb.Model):
-    PROVIDERS_INFO = { # uri is for OpenID only (not OAuth)
-        'google': {'name': 'google', 'label': 'Google', 'uri': 'gmail.com'},
-        'github': {'name': 'github', 'label': 'Github', 'uri': ''},
-        'facebook': {'name': 'facebook', 'label': 'Facebook', 'uri': ''},
-        'linkedin': {'name': 'linkedin', 'label': 'LinkedIn', 'uri': ''},
-        'myopenid': {'name': 'myopenid', 'label': 'MyOpenid', 'uri': 'myopenid.com'},
-        'twitter': {'name': 'twitter', 'label': 'Twitter', 'uri': ''},
-        'yahoo': {'name': 'yahoo', 'label': 'Yahoo!', 'uri': 'yahoo.com'},
-    }
-
-    user = ndb.KeyProperty(kind=User)
-    provider = ndb.StringProperty()
-    uid = ndb.StringProperty()
-    extra_data = ndb.JsonProperty()
-
-    @classmethod
-    def get_by_user(cls, user):
-        return cls.query(cls.user == user).fetch()
-
-    @classmethod
-    def get_by_user_and_provider(cls, user, provider):
-        return cls.query(cls.user == user, cls.provider == provider).get()
-
-    @classmethod
-    def get_by_provider_and_uid(cls, provider, uid):
-        return cls.query(cls.provider == provider, cls.uid == uid).get()
-
-    @classmethod
-    def check_unique_uid(cls, provider, uid):
-        # pair (provider, uid) should be unique
-        test_unique_provider = cls.get_by_provider_and_uid(provider, uid)
-        if test_unique_provider is not None:
-            return False
-        else:
-            return True
-    
-    @classmethod
-    def check_unique_user(cls, provider, user):
-        # pair (user, provider) should be unique
-        test_unique_user = cls.get_by_user_and_provider(user, provider)
-        if test_unique_user is not None:
-            return False
-        else:
-            return True
-
-    @classmethod
-    def check_unique(cls, user, provider, uid):
-        # pair (provider, uid) should be unique and pair (user, provider) should be unique
-        return cls.check_unique_uid(provider, uid) and cls.check_unique_user(provider, user)
-    
-    @staticmethod
-    def open_id_providers():
-        return [k for k,v in SocialUser.PROVIDERS_INFO.items() if v['uri']]

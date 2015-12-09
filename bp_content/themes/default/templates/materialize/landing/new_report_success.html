@@ -1,0 +1,40 @@
+{% extends landing_layout %}
+{% block title %}<title>New Report success</title>{% endblock %}
+
+{% block page_css %}
+{% endblock %}
+
+{% block body_content %}
+	<div class="section">
+	    <div class="container" style="margin-top:80px">
+	    	<div class="row">
+		        <h3 class="center col s12 m10 offset-m1 grey-text" style="font-weight: 200">Great! Thanks for participating.</h3>
+		        <h5 class="center col s12 m10 offset-m1 grey-text" style="font-weight: 300;letter-spacing: 0.5pt;line-height: 30pt;">You can now go and see your report on the <span class="sm-green-text">map</span>. Also, your report is available at <span class="sm-green-text">your reports</span>. Finally, please don't be shy to <span class="sm-green-text">send more reports</span>, together we'll build a more beautiful world.</h5>
+	    	</div>
+	        <div class="row">
+		        <h3 class="center col s12 m10 offset-m1 grey-text" style="font-weight: 200">¿What can I do now?</h3>
+	        	<div class="input-field col s10 offset-s1 m3 offset-m1 center">
+	                <button class="waves-effect waves-light sm-green white-text btn-large right" onclick="window.open('{{ uri_for("landing") }}', '_top')" >Go to map
+	                    <i class="mdi-social-public right"></i>
+	                </button>	                          
+	            </div>
+	            <div class="input-field col s10 offset-s1 m3 center">
+	                <button class="waves-effect waves-light sm-green white-text btn-large right" onclick="window.open('{{ uri_for("materialize-reports") }}', '_top')" >See my reports
+	                    <i class="mdi-action-receipt right"></i>
+	                </button>	                          
+	            </div>
+	            <div class="input-field col s10 offset-s1 m3 center">
+	                <button class="waves-effect waves-light sm-green white-text btn-large right" onclick="window.open('{{ uri_for("materialize-report-new") }}', '_top')" >Send new report
+	                    <i class="mdi-maps-place right"></i>
+	                </button>	                          
+	            </div>
+	        </div>
+	    </div>
+	</div>
+{% endblock %}
+
+{% block page_scripts %} 
+{% endblock %}
+
+
+

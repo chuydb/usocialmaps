@@ -133,14 +133,14 @@ class BaseHandler(webapp2.RequestHandler):
                 user_info = self.user_model.get_by_id(long(self.user_id))
                 if not user_info.activated:
                     self.auth.unset_session()
-                    self.redirect_to('materialize-home')
+                    self.redirect_to('landing')
                 else:
                     return str(user_info.username)
             except AttributeError, e:
                 # avoid AttributeError when the session was delete from the server
                 logging.error(e)
                 self.auth.unset_session()
-                self.redirect_to('materialize-home')
+                self.redirect_to('landing')
         return None
 
     @webapp2.cached_property
@@ -150,14 +150,14 @@ class BaseHandler(webapp2.RequestHandler):
                 user_info = self.user_model.get_by_id(long(self.user_id))
                 if not user_info.activated:
                     self.auth.unset_session()
-                    self.redirect_to('materialize-home')
+                    self.redirect_to('landing')
                 else:
                     return user_info.name
             except AttributeError, e:
                 # avoid AttributeError when the session was delete from the server
                 logging.error(e)
                 self.auth.unset_session()
-                self.redirect_to('materialize-home')
+                self.redirect_to('landing')
         return None
 
     @webapp2.cached_property
@@ -170,24 +170,8 @@ class BaseHandler(webapp2.RequestHandler):
                 # avoid AttributeError when the session was delete from the server
                 logging.error(e)
                 self.auth.unset_session()
-                self.redirect_to('materialize-home')
+                self.redirect_to('landing')
         return None
-
-    @webapp2.cached_property
-    def provider_uris(self):
-        login_urls = {}
-        continue_url = self.request.get('continue_url')
-        for provider in self.provider_info:
-            if continue_url:
-                login_url = self.uri_for("social-login", provider_name=provider, continue_url=continue_url)
-            else:
-                login_url = self.uri_for("social-login", provider_name=provider)
-            login_urls[provider] = login_url
-        return login_urls
-
-    @webapp2.cached_property
-    def provider_info(self):
-        return models.SocialUser.PROVIDERS_INFO
 
     @webapp2.cached_property
     def path_for_language(self):
@@ -330,8 +314,6 @@ class BaseHandler(webapp2.RequestHandler):
             'locale_language': language.capitalize() + " (" + territory.capitalize() + ")", # babel locale object
             'locale_language_id': language_id, # babel locale object
             'locales': self.locales,
-            'provider_uris': self.provider_uris,
-            'provider_info': self.provider_info,
             'enable_federated_login': self.app.config.get('enable_federated_login'),
             'base_layout': self.get_base_layout,
             'landing_layout': self.get_landing_layout

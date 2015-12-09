@@ -1,0 +1,294 @@
+{% extends landing_layout %}
+{% block title %}<title>New Report</title>{% endblock %}
+
+{% block page_css %}
+	<link rel="stylesheet" href="http://libs.cartocdn.com/cartodb.js/v3/3.15/themes/css/cartodb.css">
+	<style type="text/css">
+		.disclaimer{margin-bottom: 0px;width: 101%;height: auto;left: 0px;text-align: center;z-index: 9999;background: rgb(205, 55, 53);color: white;font-size: 16px;font-family: roboto-thin;letter-spacing: 1.5px; padding:10px;cursor: pointer;border-bottom: 1px solid rgb(240, 240, 240);position: absolute;top: 65px;}
+	</style>
+{% endblock %}
+
+{% block header_content %}
+<input type="text" hidden id="userphone" value="yes">
+<input type="text" hidden id="useraddress" value="yes">
+{% endblock %}
+
+{% block body_content %}
+	<div class="section">
+	    <div class="container" style="margin-top:80px">
+	    	<div class="row">
+		        <h3 class="col s12 m9 offset-m1 grey-text" style="font-weight: 200">Hey! Please share your opinion on a place.</h3>
+	    	</div>
+	        <div class="row">
+	        	 <form class="col s12" id="form_report" action="{{ url|safe }}" enctype="multipart/form-data" method="post">
+		                <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+		                <input type="hidden" id="catGroup" name="catGroup">
+		                <input type="hidden" id="subCat" name="subCat">
+		                <div class="container">                
+		                    <div class="col s12 m9 offset-m1">
+		    	                <div class="row">
+	                                <div class="input-field col s11 offset-s1">
+	                                    <i class="mdi-av-subtitles prefix sm-green-text"></i>
+	                                    <input id="title" name="title" class="materialize-textarea" length="100" type="text">
+	                                    <label for="title">The place is called:</label>
+	                                </div>
+	                                <div class="input-field col s11 offset-s1">
+	                                    <i class="mdi-maps-map prefix sm-green-text"></i>
+	                                    <textarea id="description" name="description" class="materialize-textarea" length="500" style="height: 22px;" type="text" ></textarea>
+	                                    <label for="description">Write your opinion about this place. What do you like and do not like? How can it be improved? What's happening here?</label>
+	                                </div>
+		    	                    <div class="row center">
+		                                <div class="input-field col s11 offset-s1 m5 offset-m1">
+		                                    <!-- Dropdown Trigger -->
+		                                    <p class="grey-text" style="margin-left:55px">I like this place...</p>
+		                                    <a data-hover="false" id='catGroupbtn' class='dropdown-button disabled btn sm-green white-text truncate' href='#' data-activates='catGroupdd' style="min-width: 250px; min-height: 45px; line-height: 45px;">---</a>
+		                                    <!-- Dropdown Structure -->
+		                                    <ul id='catGroupdd' class='dropdown-content' style="max-height: 250px; font-weight: bolder;">
+		                                    	<li> <a class="red-text" href="#" onclick="document.getElementById('catGroupbtn').innerHTML=this.innerHTML; document.getElementById('catGroup').value=(this.innerHTML).trim(); return false;"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> Not at all</a></li>
+		                                    	<li> <a class="orange-text" href="#" onclick="document.getElementById('catGroupbtn').innerHTML=this.innerHTML; document.getElementById('catGroup').value=(this.innerHTML).trim(); return false;"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> A little</a></li>
+		                                    	<li> <a class="sm-yellow-text" href="#" onclick="document.getElementById('catGroupbtn').innerHTML=this.innerHTML; document.getElementById('catGroup').value=(this.innerHTML).trim(); return false;"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> As any other</a></li>
+		                                    	<li> <a class="sm-green-text" href="#" onclick="document.getElementById('catGroupbtn').innerHTML=this.innerHTML; document.getElementById('catGroup').value=(this.innerHTML).trim(); return false;"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> A lot</a></li>
+		                                    	<li> <a class="sm-blue-text" href="#" onclick="document.getElementById('catGroupbtn').innerHTML=this.innerHTML; document.getElementById('catGroup').value=(this.innerHTML).trim(); return false;"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> I love it</a></li>
+		                                    </ul>                
+		                                </div>
+		                              
+		                                <div id="subCatdd_container" class="input-field col s10 offset-s1 m5">
+		                                    <!-- Dropdown Trigger -->
+		                                    <p class="grey-text" style="margin-left:55px">It makes me feel:</p>
+		                                    <a data-hover="false" id='subCatbtn' class='dropdown-button btn disabled sm-green white-text truncate' href='#' data-activates='subCatdd' style="min-width: 250px; min-height: 45px; line-height: 45px;">---</a>
+		                                    <!-- Dropdown Structure -->
+		                                    <ul id='subCatdd' class='dropdown-content' style="max-height: 250px; font-weight: bolder;">
+		                                    	<li> <a class="grey-text" href="#" onclick="document.getElementById('subCatbtn').innerHTML=this.innerHTML; document.getElementById('subCat').value=(this.innerHTML).trim(); return false;">Social</a></li>
+		                                    	<li> <a class="grey-text" href="#" onclick="document.getElementById('subCatbtn').innerHTML=this.innerHTML; document.getElementById('subCat').value=(this.innerHTML).trim(); return false;">Free</a></li>
+		                                    	<li> <a class="grey-text" href="#" onclick="document.getElementById('subCatbtn').innerHTML=this.innerHTML; document.getElementById('subCat').value=(this.innerHTML).trim(); return false;">Happy</a></li>
+		                                    	<li> <a class="grey-text" href="#" onclick="document.getElementById('subCatbtn').innerHTML=this.innerHTML; document.getElementById('subCat').value=(this.innerHTML).trim(); return false;">Relaxed</a></li>
+		                                    	<li> <a class="grey-text" href="#" onclick="document.getElementById('subCatbtn').innerHTML=this.innerHTML; document.getElementById('subCat').value=(this.innerHTML).trim(); return false;">Joyful</a></li>
+		                                    	<li> <a class="grey-text" href="#" onclick="document.getElementById('subCatbtn').innerHTML=this.innerHTML; document.getElementById('subCat').value=(this.innerHTML).trim(); return false;">Amazed</a></li>
+		                                    	<li> <a class="grey-text" href="#" onclick="document.getElementById('subCatbtn').innerHTML=this.innerHTML; document.getElementById('subCat').value=(this.innerHTML).trim(); return false;">Peaceful</a></li>
+		                                    	<li> <a class="grey-text" href="#" onclick="document.getElementById('subCatbtn').innerHTML=this.innerHTML; document.getElementById('subCat').value=(this.innerHTML).trim(); return false;">Excited</a></li>
+		                                    	<li> <a class="grey-text" href="#" onclick="document.getElementById('subCatbtn').innerHTML=this.innerHTML; document.getElementById('subCat').value=(this.innerHTML).trim(); return false;">Afraid</a></li>
+		                                    	<li> <a class="grey-text" href="#" onclick="document.getElementById('subCatbtn').innerHTML=this.innerHTML; document.getElementById('subCat').value=(this.innerHTML).trim(); return false;">Nervous</a></li>
+		                                    	<li> <a class="grey-text" href="#" onclick="document.getElementById('subCatbtn').innerHTML=this.innerHTML; document.getElementById('subCat').value=(this.innerHTML).trim(); return false;">Angry</a></li>
+		                                    	<li> <a class="grey-text" href="#" onclick="document.getElementById('subCatbtn').innerHTML=this.innerHTML; document.getElementById('subCat').value=(this.innerHTML).trim(); return false;">Stressed</a></li>
+		                                    	<li> <a class="grey-text" href="#" onclick="document.getElementById('subCatbtn').innerHTML=this.innerHTML; document.getElementById('subCat').value=(this.innerHTML).trim(); return false;">Confused</a></li>
+		                                    	<li> <a class="grey-text" href="#" onclick="document.getElementById('subCatbtn').innerHTML=this.innerHTML; document.getElementById('subCat').value=(this.innerHTML).trim(); return false;">Anxious</a></li>
+		                                    	<li> <a class="grey-text" href="#" onclick="document.getElementById('subCatbtn').innerHTML=this.innerHTML; document.getElementById('subCat').value=(this.innerHTML).trim(); return false;">Bored</a></li>
+		                                    	<li> <a class="grey-text" href="#" onclick="document.getElementById('subCatbtn').innerHTML=this.innerHTML; document.getElementById('subCat').value=(this.innerHTML).trim(); return false;">Sporty</a></li>
+		                                    	<li> <a class="grey-text" href="#" onclick="document.getElementById('subCatbtn').innerHTML=this.innerHTML; document.getElementById('subCat').value=(this.innerHTML).trim(); return false;">Nothing</a></li>
+		                                    	<li> <a class="grey-text" href="#" onclick="document.getElementById('subCatbtn').innerHTML=this.innerHTML; document.getElementById('subCat').value=(this.innerHTML).trim(); return false;">Other</a></li>
+		                                    </ul>                
+		                                </div>
+		    	                    </div>
+		    	                    <div class="input-field col s11 offset-s1" style="margin-top:20px;">
+					                    <i class="mdi-action-search prefix sm-green-text" onclick="geocode('from')"></i>
+					                    <input id="address_from" name="address_from" type="text" class="validate" value="{{address_from}}" placeholder="Write down the address or click on the map." onkeydown="if (event.keyCode == 13) geocode('from');">
+					                    <label for="address_from" class="active">Location</label>
+					                    <div id="map" style="width:100%; height: 500px; top: 35px; border-radius: 4px; margin-bottom:60px"></div>
+					                </div>                
+					                <input type="text" id ="address_from_coord" name="address_from_coord" value="{{ address_from_coord}}" hidden>
+	                               
+		                            
+		                            <div class="input-field col s11 offset-s1">
+	                                    <p class="grey-text">Please attach a picture.</p>
+	                                    <div class="file-field input-field">
+	                                        <a class="waves-effect waves-light btn sm-green">
+	                                            <i class="mdi-editor-attach-file"></i>
+	                                            <input name="file" type="file">
+	                                        </a>          
+	                                        <div class="file-path-wrapper">
+	                                            <input class="file-path validate" type="text" style="width: 50%">
+	                                        </div>
+	                                    </div>
+		                            </div>                                                
+		    	                
+		    	                </div>
+		        	        </div>
+		                </div>
+		                
+		                
+		         </form>
+	        </div>
+	        <div class="row">
+	        	<div class="input-field col s11 offset-s1 center">
+	                <button class="waves-effect waves-light sm-green white-text btn-large right" id="submit_report_form" >Submit
+	                    <i class="mdi-content-send right"></i>
+	                </button>	                          
+	            </div>
+	        </div>
+	    </div>
+	</div>
+{% endblock %}
+
+{% block page_scripts %} 
+	<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&libraries=places,visualization"></script>
+	<script src="http://libs.cartocdn.com/cartodb.js/v3/cartodb.js"></script>
+	<script type="text/javascript">
+				
+		google.maps.event.addDomListener(window,'load', init);
+		var map, center = [25.683956577519417, -100.20524472216799];
+		var sublayers = [];
+		var geocoder = new google.maps.Geocoder();
+	    var marker = null;
+	    var markers = [];
+	    var reportDict;
+
+	    function markerFitBounds() {
+	        var bounds = new google.maps.LatLngBounds();
+	        for(var i=0,j=markers.length; i<j; i++) {
+	            bounds.extend( markers[i].getPosition() );
+	        }
+	        map.fitBounds(bounds);
+	    }
+	        
+	    function markerDrop (loc) {
+	        //Marker idea from: http://stackoverflow.com/questions/7095574/google-maps-api-3-custom-marker-color-for-default-dot-marker	                
+	        if (marker == null){
+	            marker = new google.maps.Marker({
+                        animation: google.maps.Animation.DROP,
+	        			position: loc,
+	        			map: map,
+	        			draggable: true,
+	        			icon: 'http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|4BAF50'
+	            });
+	            google.maps.event.addListener(marker,'dragend',function(event) {
+                    geocode(event.latLng);
+	            });        
+	        }else{
+	            marker.setPosition(loc);
+	        }
+	    }
+		
+		function geocode(input) {
+	        var address, obj;
+	        if (typeof(input) === 'string') {
+	            address = document.getElementById('address_'+input).value;
+	            obj = { 'address': address };
+	        }else{
+	            address = input;
+	            obj = { 'location': address};
+	        }
+	        geocoder.geocode( obj, function(results, status) {
+	            if (status == google.maps.GeocoderStatus.OK) {
+	                if (typeof(input) === 'string') {
+	                    map.setCenter(results[0].geometry.location);
+	                    switch (results[0].geometry.location_type){
+	                        case 'ROOFTOP': map.setZoom(17); break;
+	                        case 'RANGE_INTERPOLATED': map.setZoom(16); break;
+	                        case 'GEOMETRIC_CENTER': map.setZoom(15); break;
+	                        case 'APPROXIMATE': map.setZoom(13); break;
+	                    }
+	                    markerDrop(results[0].geometry.location);
+	                }else{
+	                    if (results[1]) {
+	                        document.getElementById('address_from').value = results[1].formatted_address;
+	                    } else {
+	                        alert('No address geocode found');
+	                    }
+	                }
+	            } else {
+	                alert('Geocode unsuccessful: ' + status);
+	            }
+	        });
+	    }	
+			
+		function init(){
+
+			var mapOptions = {
+				center: new google.maps.LatLng(center[0], center[1]),
+				zoom: {% if is_mobile %}10{% else %}12{% endif %},
+				zoomControl: true,
+				zoomControlOptions: {
+					style: google.maps.ZoomControlStyle.SMALL,
+					position: google.maps.ControlPosition.LEFT_BOTTOM	
+				},
+				mapTypeControl: true,
+				mapTypeControlOptions: { 
+					mapTypeIds: [google.maps.MapTypeId.ROADMAP,google.maps.MapTypeId.SATELLITE]
+				},
+				scrollwheel: false,
+				streetViewControl: true,
+				StreetViewControlOptions: {
+					position: google.maps.ControlPosition.BOTTOM_LEFT
+				},
+				panControl:false,
+				backgroundColor: 'rgb(249, 249, 249)',
+				rotateControl:true,
+				overviewMapControl:true
+			};
+			map = new google.maps.Map(document.getElementById('map'), mapOptions);
+			   
+
+			var address_from = document.getElementById('address_from');
+			var autocomplete_from = new google.maps.places.Autocomplete(address_from);
+			autocomplete_from.bindTo('bounds', map);
+			
+			google.maps.event.addListener(autocomplete_from, 'place_changed', function() {
+			    var place = autocomplete_from.getPlace();
+			    if (!place.geometry) {
+                    return;
+			    }
+			    if (place.geometry.viewport) {
+                    map.fitBounds(place.geometry.viewport);
+                    markerDrop(place.geometry.location);
+			    }else{
+                    map.setCenter(place.geometry.location);
+                    map.setZoom(17);
+                    markerDrop(place.geometry.location);
+			    }
+			});									              	    	
+	    	
+			google.maps.event.addDomListener(window, 'resize', function() {
+                setTimeout(function() {
+                    map.panTo({lat: center[0], lng: center[1]});
+                }, 400);                            
+	        });
+				        
+			google.maps.event.addListener(map, 'click', function(event) {
+	            markerDrop(event.latLng);
+	            geocode(event.latLng);
+	        });
+	    		    	
+	    	if(document.getElementById('address_from_coord').value){
+	        	var coof = document.getElementById('address_from_coord').value.split(',').map(Number);
+	        	var latlng = new google.maps.LatLng(coof[0],coof[1]);
+	        	markerDrop (latlng);
+	    	}	
+    		
+    		$( "#submit_report_form" ).click(function() {
+    			uphone = document.getElementById('userphone').value;
+    			uaddress = document.getElementById('useraddress').value;
+    			if (uphone == 'no' || uaddress == 'no'){
+    				Materialize.toast('<span class="toast-danger">Oops! Please complete your profile first.</span>',3000,'',function(){window.location.href = "{{uri_for('materialize-settings-profile')}}";});
+    	            return false;
+    			}
+    	        if (!marker){
+    	            Materialize.toast('<span class="toast-warning">Oops! Please set a location.</span>',4500);
+    	            return false;
+    	        }
+    	        if (document.getElementById('catGroup').value == ''){
+    	            Materialize.toast('<span class="toast-warning">Oops! Please set the likeability.</span>',4500);
+    	            return false;
+    	        }
+    	        if (document.getElementById('subCat').value == ''){
+    	            Materialize.toast('<span class="toast-warning">Oops! Please set the feeling.</span>',4500);
+    	            return false;
+    	        }
+    	        if (document.getElementById('title').value == ''){
+    	            Materialize.toast('<span class="toast-warning">Oops! Please set the name of the place.</span>',4500);
+    	            return false;
+    	        }
+    	        if (document.getElementById('description').value == ''){
+    	            Materialize.toast('<span class="toast-warning">Oops! Please set your opinion.</span>',4500);
+    	            return false;
+    	        }
+    	        document.getElementById('catGroup').value= document.getElementById('catGroup').value.replace('<i class="mdi-image-brightness-1" style="font-size:15px;"></i> ','');
+    	        document.getElementById("address_from_coord").value = marker.getPosition().toString().slice(1,-1);       
+    	        document.getElementById("form_report").submit()        
+    	    });
+		}
+
+	</script>
+{% endblock %}
+
+
+

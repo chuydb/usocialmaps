@@ -1,0 +1,247 @@
+{% extends landing_layout %}
+
+<!-- ADD PAGE HEAD ELEMENTS -->
+{% block title %}<title>{{app_name}} » Reports</title>{% endblock %}
+   
+{% block page_css %}
+ 	<link href="/{{theme}}/materialize/css/prism.css" type="text/css" rel="stylesheet" media="screen,projection">
+    <link href="/{{theme}}/materialize/css/plugins/perfect-scrollbar/perfect-scrollbar.css" type="text/css" rel="stylesheet" media="screen,projection">
+{% endblock %}
+
+{% block page_components %}
+{% endblock %}
+
+
+{% block header_content %}
+  <div class="parallax-container z-depth-3" style="max-height:200px;overflow:hidden;">
+    <div class="section no-pad-bot">
+      <div class="container">
+        <h2 class="header center white-text" style="margin-top: 85px;">My reports</h2>
+      </div>
+    </div>
+    <div class="parallax sm-green"></div>
+  </div>
+{% endblock %}
+
+{% block body_content %}
+	<div class="section">
+		<div class="container">
+			<div class="row">
+				{% for idx, title, created, address_from_coord, address_from, description, image_url, likeability, feeling, cdb_id, follows, log_count, color, kind in reports %}
+		            <div class="col s12 m6 l3" id="panel_{{idx}}">
+		                <div class="map-card">
+		                    <div class="card">
+		                        <div class="card-image waves-effect waves-block waves-light">
+		                            <div id="map-canvas_{{idx}}" style="height: 342px; width: 100%"></div>
+		                        </div>
+		                        <div class="card-content" style="border-left: 5px solid #{{color}};">                    
+		                            <a class="btn-floating activator btn-move-up waves-effect waves-light right" style="background-color:#{{color}}; width: 60px;height: 60px;top: -50px;">
+		                                <i class="{% if kind == 'follow' %}mdi-social-notifications-none{% else %}mdi-action-info{% endif %}" style="font-size:40px; margin-top:11px;"></i>
+		                            </a>
+		                            <h4 class="card-title grey-text text-darken-4">
+		                                <a href="#" class="grey-text text-darken-4 activator">{{likeability}}</a>
+		                            </h4>		                            
+		                            <p class="activator" style="cursor: pointer; line-height: 40px;"><span class="grey-text text-lighten-2 activator">Click here to see details.</span></p>
+									
+									{% if log_count > 0 %}<p class="" style="cursor: pointer; line-height: 40px;"><i class="mdi-action-speaker-notes sm-green-text"></i>Comments: <span style="color:#53ACA8!important">{{log_count}}</span> <a class="grey-text text-lighten-2 modal-trigger" href="#modal_comments" onclick="populateModal({{idx}})">(click to read and comment)</a></p>
+		                            {% endif %}
+
+		                            {% if kind == 'follow' %}<p class="" style="cursor: pointer; line-height: 40px;"><i class="mdi-social-notifications-none sm-green-text"></i><span style="color:#53ACA8!important">Following</span> <a class="grey-text text-lighten-2" href="#" onclick="followReport({{cdb_id}}, {{idx}})">(click here to unfollow)</a></p>
+		                            {% endif %}
+		                        </div>
+		                        <div class="card-reveal" style="border-left: 5px solid #{{color}};">
+		                            <span class="card-title grey-text text-darken-4"><i class="mdi-navigation-close right"></i></span>                   
+		                            {% if image_url %}<img class="responsive-img center z-depth-2" style="margin-top: 12px;" src="{{image_url}}">{% endif %}
+		                            <p><i style="padding:8px;" class="mdi-action-event sm-green-text"></i>Date: <span style="color:#53ACA8!important">{{created}}</span></p>
+		                            <p><i style="padding:8px;" class="mdi-maps-pin-drop sm-green-text"></i>Location: <span style="color:#53ACA8!important">{{address_from}}</span></p>
+		                            <p><i style="padding:8px;" class="mdi-action-group-work sm-green-text"></i>Likeability: <span style="color:#53ACA8!important">{{likeability}}</span></p>
+		                            <p><i style="padding:8px;" class="mdi-image-style sm-green-text"></i>Feeling: <span style="color:#53ACA8!important">{{feeling}}</span></p>
+		                            <p><i style="padding:8px;" class="mdi-action-description sm-green-text"></i>Description: <span style="color:#53ACA8!important">{{description}}</span></p>
+		                            <p><i style="padding:8px;" class="mdi-action-book sm-green-text"></i>Place: <span style="color:#53ACA8!important">{{title}}</span></p>
+		                            <p><i style="padding:8px;" class="mdi-social-group-add sm-green-text"></i>Followers: <span style="color:#53ACA8!important">{{follows}}</span></p>
+		                        </div>
+		                    </div>
+		                </div>
+		            </div>
+		            <input type="text" id = "{{idx|safe}}" class="data" value="{{ address_from_coord|safe }}" icon="http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%20|{{color}}"hidden>
+				{% endfor %}
+				<div id="modal_delete" class="modal white {{brand_color}}-text center" style="display: none; opacity: 1; top: 0px;">
+		            <i class="mdi-navigation-close {{brand_color}}-text right modal-action modal-close" style="padding: 10px;"></i>
+		            <div class="modal-content">
+			            <div class="row">
+			                <div class="input-field col s12 center">
+			                  <p class="center login-form-text" id="modal-title"></p>
+			                </div>
+			              <div class="row">
+			                <div class="input-field col s12">
+			                  <a class="btn-large waves-effect waves-light col s4 grey white-text modal-action modal-close" style="cursor:pointer;">Cancelar</a>
+			                  <a class="btn-large waves-effect waves-light col s4 offset-s4 sm-green white-text" style="cursor:pointer;" id="submit_report_form_delete">Sí, seguro</a>
+			                </div>
+			              </div>
+			            </div>
+			        </div>
+			    </div>
+			    <form class="col s12" id="form_edit_report" action="{{ url|safe }}" method="post">
+		            <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+		            <input type="hidden" name="delete" id="delete" value="">
+		            <input type="hidden" name="comment" id="comment" value="">
+		            <input type="hidden" name="report_id" id="report_id" value="">
+		        </form>
+			</div>
+		</div>
+	</div>
+	<div id="modal_comments" class="modal white {{brand_color}}-text center" style="display: none; opacity: 1; top: 0px;">
+          <i class="mdi-navigation-close {{brand_color}}-text right modal-action modal-close" style="padding: 10px;"></i>
+          <div class="modal-content">
+              <div class="row">
+                    <div class="input-field col s12 center">
+                      <p class="center login-form-text">Este es el historial de cambios de tu reporte. Si tienes algo que agregar, no dudes en comentarlo.</p>
+                      <p class="center login-form-text">Para agregar un comentario llena la casilla inferior y da clic en comentar.</p>
+                    </div>
+                    <div class="row">
+                      <div class="container">
+                          <div class="row">
+							<div class="input-field container col s12" id="report_comments" style="font-weight:bold;">              
+                            </div>
+                            <div class="row">
+		                        <div class="input-field col s12 l6 right">
+		                            <i class="mdi-maps-map prefix sm-green-text"></i>
+		                            <textarea id="commentbox" name="commentbox" class="materialize-textarea" length="500" style="height: 22px;" type="text" ></textarea>
+		                            <label for="commentbox">Escribe aquí tu comentario</label>
+		                        </div>
+		                    </div> 
+                          	<div class="input-field col s12">
+                              <a class="btn-large waves-effect waves-light col s4 grey white-text modal-action modal-close" style="cursor:pointer;">Cerrar</a>
+                              <a class="btn-large waves-effect waves-light col s4 offset-s4 sm-green white-text" style="cursor:pointer;" id="submit_report_form_comment">Comentar</a>
+                            </div>
+                          </div>
+                      </div>
+                    </div>
+              </div>
+          </div>
+    </div>
+{% endblock %}
+
+{% block footer_content %}
+{% endblock %}
+
+{% block page_scripts %}
+	<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=true&libraries=places,visualization"></script>
+	<script type="text/javascript">
+	    var gmarkers=[];
+	    var map;
+
+	    function dropMarker (loc, origin, iconUrl) {
+	    	
+	        gmarkers[0] = new google.maps.Marker({
+            				animation: google.maps.Animation.DROP,
+            				position: loc,
+            				map: map,
+            				icon: iconUrl
+            			});
+	    }
+	    
+	    function makemapcard (id,m1,iconUrl) {
+	      // Google Maps  
+	      $('#map-canvas_'+id).addClass('loading');    
+	      var latlng = new google.maps.LatLng(m1[0],m1[1]);
+	      var settings = {
+	          zoom: 15,
+	          center: latlng,
+	          mapTypeId: google.maps.MapTypeId.ROADMAP,
+	          mapTypeControl: false,
+	          scrollwheel: false,
+	          draggable: true,
+	          navigationControl: false,
+	      };
+	      map = new google.maps.Map(document.getElementById("map-canvas_"+id), settings);
+
+	      google.maps.event.addDomListener(window, "resize", function() {
+	          var center = map.getCenter();
+	          google.maps.event.trigger(map, "resize");
+	          map.setCenter(center);
+	          $('#map-canvas_'+id).removeClass('loading');
+	      });
+	      var gmarkers=[];
+	      var companyPos = new google.maps.LatLng(m1[0],m1[1]);
+	      dropMarker (companyPos,'from',iconUrl);
+	    }
+
+		$(function() {
+		    var data = document.getElementsByClassName("data");
+		    for (var i = 0, j = data.length; i<j; i++){
+		        var m1 = data[i].value.split(',').map(Number).slice(0,2);
+		        makemapcard (data[i].id,m1,$(data[i]).attr('icon'))    
+		    }
+		});
+	</script>
+	<script type="text/javascript">
+			var _req_d = false;
+			function setReportID(id,req_d){
+				document.getElementById("report_id").value = id;
+				if (req_d == 'True'){
+					document.getElementById("modal-title").innerHTML = "¿Seguro que deseas cancelar la eliminación del reporte?";
+					_req_d = true;
+				}else{
+					document.getElementById("modal-title").innerHTML = "¿Seguro que deseas solicitar la eliminación del reporte?";
+					_req_d = false;
+				}	
+			}
+        	document.querySelector('#submit_report_form_delete').addEventListener('click', function() { 
+		            if (_req_d)
+		            	document.getElementById("delete").value = "confirmed_cancelation";
+		            else
+		            	document.getElementById("delete").value = "confirmed_deletion";
+		            document.getElementById("form_edit_report").submit();
+		    });
+
+			document.querySelector('#submit_report_form_comment').addEventListener('click', function() { 
+				if (document.getElementById("commentbox").value == '')
+    	            Materialize.toast('<span class="toast-warning">Oops! Escribe un comentario por favor.</span>',4500);
+    	        else{
+    	        	document.getElementById("comment").value = document.getElementById("commentbox").value;
+			        document.getElementById("delete").value = "confirmed_comment";
+			        document.getElementById("form_edit_report").submit();
+    	        }	            	            
+	        });
+
+	        function populateModal(idx){
+	        	console.log(idx);
+	        	rep_com = document.getElementById('report_comments');
+
+	        	var url = "/report/comments/"+idx+"/";
+	        
+	            $.ajax({
+	                url: url,
+	                type: 'GET',
+	                success: function(data) { 
+	                    console.log(data)
+	                }
+	            }).done(function(data) {
+	                rep_com.innerHTML = data.logs.html;
+	                document.getElementById("report_id").value = idx;
+	            }); 
+	        }
+
+	        function followReport(cdb, idx){
+				$.ajax({
+	                url: "{{ uri_for('materialize-report-follow') }}",
+	                type: 'POST',
+	                data: { 
+				        'report_id': cdb,
+				        'user_id': {{user_id}},
+				        '_csrf_token': '{{ csrf_token() }}',
+				        'kind': 'unfollow'
+				    }
+	            }).done(function(data) {
+					if (data.contents == 'user already following')
+	    				Materialize.toast('<span class="toast-warning">Oops! Tú ya seguías este reporte.</span>',4500);
+					else if (data.contents == 'follow request successful')
+	    				Materialize.toast('<span class="toast-success">Estás siguiendo este reporte, ahora podrás verlo en tus reportes.</span>',4500);
+					else if (data.contents == 'unfollow request successful')
+	    				Materialize.toast('<span class="toast-success">Has dejado de seguir este reporte.</span>',4500);
+	    			$('#panel_'+idx).hide();
+	            });
+			}
+	</script>
+{% endblock %}

@@ -1,181 +1,150 @@
-{% extends base_layout %}
+{% extends landing_layout %}
 
 <!-- ADD PAGE HEAD ELEMENTS -->
-{% block title %}<title>MBoilerplate » Settings Account</title>{% endblock %}
+{% block title %}<title>{{app_name}} » Settings Account</title>{% endblock %}
    
 {% block page_css %}
-	<style shim-shadowdom>
-	    paper-tabs {
-	      background-color: transparent;
-	      color: #fff;
-	      cursor:pointer;
-	    }
-
-	    paper-tabs[noink][nobar] paper-tab.core-selected {
-	      color: #fff;      
-	    }
-
-	    paper-tabs::shadow #selectionBar {
-	      background-color: rgba(255, 255, 255, 1);
-	    }
-
-	    paper-tabs paper-tab::shadow #ink {
-	      color: rgba(255, 255, 255, 1);
-	    }
-
-	    paper-tab {
-	      cursor:pointer;
-	    }
-  	</style>
-{% endblock %}
-
-{% block page_components %}
-    <link href="/boilerplate/webcomponents/bower_components/paper-tabs/paper-tabs.html" rel="import">
 {% endblock %}
 
 
-<!-- ADD PAGE BODY ELEMENTS-->
-{% block breadcrums %}
-	<!--breadcrumbs start-->
-    <div id="breadcrumbs-wrapper" class=" grey lighten-3">
+{% block header_content %}
+  <div class="parallax-container z-depth-3" style="max-height:200px;overflow:hidden;">
+    <div class="section no-pad-bot">
       <div class="container">
-        <div class="row">
-          <div class="col s12 m12 l12">
-            <h5 class="breadcrumbs-title">Profile</h5>
-          </div>
-        </div>
-        <paper-tabs id="scrollableTabs" selected="3" scrollable style="margin-left: -20px;background-color: #03A9F4;width: 110%;   margin-top: 5px;">
-          <paper-tab onclick="window.open('{{ uri_for("materialize-settings-profile") }}', '_top')">Profile</paper-tab>
-          <paper-tab onclick="window.open('{{ uri_for("materialize-settings-address") }}', '_top')">Address</paper-tab>
-          <paper-tab onclick="window.open('{{ uri_for("materialize-settings-referrals") }}', '_top')">Referrals</paper-tab>
-          <paper-tab onclick="window.open('{{ uri_for("materialize-settings-account") }}', '_top')">Account</paper-tab>
-      </paper-tabs>
+        <h2 class="header center white-text" style="margin-top: 85px;">Account settings</h2>
       </div>
     </div>
-    <!--breadcrumbs end-->
+    <div class="parallax sm-green"></div>
+  </div>
 {% endblock %}
 
-{% block page_content %}
-	<div class="section">
+{% block body_content %}
+	<div class="row">
 		<div class="container">
-			<div class="row">
-				<ul class="collapsible collapsible-accordion col s12" data-collapsible="accordion">
-					<li class="">
-						<div class="collapsible-header light-blue-text text-darken-4" style="border-bottom: none"><i class="mdi-action-lock"></i> Change password</div>
-						<div class="collapsible-body" style="display: none;">
-								<form id="form_edit_password" action="/user/settings/password/" method="post" class="col s12">
-						          <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
-						          <div class="row">
-						            <div class="input-field col s12">
-						              <i class="mdi-action-lock-outline prefix light-blue-text text-darken-3"></i>
-						              <input id="current_password" name="current_password" type="password">
-						              <label for="current_password">Current password</label>
-						            </div>
-						          </div>
-						          <div class="row">
-						            <div class="input-field col s12">
-						              <i class="mdi-action-lock-outline prefix light-blue-text"></i>
-						              <input id="password" name="password" type="password">
-						              <label for="password">New password</label>
-						            </div>
-						          </div>
-						          <div class="row">
-						            <div class="input-field col s12">
-						              <i class="mdi-action-lock-outline prefix light-blue-text"></i>
-						              <input id="c_password" name="c_password" type="password">
-						              <label for="c_password">Confirm new password</label>
-						            </div>
-						          </div>
-						          <div class="row">
-						            <div class="row">
-						              <div class="input-field col s12">
-						                <button class="waves-effect waves-light light-blue white-text btn right" type="submit" name="action">Update changes
-						                  <i class="mdi-content-send right"></i>
-						                </button>
-						              </div>
-						            </div>
-						          </div>
-						        </form>
+			<div class="section">
+				<div class="section">
+					<div class="container">
+						<div class="row">
+							<ul class="collapsible collapsible-accordion col s12" data-collapsible="accordion">
+								<li class="">
+									<div class="collapsible-header light-blue-text text-darken-4" style="border-bottom: none;"><i class="mdi-action-lock"></i> Change password</div>
+									<div class="collapsible-body" style="display: none;">
+											<form id="form_edit_password" action="/user/settings/password/" method="post" class="col s12">
+									          <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+									          <div class="row">
+									            <div class="input-field col s12">
+									              <i class="mdi-action-lock-outline prefix light-blue-text text-darken-3"></i>
+									              <input id="current_password" name="current_password" type="password">
+									              <label for="current_password">Current password</label>
+									            </div>
+									          </div>
+									          <div class="row">
+									            <div class="input-field col s12">
+									              <i class="mdi-action-lock-outline prefix light-blue-text"></i>
+									              <input id="password" name="password" type="password">
+									              <label for="password">New password</label>
+									            </div>
+									          </div>
+									          <div class="row">
+									            <div class="input-field col s12">
+									              <i class="mdi-action-lock-outline prefix light-blue-text"></i>
+									              <input id="c_password" name="c_password" type="password">
+									              <label for="c_password">Confirm new password</label>
+									            </div>
+									          </div>
+									          <div class="row">
+									            <div class="row">
+									              <div class="input-field col s12">
+									                <button class="waves-effect waves-light light-blue white-text btn right" type="submit" name="action">Update changes
+									                  <i class="mdi-content-send right"></i>
+									                </button>
+									              </div>
+									            </div>
+									          </div>
+									        </form>
+									</div>
+								</li>
+								<li class="">
+									<div class="collapsible-header light-blue-text text-darken-4" style="border-bottom: none;"><i class="mdi-communication-email"></i> Change email</div>
+									<div class="collapsible-body" style="display: none;">
+										<div class="col s12 center" style="margin-top:8px;">
+									        <div class="row" style="margin-left:0px;">
+									            <div class="input-field col s12">
+									              <i class="mdi-communication-email prefix light-blue-text text-darken-3"></i>
+									              <input id="current_email" type="email" value="{{email}}" disabled>
+									              <label for="current_email">Current email</label>
+									            </div>
+									        </div>
+									        <form id="form_edit_email" action="/user/settings/email/" method="post" class="col s12">
+									          <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+									          <div class="row">
+									            <div class="input-field col s12">
+									              <i class="mdi-communication-email prefix light-blue-text"></i>
+									              <input id="new_email" name="new_email" type="email" class="validate">
+									              <label for="new_email">New email</label>
+									            </div>
+									          </div>
+									          <div class="row">
+									            <div class="input-field col s12">
+									              <i class="mdi-action-lock-outline prefix light-blue-text"></i>
+									              <input id="password" name="password" type="password" class="required">
+									              <label for="password">Type your password</label>
+									            </div>
+									          </div>
+									          <div class="row" style="margin-bottom:20px;">
+									              <div class="input-field col s12">
+									                <button class="waves-effect waves-light light-blue white-text btn right" type="submit" name="action">Update changes
+									                  <i class="mdi-content-send right"></i>
+									                </button>
+									              </div>
+									          </div>
+									        </form>
+									    </div>
+									</div>
+								</li>
+							</ul>
 						</div>
-					</li>
-					<li class="">
-						<div class="collapsible-header light-blue-text text-darken-4" style="border-bottom: none"><i class="mdi-communication-email"></i> Change email</div>
-						<div class="collapsible-body" style="display: none;">
-							<div class="col s12 center" style="margin-top:8px;">
-						        <div class="row" style="margin-left:0px;">
-						            <div class="input-field col s12">
-						              <i class="mdi-communication-email prefix light-blue-text text-darken-3"></i>
-						              <input id="current_email" type="email" value="{{email}}" disabled>
-						              <label for="current_email">Current email</label>
-						            </div>
-						        </div>
-						        <form id="form_edit_email" action="/user/settings/email/" method="post" class="col s12">
-						          <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
-						          <div class="row">
-						            <div class="input-field col s12">
-						              <i class="mdi-communication-email prefix light-blue-text"></i>
-						              <input id="new_email" name="new_email" type="email" class="validate">
-						              <label for="new_email">New email</label>
-						            </div>
-						          </div>
-						          <div class="row">
-						            <div class="input-field col s12">
-						              <i class="mdi-action-lock-outline prefix light-blue-text"></i>
-						              <input id="password" name="password" type="password" class="required">
-						              <label for="password">Type your password</label>
-						            </div>
-						          </div>
-						          <div class="row" style="margin-bottom:20px;">
-						              <div class="input-field col s12">
-						                <button class="waves-effect waves-light light-blue white-text btn right" type="submit" name="action">Update changes
-						                  <i class="mdi-content-send right"></i>
-						                </button>
-						              </div>
-						          </div>
-						        </form>
-						    </div>
-						</div>
-					</li>
-				</ul>
-			</div>
-			<div class="row">
-				<ul class="collapsible collapsible-accordion col s12" data-collapsible="accordion">
+						<div class="row">
+							<ul class="collapsible collapsible-accordion col s12" data-collapsible="accordion">
 
-					<li class="grey-text text-lighten-2">
-						<div class="collapsible-header" style="border-bottom: none"><i class="mdi-action-delete"></i> Delete account </div>
-					    <div class="collapsible-body" style="display: none;">
-								<form id="form_delete_account" action="/user/settings/delete/" method="post" class="col s12">
-						          <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
-						          <div class="row">
-						            <div class="input-field col s12">
-						              <i class="mdi-action-lock-outline  prefix" style="color:red"></i>
-						              <input id="password" name="password" type="password">
-						              <label for="password">Type your password</label>
-						            </div>
-						          </div>
-						          <div class="row">
-						            <div class="input-field col s12" style="margin-left: 45px;">
-						              <div class="controls" id="captcha">
-						                  {{captchahtml | safe}}
-						              </div>
-						            </div>
-						          </div>
-						          <div class="row">
-						            <div class="row">
-						              <div class="input-field col s12">
-						                <button class="btn red waves-effect waves-light right" type="submit" name="action" style="margin-bottom:10px">Delete forever
-						                  <i class="mdi-content-send right"></i>
-						                </button>
-						              </div>
-						            </div>
-						          </div>
-						        </form>
-					    </div>
-					</li>
-				</ul>
+								<li class="grey-text text-lighten-2">
+									<div class="collapsible-header" style="border-bottom: none;"><i class="mdi-action-delete"></i> Delete account </div>
+								    <div class="collapsible-body" style="display: none;">
+											<form id="form_delete_account" action="/user/settings/delete/" method="post" class="col s12">
+									          <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+									          <div class="row">
+									            <div class="input-field col s12">
+									              <i class="mdi-action-lock-outline  prefix" style="color:red"></i>
+									              <input id="password" name="password" type="password">
+									              <label for="password">Type your password</label>
+									            </div>
+									          </div>
+									          <div class="row">
+									            <div class="input-field col s12" style="margin-left: 45px;">
+									              <div class="controls" id="captcha">
+									                  {{captchahtml | safe}}
+									              </div>
+									            </div>
+									          </div>
+									          <div class="row">
+									            <div class="row">
+									              <div class="input-field col s12">
+									                <button class="btn red waves-effect waves-light right" type="submit" name="action" style="margin-bottom:10px">Delete forever
+									                  <i class="mdi-content-send right"></i>
+									                </button>
+									              </div>
+									            </div>
+									          </div>
+									        </form>
+								    </div>
+								</li>
+							</ul>
+						</div>
+				    </div>
+			   	</div>
 			</div>
-	    </div>
-   	</div>
+		</div>
+	</div>
 {% endblock %}
 
 {% block sidebar_right %}

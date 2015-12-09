@@ -1,7 +1,7 @@
 {% extends landing_layout %}
 
 {% block title %}
-	<title>MBoilerplate » Login</title>
+	<title>{{app_name}} » Login</title>
 {% endblock %}
 
 {% block page_css %}
@@ -40,7 +40,7 @@
 			            <label for="password" class="">Password</label>
 			          </div>
 			        </div>
-			        <div class="row">          
+			        <div class="row" style="display:none;">          
 			          <div class="input-field col s12 m12 l12  login-text">
 			              <input type="checkbox" name="remember_me" id="remember-me">
 			              <label for="remember-me">Remember me</label>
@@ -61,7 +61,11 @@
 		    </div>
 		  </div>
 		</div>
-		<div class="parallax"><img src="/default/materialize/images/landing/black_mac.png" alt="Unsplashed background img 1" style="display: block; transform: translate3d(-50%, 172px, 0px);"></div>
+		<div class="parallax"><img src="/default/materialize/images/landing/map.png" alt="Unsplashed background img 1" style="display: block; transform: translate3d(-50%, 172px, 0px);"></div>
 	</div>
 {% endblock %}
 
+
+
+{% block body_content %}
+{% endblock %}

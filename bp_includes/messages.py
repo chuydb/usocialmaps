@@ -38,3 +38,5 @@ account_delete_success = unicode('Awww, we are sad you\'re leaving us. Your acco
 resend_success = unicode('Sent! Check email at {} to activate.','utf-8')
 google_contacts_error = unicode('Come on, shall we try again? Google said you should.','utf-8')
 email_welcome_subject = unicode('Huzzah! Thanks for creating your account.','utf-8')
+report_success = unicode('Thanks! Your contribution has been saved.', 'utf-8')
+inquiry_success = unicode('Thanks! Your comments have been saved.', 'utf-8')

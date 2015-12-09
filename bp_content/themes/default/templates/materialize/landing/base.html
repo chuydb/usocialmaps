@@ -16,13 +16,6 @@
 
 		{% block favicons %}
 		    <link rel="icon" href="{{brand_favicon}}" sizes="32x32">
-		    {% if is_mobile %}
-				<!-- For iPhone -->
-				<link rel="apple-touch-icon-precomposed" href="{{brand_favicon}}">
-				<!-- For Windows Phone -->
-				<meta name="msapplication-TileColor" content="#00bcd4">
-				<meta name="msapplication-TileImage" content="{{brand_favicon}}">
-		    {% endif %}
 		{% endblock %}
 
 	  	<!-- CSS  -->
@@ -49,7 +42,7 @@
 				  font-size: inherit;
 				}
 				ul li{
-					font-family: roboto-thin!important;
+					font-family: roboto-medium!important;
 				}
 				.g-recaptcha{
 					  margin-left: 23%;
@@ -59,6 +52,44 @@
 				html, body { height: 100%; margin: 0; padding: 0; }
 				#map {height: 95%}
 				.spacer{margin-bottom: 35px;}
+
+				.sm-green{
+					background-color: #A8D47D!important;
+				}
+				.sm-green-text{
+					color:#A8D47D!important;
+				}
+				.sm-blue{
+					background-color: #5FD0E0!important;
+				}
+				.sm-blue-text{
+					color:#5FD0E0!important;
+				}
+				.sm-yellow{
+					background-color: #EEBF40!important;
+				}
+				.sm-yellow-text{
+					color:#EEBF40!important;
+				}
+				
+				.btn{
+					background-color: #A8D47D;
+				}
+				.btn:hover{
+					background-color: #59CEDF;
+				}
+				.btn-large{
+					background-color: #A8D47D;
+				}
+				.btn-large:hover{
+					background-color: #59CEDF;
+				}
+				.btn-floating{
+					background-color: #A8D47D;
+				}
+				.btn-floating:hover{
+					background-color: #59CEDF;
+				}
 	    	</style>
 		    {% block page_css %}{% endblock %}
 		{% endblock %}
@@ -70,15 +101,9 @@
 	    
 	    <!-- All JavaScript at the bottom, except these. -->
 		{% block priority_js %}
-			<!-- <script type="text/javascript" src="/boilerplate/webcomponents/bower_components/webcomponentsjs/webcomponents.min.js"></script>	 -->
     		<script type="text/javascript" src="/boilerplate/js/libs/modernizr-2.7.1.min.js"></script>
    		 	<script src="https://ajax.googleapis.com/ajax/libs/webfont/1.5.10/webfont.js"></script>
 		{% endblock %}
-
-		<!--  POLYMER   -->
-		<!-- {% block webcomponents %}
-			{% block page_components %}{% endblock %}
-		{% endblock %}  -->
 
 	</head>
 {% endblock %}
@@ -89,62 +114,60 @@
 		{% block navbar %}
 			<!-- START NAVBAR -->
 			<nav style="background-color: transparent;position: fixed;border-bottom: none; z-index: 9999999;" class="z-depth-2">
-				<div class="nav-wrapper" style="background:#E2EFD3;">
+				<div class="nav-wrapper" style="background:white;opacity:0.85">
 				  <a href="{{uri_for("landing")}}" class="brand-logo"><img src="{{brand_logo}}" style="height:45px; margin-top:8px; {% if is_mobile %}margin-left:4px;{% else %}margin-left:10px;{% endif %}"></a>
-				  <a href="#" data-activates="mobile-demo" class="button-collapse right"><i class="mdi-navigation-more-vert"></i></a>
+				  <a href="#" data-activates="mobile-demo" class="button-collapse right"><i class="mdi-navigation-more-vert grey-text"></i></a>
 				  <ul id="nav-mobile" class="right hide-on-med-and-down">
 				    {% if not user_id %}
-				    <li id="nav-login"><a href="#modal1" class="modal-trigger menu-item btn" style="background-color: #65BD2E;margin-left: 20px;margin-right: 20px;">Login</a></li>
-				    <li id="nav-register"><a href="#modal2" class="modal-trigger menu-item btn" style="background-color: #F6A10C;margin-left: 20px;margin-right: 20px;">Register</a></li>
+				    <li id="nav-login"><a href="#modal1" class="modal-trigger menu-item btn white grey-text" style="font-family: roboto-black;margin-left: 20px;margin-right: 20px;">Login</a></li>
+				    <li id="nav-register"><a href="#modal2" class="modal-trigger menu-item btn white grey-text" style="font-family: roboto-black;margin-left: 20px;margin-right: 20px;">Sign up</a></li>
 				    {% else %}
 				    <ul id="profile-dropdown" class="dropdown-content" style="margin-top:10px; border-radius:4px; padding:10px">
-		                  <li><a  style="font-size: 1rem;padding: 0.5rem;" class="{{brand_color}}-text" href="{{ uri_for("materialize-home") }}">My dashboard</a>
+		                  <li><a  style="font-size: 1rem;padding: 0.5rem; font-family:roboto-medium;" class="{{brand_color}}-text" href="{{ uri_for("materialize-settings-profile") }}">Profile</a>
 	                        </li>
-	                      <li><a  style="font-size: 1rem;padding: 0.5rem;" class="{{brand_color}}-text" href="{{ uri_for("materialize-settings-profile") }}">My profile </a>
+	                      <li><a  style="font-size: 1rem;padding: 0.5rem; font-family:roboto-medium;" class="{{brand_color}}-text" href="{{ uri_for("materialize-reports") }}">My reports</a>
 	                        </li>
-	                      <li><a  style="font-size: 1rem;padding: 0.5rem;" class="{{brand_color}}-text" href="{{ uri_for("logout") }}">Logout</a>
+	                      <li><a  style="font-size: 1rem;padding: 0.5rem; font-family:roboto-medium;" class="{{brand_color}}-text" href="{{ uri_for("logout") }}">Logout</a>
 	                        </li>
 		            </ul>
-				    <li class="nav-user" style="margin-right: -32px;">
+				    <li class="nav-user" style="margin-right: -32px; height: 65px;">
                         	{% if has_picture %}
-								<a class="btn-flat dropdown-button waves-effect waves-light white-text profile-btn right" href="#" data-activates="profile-dropdown" style="    height: 45px; margin-top: 8px;    line-height: 1.5rem;    position: relative;">
+								<a class="btn-flat dropdown-button waves-effect waves-light grey-text profile-btn right" href="#" data-activates="profile-dropdown" style="    height: 45px; margin-top: 8px;    line-height: 1.5rem;    position: relative;     font-family: roboto-medium;">
 										<div style="position: absolute;left: 0px;"><img src="/media/serve/profile/{{user_id}}/" alt="" class="circle responsive-img valign profile-image" style=" height: 30px; margin-top:6px;border: 1px solid white; height:35px"></div>
 										<span style="padding: 15px;height: 46px;text-transform: none;" class="valign-wrapper">{{name}} <i class="material-icons right" style="margin-left: 5px; font-size: 14px;">arrow_drop_down</i></span>
 		                        </a>
 							{% else %}
-								<a class="btn-flat dropdown-button waves-effect waves-light white-text profile-btn right" href="#" data-activates="profile-dropdown" style="    height: 45px; margin-top: 8px;    line-height: 1.5rem;    position: relative;">
+								<a class="btn-flat dropdown-button waves-effect waves-light grey-text profile-btn right" href="#" data-activates="profile-dropdown" style="    height: 45px; margin-top: 8px;    line-height: 1.5rem;    position: relative;     font-family: roboto-medium;">
 										<div style="position: absolute;left: 0px;">
-											<span class="circle white light-blue-text lighten-1" style="width: 35px;   height: 35px; display: inline-block;   text-align: center;   font-size: 1.5rem;   color: #fff;   font-weight: 300;margin-top: 5px;line-height: 2.2rem;">{{ name_i }}</span>
+											<span class="circle sm-blue white-text" style="width: 35px;   height: 35px; display: inline-block;   text-align: center;   font-size: 1.5rem;   color: #fff;   font-weight: 300;margin-top: 5px;line-height: 2.2rem;">{{ name_i }}</span>
 										</div>
 										<span style="padding: 15px;height: 46px;text-transform: none;" class="valign-wrapper">{{name}} <i class="material-icons right" style="margin-left: 5px; font-size: 14px;">arrow_drop_down</i></span>
 		                        </a>
 							{% endif %}
                      </li>	
 				    {% endif %}
-				    <li id="nav-blog"><a href="{{uri_for("blog")}}" class="modal-trigger menu-item btn" style="background-color: #ED363D;margin-left: 20px;margin-right: 20px;">Trends</a></li>
 				  </ul>
 				  <ul class="side-nav" id="mobile-demo">
 				    {% if not user_id %}
 				    <li id="nav-login"><a href="#modal1" class="modal-trigger menu-item">Login</a></li>
-				    <li id="nav-register"><a href="#modal2" class="modal-trigger menu-item">Register</a></li>
+				    <li id="nav-register"><a href="#modal2" class="modal-trigger menu-item">Sign up</a></li>
 				    {% else %}
 				    <li class="no-padding">
                         <ul class="collapsible collapsible-accordion">
                             <li class="bold">
-                            	<a class="collapsible-header waves-effect waves-cyan">
+                            	<a class="collapsible-header waves-effect waves-cyan center">
 						    	{% if has_picture %}
-									<img src="/media/serve/profile/{{user_id}}/" alt="" class="circle responsive-img valign profile-image" style="margin-top:6px;border: 1px solid rgb(3, 169, 244); height:35px">
+									<img src="/media/serve/profile/{{user_id}}/" alt="" class="circle responsive-img valign profile-image" style="margin-top:6px;border: 1px solid rgb(3, 169, 244); height:50px">
 								{% else %}
-		                        	<span class="circle red lighten-1" style="width: 35px;   height: 35px; display: inline-block;   vertical-align: middle;   text-align: center;   font-size: 1.5rem;   color: #fff;   font-weight: 300; margin-top: 10px;margin-left: 10px;">{{ name_i }}</span>
+		                        	<span class="circle sm-blue white-text" style="width: 50px;height: 50px;display: inline-block;vertical-align: middle;text-align: center;font-size: 1.5rem;color: #fff;font-weight: 300;margin-top: 0px;margin-left: 10px;line-height: 3.5rem;;">{{ name_i }}</span>
 								{% endif %}
-									<i class="material-icons right" style="line-height: 1.6;margin-left: -38px;">arrow_drop_down</i>
                             	<div class="collapsible-body">
                                     <ul>
-									  <li><a href="{{ uri_for("materialize-home") }}">My dashboard</a>
+									  <li><a style="font-family:roboto-medium;" href="{{ uri_for("materialize-settings-profile") }}">Profile</a>
 		                                </li>
-		                              <li><a href="{{ uri_for("materialize-settings-profile") }}">My profile </a>
+		                              <li><a style="font-family:roboto-medium;" href="{{ uri_for("materialize-reports") }}">My reports</a>
 		                                </li>
-		                              <li><a href="{{ uri_for("logout") }}">Logout</a>
+		                              <li><a style="font-family:roboto-medium;" href="{{ uri_for("logout") }}">Logout</a>
 		                                </li>
                                     </ul>
                                 </div>
@@ -153,7 +176,6 @@
                      </li>
 				     <li class="divider"></li>
 				    {% endif %}
-				    <li id="nav-blog"><a href="{{uri_for("blog")}}" class="modal-trigger menu-item">Trends</a></li>
 				  </ul>
 				</div>
 			</nav>
@@ -166,6 +188,52 @@
 		{% block body_content %}
 			<div id="map">				
 			</div>
+			<div class="hide-on-small-only" style="width:225px; position:fixed; top:12%; left:3%;">
+                <ul class="collapsible collapsible-accordion" data-collapsible="expandable">
+                  <li>
+                    <div class="collapsible-header white-text truncate sm-blue"> Currently <span id="rep_count" style="font-family: roboto-regular;">0</span> reports.</div>
+                  </li>
+                  <li>
+                    <div class="collapsible-header white-text sm-blue"><i class="mdi-device-dvr"></i> Change view</div>
+                    <div class="collapsible-body white lighten-5 center">
+                      <div class="row">
+                      	<div class="col s6" style="margin-top:15px;"><a class="btn-floating btn-large waves-effect waves-light green tooltipped" data-position="top" data-delay="50" data-tooltip="Normal" onclick="setMapView('normal');"><i class="mdi-maps-place"></i></a></div>
+                      	<div class="col s6" style="margin-top:15px;"><a class="btn-floating btn-large waves-effect waves-light yellow tooltipped" data-position="top" data-delay="50" data-tooltip="Cluster" onclick="setMapView('cluster');"><i class="mdi-maps-pin-drop"></i></a></div>
+                      </div>
+                      <div class="row">
+                      	<div class="col s6"><a class="btn-floating btn-large waves-effect waves-light red tooltipped" data-position="top" data-delay="50" data-tooltip="Intensity" onclick="setMapView('heat');"><i class="mdi-social-whatshot"></i></a></div>
+                      	<div class="col s6"><a class="btn-floating btn-large waves-effect waves-light light-blue tooltipped" data-position="top" data-delay="50" data-tooltip="Occurrence" onclick="setMapView('intensity');"><i class="mdi-image-blur-circular"></i></a></div>
+                      </div>
+                    </div>
+                  </li>
+                  <li>
+                    <div class="collapsible-header gpe-green-darken-1 white-text sm-blue"><i class="mdi-content-filter-list"></i> Filter</div>
+                    <div class="collapsible-body white lighten-5">
+                      <div class="row">
+                      	<p>Likeability:</p>
+                      	<div class="col s11 offset-s1"> 
+                      		<a class="grey-text" href="#" onclick="setQ('likeability',''); return false;"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> All</a> 
+                      	</div>
+                      	<div class="col s11 offset-s1"> 
+                      		<a class="red-text" href="#" onclick="setQ('likeability','Not at all'); return false;"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> Not at all</a> 
+                      	</div>
+                      	<div class="col s11 offset-s1"> 
+                      		<a class="orange-text" href="#" onclick="setQ('likeability','A little'); return false;"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> A little</a> 
+                      	</div>
+                      	<div class="col s11 offset-s1"> 
+                      		<a class="sm-yellow-text" href="#" onclick="setQ('likeability','As any other'); return false;"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> As any other</a> 
+                      	</div>
+                      	<div class="col s11 offset-s1"> 
+                      		<a class="sm-green-text" href="#" onclick="setQ('likeability','A lot'); return false;"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> A lot</a> 
+                      	</div>
+                      	<div class="col s11 offset-s1"> 
+                      		<a class="sm-blue-text" href="#" onclick="setQ('likeability','I love it'); return false;"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> I love it</a> 
+                      	</div>
+                      </div>
+                    </div>
+                  </li>
+                </ul>
+            </div> 
 		{% endblock %}
 
 		{% block modals_content %}
@@ -201,7 +269,7 @@
 			        </div>
 			        <div class="row">
 			          <div class="input-field col s12">
-			            <a class="btn waves-effect waves-light col s12" style="cursor:pointer;background-color: #65BD2E;" onclick="sendForm('form_login_user')">Login</a>
+			            <a class="btn-large sm-green waves-effect waves-light col s12" style="cursor:pointer;" onclick="sendForm('form_login_user')">Login</a>
 			          </div>
 			        </div>
 			        <div class="row">
@@ -249,7 +317,7 @@
 			        </div>
 			        <div class="row">
 			          <div class="input-field col s12">
-			            <a class="btn waves-effect waves-light col s12" style="cursor:pointer;background-color: #F6A10C;" onclick="sendForm('form_register_user')">Register</a>
+			            <a class="btn-large sm-blue waves-effect waves-light col s12" style="cursor:pointer;" onclick="sendForm('form_register_user')">Sign up</a>
 			          </div>
 			        </div>
 			        <div class="row">
@@ -259,6 +327,49 @@
 			      </form>
 		      </div>
 		    </div>
+		    <div id="modal3" class="modal" style="display: none; opacity: 1; top: 80px!important; font-family: roboto-medium; max-height: 85%;">
+		      <i class="mdi-navigation-close {{brand_color}}-text right modal-action modal-close" style="padding: 10px;"></i>
+              <div id="modal3_content" class="modal-content grey-text row" style="overflow-y:scroll; font-family:roboto-medium">
+                <div class="row">
+	                <img id="report_image" class="responsive-img center col s12 m6" style="margin-top: 12px;" src="" style="display:none;">
+	                <div id="gSV" class="col s12" style="display:none;">
+	                	<div class="sm-green" id='gSVpanorama' style='height: 300px;overflow: hidden;-webkit-transform: translateZ(0px);'></div>
+	                </div>
+	            </div>
+                <p class="col s12 m4"><i style="padding:8px;" class="mdi-action-event sm-blue-text"></i>Date: <span id="report_date" style="color:#53ACA8!important"></span></p>
+                <p class="col s12 m8"><i style="padding:8px;" class="mdi-maps-pin-drop sm-blue-text"></i>Location: <span id="report_address" style="color:#53ACA8!important"></span></p>
+                <p class="col s12 m4"><i style="padding:8px;" class="mdi-action-group-work sm-blue-text"></i>Likeability: <span id="report_likeability" style="color:#53ACA8!important"></span></p>
+                <p class="col s12 m4"><i style="padding:8px;" class="mdi-action-face-unlock sm-blue-text"></i>Feeling: <span id="report_feeling" style="color:#53ACA8!important"></span></p>
+                <p class="col s12 m4"><i style="padding:8px;" class="mdi-av-subtitles sm-blue-text"></i>Place: <span id="report_title" style="color:#53ACA8!important"></span></p>
+		        <p class="col s12 m4"><i style="padding:8px;" class="mdi-social-group-add sm-blue-text"></i>Followers: <span id="report_followers" style="color:#53ACA8!important"></span></p>
+                <p class="col s12" style="margin-bottom:20px;"><i style="padding:8px;" class="mdi-action-description sm-blue-text"></i>Opinion: <span id="report_description" style="color:#53ACA8!important"></span></p>
+                
+                <input id="report_ticket" type="hidden" value="">
+                <input id="report_follows" type="hidden" value="">
+                <input id="report_uuid" type="hidden" value="">
+              </div>
+              <div class="modal-footer grey lighten-3" style="position: fixed; bottom: 0px;">
+                <a href="#" id="followBtn" class="waves-effect waves-white btn sm-green modal-action tooltipped" data-position="top" data-delay="50" data-tooltip="Follow this report will make it appear at your reports section."  onclick="followReport(this)">Follow</a>
+                <a href="#" class="waves-effect waves-teal btn-flat modal-action modal-close" style="margin-right:20px;">Close</a>
+              </div>
+            </div>
+		{% endblock %}
+
+		{% block page_floatings %}
+			{% if path != uri_for('materialize-report-new') %}
+			<!-- Floating Action Button -->
+            <div class="fixed-action-btn" style="bottom: 65px; right: 60px;">
+                <a class="btn-floating btn-large sm-green">
+                  <i class="large mdi-content-add"></i>
+                </a>
+                <ul>
+                  {% if path != uri_for('contact') %}<li><a href="{{ uri_for('contact') }}" class="btn-floating gpe-green-lighten-1"><i class="large mdi-communication-email"></i></a></li>{% endif %}
+                  {% if path != uri_for('landing') %}<li><a href="{{ uri_for('landing') }}" class="btn-floating gpe-green-lighten-1"><i class="large mdi-social-public"></i></a></li>{% endif %}
+                  <li><a href="{{ uri_for('materialize-report-new') }}" class="btn-floating sm-green"><i class="large mdi-maps-place"></i></a></li>
+                </ul>
+            </div>
+            <!-- Floating Action Button -->
+            {% endif %}
 		{% endblock %}
 
 		{% block footer %}
@@ -266,7 +377,7 @@
 			<footer class="page-footer" style="margin-top:0!important; background-color:#f1f1f1!important">
 				<div class="footer-copyright " style="text-align:right;">
 				  <div class="container">
-				  	<a class="white-text" href="{{uri_for("license")}}">MIT License - </a>© 2015 Social Maps, All rights reserved. Powered by <a class="white-text tooltipped" data-position="top" data-delay="50" data-tooltip="Try the Konami-code" href="http://mboilerplate.appspot.com" target="_blank">the amazing MBoilerplate.</a>
+				  	<a class="white-text" href="{{uri_for("license")}}">MIT License - </a>© 2015 Social Maps, All rights reserved. Powered by <a class="white-text tooltipped" data-position="top" data-delay="50" data-tooltip="Try the Konami-code" href="http://usocialmaps.appspot.com" target="_blank">the amazing MBoilerplate.</a>
 				  </div>
 				</div>
 			</footer>
@@ -344,32 +455,6 @@
 						$(".menu-item").click(function(){
 							$('.button-collapse').sideNav('hide');
 						});
-
-						var body = document.body,html = document.documentElement;
-						var height = Math.max( body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight );
-						var scroll_pos = 0;
-					    var animation_begin_pos = 500;
-					    var animation_end_pos = height;
-					    var original_color = new $.Color( 'rgba(0,0,0,0)' );
-					    var beginning_color = new $.Color( 'rgb(32, 88, 113)' );
-					    var ending_color = new $.Color( 'rgb(3, 155, 229)' );
-					    $(document).scroll(function() {
-					        scroll_pos = $(this).scrollTop(); 
-					        if(scroll_pos >= animation_begin_pos && scroll_pos <= animation_end_pos ) { 
-					            var percentScrolled = scroll_pos / ( animation_end_pos - animation_begin_pos );
-					            var newRed = beginning_color.red() + ( ( ending_color.red() - beginning_color.red() ) * percentScrolled );
-					            var newGreen = beginning_color.green() + ( ( ending_color.green() - beginning_color.green() ) * percentScrolled );
-					            var newBlue = beginning_color.blue() + ( ( ending_color.blue() - beginning_color.blue() ) * percentScrolled );
-					            var newColor = new $.Color( newRed, newGreen, newBlue );
-					            $('nav').animate({ backgroundColor: newColor }, 0);
-					        } else if ( scroll_pos > animation_end_pos ) {
-					            $('nav').animate({ backgroundColor: ending_color }, 0);
-					        } else if ( scroll_pos < animation_begin_pos && scroll_pos > 0) {
-					        } else { 
-					            $('nav').animate({ backgroundColor: original_color }, 0);
-
-					        }
-					    });
 
 						var BrowserDetect = {
 							init: function() {
@@ -480,28 +565,71 @@
 			    			if (document.getElementById('login_email').value != "" && document.getElementById('login_password') != ""){
 			    				document.getElementById(formID).submit();
 			    			}else{
-			    				Materialize.toast('<span class="toast-warning">Oops! Are you missing an input field ?</span>',4500);
+			    				Materialize.toast('<span class="toast-warning">Oops! ¿ Te faltó algún campo ?</span>',4500);
 			    			}
 			    		}else if (formID == "form_login"){
 			    			if (document.getElementById('email').value != "" && document.getElementById('password') != ""){
 			    				document.getElementById(formID).submit();
 			    			}else{
-			    				Materialize.toast('<span class="toast-warning">Oops! Are you missing an input field ?</span>',4500);
+			    				Materialize.toast('<span class="toast-warning">Oops! ¿ Te faltó algún campo ?</span>',4500);
 			    			}
 			    		}else if (formID == "form_register_user"){
-			    			if (document.getElementById('register_name').value != "" && document.getElementById('register_email').value != "" && document.getElementById('register_password') != ""){
-			    				document.getElementById(formID).submit();
+			    			if (document.getElementById('register_name').value != "" && document.getElementById('register_email').value != "" && document.getElementById('register_password').value != ""){
+			    				if (cleanUpSpecialChars(document.getElementById('register_password').value) == document.getElementById('register_password').value && cleanUpMailSpecialChars(document.getElementById('register_email').value) == document.getElementById('register_email').value)
+			    					document.getElementById(formID).submit();
+			    				else
+			    					Materialize.toast('<span class="toast-warning">Oops! Por favor evita caracteres especiales en email y contraseña</span>',4500);
+
 			    			}else{
-			    				Materialize.toast('<span class="toast-warning">Oops! Are you missing an input field ?</span>',4500);
+			    				Materialize.toast('<span class="toast-warning">Oops! ¿ Te faltó algún campo ?</span>',4500);
 			    			}
 			    		}else if (formID == "form_register"){
-			    			if (document.getElementById('r_name').value != "" && document.getElementById('r_email').value != "" && document.getElementById('r_password') != ""){
-			    				document.getElementById(formID).submit();
+			    			if (document.getElementById('r_name').value != "" && document.getElementById('r_email').value != "" && document.getElementById('r_password').value != ""){
+			    				if (cleanUpSpecialChars(document.getElementById('r_password').value) == document.getElementById('r_password').value && cleanUpMailSpecialChars(document.getElementById('r_email').value) == document.getElementById('r_email').value)
+			    					document.getElementById(formID).submit();
+			    				else
+			    					Materialize.toast('<span class="toast-warning">Oops! Por favor evita caracteres especiales en email y contraseña</span>',4500);
+
 			    			}else{
-			    				Materialize.toast('<span class="toast-warning">Oops! Are you missing an input field ?</span>',4500);
+			    				Materialize.toast('<span class="toast-warning">Oops! ¿ Te faltó algún campo ?</span>',4500);
 			    			}
 			    		}
 
+					}
+
+					function cleanUpSpecialChars(str){
+						str = str.replace(/[ÀÁÂÃÄÅ]/g,"A");
+						str = str.replace(/[àáâãäå]/g,"a");
+						str = str.replace(/[ÈÉÊË]/g,"E");
+						str = str.replace(/[éèëê]/g,"e");
+						str = str.replace(/[ÍÌÎÏ]/g,"I");
+						str = str.replace(/[íîïì]/g,"i");
+						str = str.replace(/[ÓÖÒÔ]/g,"O");
+						str = str.replace(/[óòôö]/g,"o");
+						str = str.replace(/[ÚÜÛÙ]/g,"U");
+						str = str.replace(/[úùûü]/g,"u");
+						str = str.replace(/[Ñ]/g,"N");
+						str = str.replace(/[ñ]/g,"n");
+						str = str.replace(/[Ç]/g,"C");
+						str = str.replace(/[ç]/g,"c");
+						return str.replace(/[^a-zA-Z0-9 ]/g, "");
+					}
+					function cleanUpMailSpecialChars(str){
+						str = str.replace(/[ÀÁÂÃÄÅ]/g,"A");
+						str = str.replace(/[àáâãäå]/g,"a");
+						str = str.replace(/[ÈÉÊË]/g,"E");
+						str = str.replace(/[éèëê]/g,"e");
+						str = str.replace(/[ÍÌÎÏ]/g,"I");
+						str = str.replace(/[íîïì]/g,"i");
+						str = str.replace(/[ÓÖÒÔ]/g,"O");
+						str = str.replace(/[óòôö]/g,"o");
+						str = str.replace(/[ÚÜÛÙ]/g,"U");
+						str = str.replace(/[úùûü]/g,"u");
+						str = str.replace(/[Ñ]/g,"N");
+						str = str.replace(/[ñ]/g,"n");
+						str = str.replace(/[Ç]/g,"C");
+						str = str.replace(/[ç]/g,"c");
+						return str;
 					}
 				</script>
 			{% endblock %}
@@ -518,7 +646,20 @@
 				<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&libraries=drawing,places,panoramio,weather,visualization"></script>
 				<script src="http://libs.cartocdn.com/cartodb.js/v3/cartodb.js"></script>
                 <script type="text/javascript">
+                	var _query, _table_name = 'public_reports', _sql = new cartodb.SQL({ user: 'usocialmaps' });
+    				var sublayers = [];
+    				var sourceurl = "http://usocialmaps.appspot.com/default/materialize/images/markers/";
+					var catMarkers = [
+						['Not at all', 'red.png'],
+						['A little', 'orange.png'],
+						['As any other', 'amber.png'],
+						['A lot', 'green.png'],
+						['I love it', 'blue.png']
+						];
+
+
 					/* MAPS RELATED */
+					var panorama, sv = new google.maps.StreetViewService();
 					var mapCenter = [25.6765307,-100.2124545],map;
 					google.maps.event.addDomListener(window,'load', init);
                     
@@ -526,17 +667,13 @@
 						/*  MAP  */
 						var mapOptions = {
 							center: new google.maps.LatLng(mapCenter[0], mapCenter[1]),
-							zoom: 14,
+							zoom: 13,
 							minZoom:5,
 							zoomControl: true,
 							zoomControlOptions: {
 								style: google.maps.ZoomControlStyle.SMALL,	
 							},
-							mapTypeControl: true,
-							mapTypeControlOptions: { 
-								mapTypeIds: [google.maps.MapTypeId.SATELLITE, 'style_1','style_2','style_3','style_4'],
-								style: google.maps.MapTypeControlStyle.DROPDOWN_MENU
-							},
+							mapTypeControl: false,
 							scrollwheel: false,
 							streetViewControl: true,
 							panControl:false,
@@ -548,33 +685,45 @@
 						
     					google.maps.event.addDomListener(window, 'resize', function() {
                             map.setCenter({lat: mapCenter[0], lng: mapCenter[1]});
-							/*
-                            window.setTimeout(function() {
-                                  map.panTo({lat: mapCenter[0], lng: mapCenter[1]});
-                            }, 1000);                            
-							*/
                         });
-						
-						/* GMAPS STYLES courtesy of http://snazzymaps.com/ */
-						var styler1 = [{"featureType": "water","stylers": [{ "visibility": "on" },{ "color": "#03A9F4" }]},{"featureType": "road","stylers": [{ "visibility": "off" }]}];
-						var styler1 = [{  "featureType": "administrative",  "stylers": [    { "hue": "#8800ff" },    { "saturation": 17 },    { "lightness": 48 }  ]},{  "featureType": "landscape",  "stylers": [    { "hue": "#ffcc00" },    { "saturation": 81 },    { "lightness": 49 }  ]},{  "featureType": "poi",  "stylers": [    { "saturation": 8 },    { "lightness": 51 }  ]},{  "featureType": "road",  "stylers": [    { "saturation": 1 },    { "lightness": 65 }  ]},{  "featureType": "water",  "stylers": [    { "hue": "#00ddff" },    { "lightness": -4 },    { "saturation": -50 }  ]}]
-						var styler2 = [{"featureType":"water","elementType;":"geometry","stylers":[{"color":"#000000"},{"lightness":17}]},{"featureType":"landscape","elementType":"geometry","stylers":[{"color":"#000000"},{"lightness":20}]},{"featureType":"road.highway","elementType":"geometry.fill","stylers":[{"color":"#000000"},{"lightness":17}]},{"featureType":"road.highway","elementType":"geometry.stroke","stylers":[{"color":"#000000"},{"lightness":29},{"weight":0.2}]},{"featureType":"road.arterial","elementType":"geometry","stylers":[{"color":"#000000"},{"lightness":18}]},{"featureType":"road.local","elementType":"geometry","stylers":[{"color":"#000000"},{"lightness":16}]},{"featureType":"poi","elementType":"geometry","stylers":[{"color":"#000000"},{"lightness":21}]},{"elementType":"labels.text.stroke","stylers":[{"visibility":"on"},{"color":"#000000"},{"lightness":16}]},{"elementType":"labels.text.fill","stylers":[{"saturation":36},{"color":"#000000"},{"lightness":40}]},{"elementType":"labels.icon","stylers":[{"visibility":"off"}]},{"featureType":"transit","elementType":"geometry","stylers":[{"color":"#000000"},{"lightness":19}]},{"featureType":"administrative","elementType":"geometry.fill","stylers":[{"color":"#000000"},{"lightness":20}]},{"featureType":"administrative","elementType":"geometry.stroke","stylers":[{"color":"#000000"},{"lightness":17},{"weight":1.2}]}];
-						var styler3 =[{"featureType":"water","elementType":"geometry","stylers":[{"color":"#a2daf2"}]},{"featureType":"landscape.man_made","elementType":"geometry","stylers":[{"color":"#f7f1df"}]},{"featureType":"landscape.natural","elementType":"geometry","stylers":[{"color":"#d0e3b4"}]},{"featureType":"landscape.natural.terrain","elementType":"geometry","stylers":[{"visibility":"off"}]},{"featureType":"poi.park","elementType":"geometry","stylers":[{"color":"#bde6ab"}]},{"featureType":"poi","elementType":"labels","stylers":[{"visibility":"off"}]},{"featureType":"poi.medical","elementType":"geometry","stylers":[{"color":"#fbd3da"}]},{"featureType":"poi.business","stylers":[{"visibility":"off"}]},{"featureType":"road","elementType":"geometry.stroke","stylers":[{"visibility":"off"}]},{"featureType":"road","elementType":"labels","stylers":[{"visibility":"off"}]},{"featureType":"road.highway","elementType":"geometry.fill","stylers":[{"color":"#ffe15f"}]},{"featureType":"road.highway","elementType":"geometry.stroke","stylers":[{"color":"#efd151"}]},{"featureType":"road.arterial","elementType":"geometry.fill","stylers":[{"color":"#ffffff"}]},{"featureType":"road.local","elementType":"geometry.fill","stylers":[{"color":"black"}]},{"featureType":"transit.station.airport","elementType":"geometry.fill","stylers":[{"color":"#cfb2db"}]}];
-						var styler4 = [{"featureType":"water","stylers":[{"saturation":43},{"lightness":-11},{"hue":"#0088ff"}]},{"featureType":"road","elementType":"geometry.fill","stylers":[{"hue":"#ff0000"},{"saturation":-100},{"lightness":99}]},{"featureType":"road","elementType":"geometry.stroke","stylers":[{"color":"#808080"},{"lightness":54}]},{"featureType":"landscape.man_made","elementType":"geometry.fill","stylers":[{"color":"#ece2d9"}]},{"featureType":"poi.park","elementType":"geometry.fill","stylers":[{"color":"#ccdca1"}]},{"featureType":"road","elementType":"labels.text.fill","stylers":[{"color":"#767676"}]},{"featureType":"road","elementType":"labels.text.stroke","stylers":[{"color":"#ffffff"}]},{"featureType":"poi","stylers":[{"visibility":"off"}]},{"featureType":"landscape.natural","elementType":"geometry.fill","stylers":[{"visibility":"on"},{"color":"#b8cb93"}]},{"featureType":"poi.park","stylers":[{"visibility":"on"}]},{"featureType":"poi.sports_complex","stylers":[{"visibility":"on"}]},{"featureType":"poi.medical","stylers":[{"visibility":"on"}]},{"featureType":"poi.business","stylers":[{"visibility":"simplified"}]}];
-						
-						var styleMap1 = new google.maps.StyledMapType(styler1,{name: "GMaps"});	
-						var styleMap2 = new google.maps.StyledMapType(styler2,{name: "Black"});	
-						var styleMap3 = new google.maps.StyledMapType(styler3,{name: "Apple Maps"});	
-						var styleMap4 = new google.maps.StyledMapType(styler4,{name: "Mapbox"});	
-						
-						map.mapTypes.set('style_1', styleMap1);
-						map.mapTypes.set('style_2', styleMap2);
-						map.mapTypes.set('style_3', styleMap3);
-						map.mapTypes.set('style_4', styleMap4);
 
-						map.setMapTypeId('style_1');
+
+
+						_query= "SELECT * FROM " + _table_name;	    
+                        var interactivity_ = ["cartodb_id", "address","description","feeling","follows","image_url","likeability","title","uuid"];
+						var layerSource = {
+                            user_name: 'usocialmaps',
+                            type: 'cartodb',
+                            sublayers: [{
+                                sql: _query,
+                                cartocss: createTileStyle('normal', _table_name),
+                                interactivity: interactivity_
+
+                            }]
+                        };                        
+                        cartodb.createLayer(map,layerSource)
+                        .on('done', function(layer) {
+						    map.overlayMapTypes.setAt(0, layer);
+                            for (var i = 0; i < layer.getSubLayerCount(); i++) {
+                               sublayers[i] = layer.getSubLayer(i);
+                               console.log("Congrats, you added sublayer #" + i + "!");
+                            }
+                            
+                            sublayers[0].infowindow.set('template', $('#infowindow_'+_table_name).html());
+                            cdb.vis.Vis.addInfowindow(map, sublayers[0], interactivity_, {
+                                infowindowTemplate: $('#infowindow_'+_table_name).html()
+                            });
+                            sublayers[0].setInteraction(true);                                 
+                            sublayers[0].on('featureClick', function(e, latlng, pos, data) {
+                            	  populateModal(data, latlng);
+                            	  console.log(data);
+						    });  
+
+						    _sql.execute(_query).done(function(data) {
+							        $('#rep_count').html(addCommas(data.total_rows));
+						    }) 
+                        });
 					}
-						
 
                     function addCommas(val) {
 					  	while (/(\d+)(\d{3})/.test(val.toString())) {
@@ -582,7 +731,215 @@
 					  	}
 					  	return val;
 					}	
+
+					function createTileStyle(tStyle, table) {
+						var mOverlap;
+						var close;
+						var tileStyle = "#" + table + "{";
+						switch (tStyle) {
+						case 'normal':
+							mOverlap = true;
+							closeStyle = "}";
+							break;
+						case 'cluster':
+							mOverlap = false;
+							closeStyle = "}";
+							break;
+						case 'heat':
+							return "#" + table + "{marker-fill:#4EC8BC;marker-width:10;marker-line-color:#FFF;marker-line-width:1;marker-line-opacity:1;marker-fill-opacity:0.9;marker-comp-op:multiply;marker-type:ellipse;marker-placement:point;marker-allow-overlap:true;marker-clip:false;marker-multi-policy:largest;}";
+						case 'intensity':
+							return "#" + table + "{first/marker-fill:#005761;first/marker-opacity:0.01;first/marker-width:80;first/marker-line-width:0;first/marker-placement:point;first/marker-allow-overlap:true;first/marker-comp-op:lighten;second/marker-fill:#005761;second/marker-opacity:0.02;second/marker-width:50;second/marker-line-width:0;second/marker-placement:point;second/marker-allow-overlap:true;second/marker-comp-op:lighten;third/marker-fill:#005761;third/marker-opacity:0.15;third/marker-width:20;third/marker-line-width:0;third/marker-placement:point;third/marker-allow-overlap:true;third/marker-comp-op:lighten;}";							
+						case 'bubble':
+							mOverlap = false;
+							closeStyle = "}#" + table + "{marker-fill:#FF5C00;marker-line-color:#FFF;marker-line-width:2;marker-line-opacity:1;marker-opacity:0.9;marker-placement:point;marker-type:ellipse;marker-allow-overlap:true;marker-clip:false;marker-multi-policy:largest;}"
+							break;
+						default:
+							mOverlap = true;
+							closeStyle = "}";
+							break;
+						}
+						for (var i = 0; i < catMarkers.length; i++) {
+							tileStyle += "[likeability='" + catMarkers[i][0] + "']{marker-file:url('" + sourceurl  + catMarkers[i][1] + "');marker-clip:true;marker-allow-overlap:" + mOverlap + ";marker-width:80;}";
+						}
+						
+						tileStyle += closeStyle;
+						if (tStyle == "bubble") {
+							for (var j = upperVotes.length - 1; j >= 0; j--) {
+								tileStyle += "#" + table + "[votes<=" + upperVotes[j] + "]{marker-width:" + widthMarkers[j] + ";marker-line-color:yellow;marker-line-width:10;}";
+							}
+						}
+						return tileStyle;
+					}
+
+					function setMapView(mapstyle){
+						sublayers[0].setCartoCSS(createTileStyle(mapstyle, _table_name));
+					}
+
+					function setQ(way, content){
+						if (way == 'likeability')
+							_query = "SELECT * FROM " + _table_name + " WHERE " + way + " ilike '%" + content + "%'";
+            			
+            			sublayers[0].setSQL(_query);
+						_sql.execute(_query).done(function(data) {
+							$('#rep_count').html(addCommas(data.total_rows));
+						}) 
+					}
+
+					function populateModal(data, latlng){
+						if (data.image_url != 'None'){
+							$('#report_image').attr("src", data.image_url );
+							$('#report_image').show();
+							$('#gSV').addClass('m6');							
+						}else{ 
+							$('#report_image').hide();
+							$('#gSV').removeClass('m6');							
+						}
+						$('#report_ticket').val(data.cartodb_id);
+						$('#report_follows').val(data.follows);
+						$('#report_uuid').val(data.uuid);
+						$('#report_followers').html(data.follows);
+						$('#report_likeability').html(getLikeability(data.likeability));
+						$('#report_description').html(data.description);
+						$('#report_title').html(data.title);
+						$('#report_feeling').html(data.feeling);
+						$('#report_address').html(data.address);
+						var qry = "SELECT created FROM " + _table_name + " WHERE cartodb_id = " + data.cartodb_id;
+						_sql.execute(qry).done(function(data) {
+							$('#report_date').html(data.rows[0].created.substr(0,10));
+						});
+						$('#followBtn').html('Follow');
+				
+
+						$('#modal3').openModal();
+						getgSV(latlng)
+						if (document.getElementById('close-infowindow')) document.getElementById('close-infowindow').click();
+					}
+
+					function getgSV(location) {
+						var loc = new google.maps.LatLng(location[0], location[1]);
+						var _gsv = false;
+						sv.getPanoramaByLocation(loc, 50, function(data, status) {
+							if (status == google.maps.StreetViewStatus.OK) {
+								$('#gSV').show();
+								panorama = new google.maps.StreetViewPanorama(
+									document.getElementById('gSVpanorama'), {
+										position: loc,
+										addressControlOptions: {
+										  position: google.maps.ControlPosition.BOTTOM_CENTER
+										},
+										linksControl: false,
+										panControl: false,
+										enableCloseButton: true,
+										scrollwheel: false,
+										zoomControl: false,
+										fullScreenControl: false
+									}
+								);
+								_gsv = true;
+							}else{
+								$('#gSV').hide();
+								_gsv = false;
+							}
+						});
+						return _gsv;
+					}
+
+					function getLikeability(st){
+						switch(st){
+					        case 'Not at all':
+					            return '<a class="red-text" href="#"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> Not at all</a>';   
+					        case 'A little':
+					            return '<a class="orange-text" href="#"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> A little</a>';
+					        case 'As any other':
+					            return '<a class="sm-yellow-text" href="#"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> As any other</a>';
+					        case 'A lot':
+					            return '<a class="sm-green-text" href="#"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> A lot</a>';
+					        case 'I love it':
+					            return '<a class="sm-blue-text" href="#"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> I love it</a>';
+					    }
+					}					
+
+					function followReport(elem){
+						var kind;
+						if (elem.innerHTML.indexOf('Follow') >= 0){
+							kind = 'follow';
+						}
+						else if (elem.innerHTML.indexOf('Unfollow') >= 0){
+							kind = 'unfollow';
+						}
+						else{
+							kind = 'none';
+						}
+
+						$.ajax({
+			                url: "{{ uri_for('materialize-report-follow') }}",
+			                type: 'POST',
+			                data: { 
+						        'report_id': $('#report_ticket').val(),
+						        'user_id': {{user_id}},
+						        '_csrf_token': '{{ csrf_token() }}',
+						        'kind': kind
+						    }
+			            }).done(function(data) {
+			            	console.log(data);
+			            	if (kind == 'follow' && data.status == 'success'){
+			            		elem.innerHTML = elem.innerHTML.replace('Follow','Unfollow');
+			            	}
+			            	if (kind == 'unfollow' && data.status == 'success'){
+			            		elem.innerHTML = elem.innerHTML.replace('Unfollow', 'Follow');
+			            	}
+			            	var qry = "SELECT follows FROM " + gpe_table_name + " WHERE cartodb_id = " + $('#report_ticket').val();
+							gpe_sql.execute(qry).done(function(data) {
+								$('#report_followers').html(data.rows[0].follows);
+								$('#report_follows').val(data.rows[0].follows)
+							});
+							if (data.contents == 'user already following')
+			    				Materialize.toast('<span class="toast-warning">Oops! You already follow this report.</span>',4500);
+							else if (data.contents == 'follow request successful')
+			    				Materialize.toast('<span class="toast-success">You are now following this report.</span>',4500);
+							else if (data.contents == 'unfollow request successful')
+			    				Materialize.toast('<span class="toast-success">You just stopped following the report.</span>',4500);
+			            });
+					}
+
+					function loadComments(){
+						// rep_com = document.getElementById('report_comments');
+
+						//      	var url = "/report/comments/"+idx+"/";
+
+						//          $.ajax({
+						//              url: url,
+						//              type: 'GET',
+						//              success: function(data) { 
+						//                  console.log(data)
+						//              }
+						//          }).done(function(data) {
+						//              rep_com.innerHTML = data.logs.html;
+						//              document.getElementById("report_id").value = idx;
+						//          });
+					}
 				</script>
+
+				<script type="infowindow/html" id="infowindow_nl_public">
+                    {% raw %}
+                    <div class="cartodb-popup v2"> 
+                        <a id="close-infowindow" href="#close" class="cartodb-popup-close-button close">x</a> 
+                        <div class="cartodb-popup-header"> 
+                            <img style="width: 40%; padding:10px;" src="http://devcb.gpegobmx.appspot.com/default/materialize/images/logoC.png?v=1"> 
+                            <p style="color:#DDDDDD; padding-left:10px; margin-bottom:-20px">Likeability</p> 
+                            <h3 style="padding:10px;color:#00464F">{{likeability}}</h3> 
+                            <span class="separator"></span> 
+                        </div> 
+                        <div class="cartodb-popup-content-wrapper"> 
+                            <div class="cartodb-popup-content">                            
+                                <p style="color:#DDDDDD; padding-left:10px; margin-bottom:-10px">Feeling</p> 
+                                <h4 style="padding:10px;color:#00464F">{{feeling}}</h4>
+                            </div> 
+                        </div> 
+                        <div class="cartodb-popup-tip-container"> </div> 
+                    </div> 
+                    {% endraw %}  
+                </script>
 
 			{% endblock %}			
 		{% endblock %}
