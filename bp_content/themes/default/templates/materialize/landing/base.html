@@ -23,6 +23,7 @@
 	  		<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 	  		<link href="/{{theme}}/materialize/css/materialize.min.css" type="text/css" rel="stylesheet" media="screen,projection">		    
 		    <link href="/{{theme}}/materialize/css/style.css" type="text/css" rel="stylesheet" media="screen,projection">
+		    <link rel="stylesheet" href="http://libs.cartocdn.com/cartodb.js/v3/3.15/themes/css/cartodb.css">
 		    <style type="text/css">
 	    		.toast {background-color: white!important; border-radius: 40px;}
 	    		.toast-success{ color: #25CD67!important; line-height: 18px;}
@@ -122,6 +123,12 @@
 				    <li id="nav-login"><a href="#modal1" class="modal-trigger menu-item btn white grey-text" style="font-family: roboto-black;margin-left: 20px;margin-right: 20px;">Login</a></li>
 				    <li id="nav-register"><a href="#modal2" class="modal-trigger menu-item btn white grey-text" style="font-family: roboto-black;margin-left: 20px;margin-right: 20px;">Sign up</a></li>
 				    {% else %}
+				    {% if path != uri_for('landing') %}
+				    <li id="nav-lan"><a href="{{ uri_for('landing') }}" class="menu-item btn white grey-text" style="font-family: roboto-black;margin-left: 20px;margin-right: 20px;">Map</a></li>
+				    {% endif %}
+					{% if path != uri_for('materialize-report-new') %}
+				    <li id="nav-rep-new"><a href="{{ uri_for('materialize-report-new') }}" class="menu-item btn white grey-text" style="font-family: roboto-black;margin-left: 20px;margin-right: 20px;">Add a place</a></li>
+				    {% endif %}
 				    <ul id="profile-dropdown" class="dropdown-content" style="margin-top:10px; border-radius:4px; padding:10px">
 		                  <li><a  style="font-size: 1rem;padding: 0.5rem; font-family:roboto-medium;" class="{{brand_color}}-text" href="{{ uri_for("materialize-settings-profile") }}">Profile</a>
 	                        </li>
@@ -173,8 +180,14 @@
                                 </div>
                             </li>
                         </ul>
-                     </li>
-				     <li class="divider"></li>
+                    </li>				    
+				    <li class="divider"></li>
+					{% if path != uri_for('landing') %}
+					<li id="nav-lan"><a href="{{ uri_for('landing') }}" class="menu-item btn white grey-text" style="font-family: roboto-black;margin-left: 20px;margin-right: 20px;">Map</a></li>
+					{% endif %}
+					{% if path != uri_for('materialize-report-new') %}
+					<li id="nav-rep-new"><a href="{{ uri_for('materialize-report-new') }}" class="menu-item btn white grey-text" style="font-family: roboto-black;margin-left: 20px;margin-right: 20px;">Add a place</a></li>
+					{% endif %}
 				    {% endif %}
 				  </ul>
 				</div>
@@ -194,7 +207,7 @@
                     <div class="collapsible-header white-text truncate sm-blue"> Currently <span id="rep_count" style="font-family: roboto-regular;">0</span> reports.</div>
                   </li>
                   <li>
-                    <div class="collapsible-header white-text sm-blue"><i class="mdi-device-dvr"></i> Change view</div>
+                    <div class="collapsible-header white-text sm-blue" style="    background-color: #47C4D6!important;"><i class="mdi-device-dvr"></i> Change view</div>
                     <div class="collapsible-body white lighten-5 center">
                       <div class="row">
                       	<div class="col s6" style="margin-top:15px;"><a class="btn-floating btn-large waves-effect waves-light green tooltipped" data-position="top" data-delay="50" data-tooltip="Normal" onclick="setMapView('normal');"><i class="mdi-maps-place"></i></a></div>
@@ -207,7 +220,7 @@
                     </div>
                   </li>
                   <li>
-                    <div class="collapsible-header gpe-green-darken-1 white-text sm-blue"><i class="mdi-content-filter-list"></i> Filter</div>
+                    <div class="collapsible-header gpe-green-darken-1 white-text sm-blue" style="    background-color: #35B3C5!important;"><i class="mdi-content-filter-list"></i> Filter</div>
                     <div class="collapsible-body white lighten-5">
                       <div class="row">
                       	<p>Likeability:</p>
@@ -341,16 +354,23 @@
                 <p class="col s12 m4"><i style="padding:8px;" class="mdi-action-group-work sm-blue-text"></i>Likeability: <span id="report_likeability" style="color:#53ACA8!important"></span></p>
                 <p class="col s12 m4"><i style="padding:8px;" class="mdi-action-face-unlock sm-blue-text"></i>Feeling: <span id="report_feeling" style="color:#53ACA8!important"></span></p>
                 <p class="col s12 m4"><i style="padding:8px;" class="mdi-av-subtitles sm-blue-text"></i>Place: <span id="report_title" style="color:#53ACA8!important"></span></p>
-		        <p class="col s12 m4"><i style="padding:8px;" class="mdi-social-group-add sm-blue-text"></i>Followers: <span id="report_followers" style="color:#53ACA8!important"></span></p>
+		        <p class="col s12 "><i style="padding:8px;" class="mdi-social-group-add sm-blue-text"></i>Followers: <span id="report_followers" style="color:#53ACA8!important"></span> {% if user_id %}<a href="#" id="followBtn" class="waves-effect waves-white btn sm-green modal-action tooltipped" data-position="top" data-delay="50" data-tooltip="Follow this report will make it appear at your reports section."  onclick="followReport(this)" style="    margin-left: 16px;">Follow</a>{% endif %}</p>
                 <p class="col s12" style="margin-bottom:20px;"><i style="padding:8px;" class="mdi-action-description sm-blue-text"></i>Opinion: <span id="report_description" style="color:#53ACA8!important"></span></p>
-                
+                <p class="col s12" style="margin-bottom:20px;"><i style="padding:8px;" class="mdi-action-speaker-notes sm-blue-text"></i>Comments: <br><span id="report_comments" style="color:#53ACA8!important"></span></p>
+                {% if user_id %}
+                <div class="row">
+                    <div class="input-field col s11 offset-s1 m7 offset-m1">
+                        <textarea id="commentbox" name="commentbox" class="materialize-textarea" length="500" style="height: 22px;" type="text" ></textarea>
+                        <label for="commentbox">Add a comment here...</label>
+                    </div>
+                    <div class="input-field col s11 offset-s1 m7 offset-m1">
+		            	<a class="btn waves-effect waves-light sm-green white-text right" style="cursor:pointer;" id="submit_report_form_comment">Comment <i class="mdi-content-send right"></i></a>
+		            </div>
+                </div> 
+                {% endif %}
                 <input id="report_ticket" type="hidden" value="">
                 <input id="report_follows" type="hidden" value="">
                 <input id="report_uuid" type="hidden" value="">
-              </div>
-              <div class="modal-footer grey lighten-3" style="position: fixed; bottom: 0px;">
-                <a href="#" id="followBtn" class="waves-effect waves-white btn sm-green modal-action tooltipped" data-position="top" data-delay="50" data-tooltip="Follow this report will make it appear at your reports section."  onclick="followReport(this)">Follow</a>
-                <a href="#" class="waves-effect waves-teal btn-flat modal-action modal-close" style="margin-right:20px;">Close</a>
               </div>
             </div>
 		{% endblock %}
@@ -643,7 +663,7 @@
 			{% endif %}
 
 			{% block page_scripts %}
-				<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&libraries=drawing,places,panoramio,weather,visualization"></script>
+				<script src="https://maps.googleapis.com/maps/api/js?v=3&libraries=drawing,places,panoramio,weather,visualization"></script>
 				<script src="http://libs.cartocdn.com/cartodb.js/v3/cartodb.js"></script>
                 <script type="text/javascript">
                 	var _query, _table_name = 'public_reports', _sql = new cartodb.SQL({ user: 'usocialmaps' });
@@ -749,25 +769,16 @@
 							return "#" + table + "{marker-fill:#4EC8BC;marker-width:10;marker-line-color:#FFF;marker-line-width:1;marker-line-opacity:1;marker-fill-opacity:0.9;marker-comp-op:multiply;marker-type:ellipse;marker-placement:point;marker-allow-overlap:true;marker-clip:false;marker-multi-policy:largest;}";
 						case 'intensity':
 							return "#" + table + "{first/marker-fill:#005761;first/marker-opacity:0.01;first/marker-width:80;first/marker-line-width:0;first/marker-placement:point;first/marker-allow-overlap:true;first/marker-comp-op:lighten;second/marker-fill:#005761;second/marker-opacity:0.02;second/marker-width:50;second/marker-line-width:0;second/marker-placement:point;second/marker-allow-overlap:true;second/marker-comp-op:lighten;third/marker-fill:#005761;third/marker-opacity:0.15;third/marker-width:20;third/marker-line-width:0;third/marker-placement:point;third/marker-allow-overlap:true;third/marker-comp-op:lighten;}";							
-						case 'bubble':
-							mOverlap = false;
-							closeStyle = "}#" + table + "{marker-fill:#FF5C00;marker-line-color:#FFF;marker-line-width:2;marker-line-opacity:1;marker-opacity:0.9;marker-placement:point;marker-type:ellipse;marker-allow-overlap:true;marker-clip:false;marker-multi-policy:largest;}"
-							break;
 						default:
 							mOverlap = true;
 							closeStyle = "}";
 							break;
 						}
 						for (var i = 0; i < catMarkers.length; i++) {
-							tileStyle += "[likeability='" + catMarkers[i][0] + "']{marker-file:url('" + sourceurl  + catMarkers[i][1] + "');marker-clip:true;marker-allow-overlap:" + mOverlap + ";marker-width:80;}";
+							tileStyle += "[likeability='" + catMarkers[i][0] + "']{marker-file:url('" + sourceurl  + catMarkers[i][1] + "');marker-line-color: #FFF;marker-line-opacity: 1;marker-line-width: 5;marker-allow-overlap:" + mOverlap + ";marker-width:80;}";
 						}
 						
 						tileStyle += closeStyle;
-						if (tStyle == "bubble") {
-							for (var j = upperVotes.length - 1; j >= 0; j--) {
-								tileStyle += "#" + table + "[votes<=" + upperVotes[j] + "]{marker-width:" + widthMarkers[j] + ";marker-line-color:yellow;marker-line-width:10;}";
-							}
-						}
 						return tileStyle;
 					}
 
@@ -797,6 +808,7 @@
 						$('#report_ticket').val(data.cartodb_id);
 						$('#report_follows').val(data.follows);
 						$('#report_uuid').val(data.uuid);
+						$('#commentbox').val('');
 						$('#report_followers').html(data.follows);
 						$('#report_likeability').html(getLikeability(data.likeability));
 						$('#report_description').html(data.description);
@@ -808,10 +820,10 @@
 							$('#report_date').html(data.rows[0].created.substr(0,10));
 						});
 						$('#followBtn').html('Follow');
-				
+						loadComments();
+						getgSV(latlng)
 
 						$('#modal3').openModal();
-						getgSV(latlng)
 						if (document.getElementById('close-infowindow')) document.getElementById('close-infowindow').click();
 					}
 
@@ -847,14 +859,19 @@
 					function getLikeability(st){
 						switch(st){
 					        case 'Not at all':
+					            document.getElementById("modal3_content").style.borderLeft = "thick solid #FD5D47";
 					            return '<a class="red-text" href="#"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> Not at all</a>';   
 					        case 'A little':
+					            document.getElementById("modal3_content").style.borderLeft = "thick solid #FFAA1E";
 					            return '<a class="orange-text" href="#"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> A little</a>';
 					        case 'As any other':
+					            document.getElementById("modal3_content").style.borderLeft = "thick solid #F3CA59";
 					            return '<a class="sm-yellow-text" href="#"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> As any other</a>';
 					        case 'A lot':
+					            document.getElementById("modal3_content").style.borderLeft = "thick solid #B3DA93";
 					            return '<a class="sm-green-text" href="#"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> A lot</a>';
 					        case 'I love it':
+					            document.getElementById("modal3_content").style.borderLeft = "thick solid #66D7E6";
 					            return '<a class="sm-blue-text" href="#"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> I love it</a>';
 					    }
 					}					
@@ -882,14 +899,14 @@
 						    }
 			            }).done(function(data) {
 			            	console.log(data);
-			            	if (kind == 'follow' && data.status == 'success'){
+			            	if (kind == 'follow' && data.status == 'success' && data.contents != 'user is creator'){
 			            		elem.innerHTML = elem.innerHTML.replace('Follow','Unfollow');
 			            	}
-			            	if (kind == 'unfollow' && data.status == 'success'){
+			            	if (kind == 'unfollow' && data.status == 'success' && data.contents != 'user is creator'){
 			            		elem.innerHTML = elem.innerHTML.replace('Unfollow', 'Follow');
 			            	}
-			            	var qry = "SELECT follows FROM " + gpe_table_name + " WHERE cartodb_id = " + $('#report_ticket').val();
-							gpe_sql.execute(qry).done(function(data) {
+			            	var qry = "SELECT follows FROM " + _table_name + " WHERE cartodb_id = " + $('#report_ticket').val();
+							_sql.execute(qry).done(function(data) {
 								$('#report_followers').html(data.rows[0].follows);
 								$('#report_follows').val(data.rows[0].follows)
 							});
@@ -899,38 +916,59 @@
 			    				Materialize.toast('<span class="toast-success">You are now following this report.</span>',4500);
 							else if (data.contents == 'unfollow request successful')
 			    				Materialize.toast('<span class="toast-success">You just stopped following the report.</span>',4500);
+							else if (data.contents == 'user is creator')
+			    				Materialize.toast('<span class="toast-success">You created this report, it is already at your reports.</span>',4500);
 			            });
 					}
 
 					function loadComments(){
-						// rep_com = document.getElementById('report_comments');
-
-						//      	var url = "/report/comments/"+idx+"/";
-
-						//          $.ajax({
-						//              url: url,
-						//              type: 'GET',
-						//              success: function(data) { 
-						//                  console.log(data)
-						//              }
-						//          }).done(function(data) {
-						//              rep_com.innerHTML = data.logs.html;
-						//              document.getElementById("report_id").value = idx;
-						//          });
+						var url = "/report/comments/"+$('#report_uuid').val()+"/";
+				         $.ajax({
+				             url: url,
+				             type: 'GET',
+				             success: function(data) { 
+				                 console.log(data)
+				             }
+				         }).done(function(data) {
+				             $('#report_comments').html(data.logs.html);
+				         });
 					}
+
+					document.querySelector('#submit_report_form_comment').addEventListener('click', function() { 
+						if (document.getElementById("commentbox").value == '')
+		    	            Materialize.toast('<span class="toast-warning">Oops! Write a comment please.</span>',4500);
+		    	        else{
+		    	        	var url = "{{ uri_for('materialize-report-comments-add') }}?report_id="+$('#report_uuid').val()+"&comment=" + document.getElementById("commentbox").value;
+					         $.ajax({
+					             url: url,
+					             type: 'GET',
+					             success: function(data) { 
+					                 console.log(data)
+					             }
+					         }).done(function(data) {
+					         	 if (data.status == 'success'){
+					             	loadComments();
+									$('#commentbox').val('');
+			    					Materialize.toast('<span class="toast-success">Your comment has been saved.</span>',4500);
+					         	 }else{
+			    					Materialize.toast('<span class="toast-warning">Something went wrong, please try again later.</span>',4500);
+					         	 }
+					         });
+		    	        }	            	            
+			        });
 				</script>
 
-				<script type="infowindow/html" id="infowindow_nl_public">
+				<script type="infowindow/html" id="infowindow_public_reports">
                     {% raw %}
                     <div class="cartodb-popup v2"> 
                         <a id="close-infowindow" href="#close" class="cartodb-popup-close-button close">x</a> 
                         <div class="cartodb-popup-header"> 
-                            <img style="width: 40%; padding:10px;" src="http://devcb.gpegobmx.appspot.com/default/materialize/images/logoC.png?v=1"> 
+                            <img style="width: 40%; padding:10px;" src="http://usocialmaps.appspot.com/default/materialize/images/logoH.png"> 
                             <p style="color:#DDDDDD; padding-left:10px; margin-bottom:-20px">Likeability</p> 
                             <h3 style="padding:10px;color:#00464F">{{likeability}}</h3> 
                             <span class="separator"></span> 
                         </div> 
-                        <div class="cartodb-popup-content-wrapper"> 
+                        <div class="cartodb-popup-content-wrapper" style="width:235px;    max-width: 235px;"> 
                             <div class="cartodb-popup-content">                            
                                 <p style="color:#DDDDDD; padding-left:10px; margin-bottom:-10px">Feeling</p> 
                                 <h4 style="padding:10px;color:#00464F">{{feeling}}</h4>

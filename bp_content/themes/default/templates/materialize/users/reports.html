@@ -39,12 +39,11 @@
 		                                <i class="{% if kind == 'follow' %}mdi-social-notifications-none{% else %}mdi-action-info{% endif %}" style="font-size:40px; margin-top:11px;"></i>
 		                            </a>
 		                            <h4 class="card-title grey-text text-darken-4">
-		                                <a href="#" class="grey-text text-darken-4 activator">{{likeability}}</a>
+		                                <a href="#" class="grey-text text-darken-4 activator" style="color:#{{color}}!important"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> {{likeability}}</a>
 		                            </h4>		                            
 		                            <p class="activator" style="cursor: pointer; line-height: 40px;"><span class="grey-text text-lighten-2 activator">Click here to see details.</span></p>
 									
-									{% if log_count > 0 %}<p class="" style="cursor: pointer; line-height: 40px;"><i class="mdi-action-speaker-notes sm-green-text"></i>Comments: <span style="color:#53ACA8!important">{{log_count}}</span> <a class="grey-text text-lighten-2 modal-trigger" href="#modal_comments" onclick="populateModal({{idx}})">(click to read and comment)</a></p>
-		                            {% endif %}
+									<p class="" style="cursor: pointer; line-height: 40px;"><i class="mdi-action-speaker-notes sm-green-text"></i>Comments: <span style="color:#53ACA8!important">{{log_count}}</span> <a class="grey-text text-lighten-2 modal-trigger" href="#modal_comments" onclick="populateModal({{idx}})">(click to read and comment)</a></p>
 
 		                            {% if kind == 'follow' %}<p class="" style="cursor: pointer; line-height: 40px;"><i class="mdi-social-notifications-none sm-green-text"></i><span style="color:#53ACA8!important">Following</span> <a class="grey-text text-lighten-2" href="#" onclick="followReport({{cdb_id}}, {{idx}})">(click here to unfollow)</a></p>
 		                            {% endif %}
@@ -52,13 +51,13 @@
 		                        <div class="card-reveal" style="border-left: 5px solid #{{color}};">
 		                            <span class="card-title grey-text text-darken-4"><i class="mdi-navigation-close right"></i></span>                   
 		                            {% if image_url %}<img class="responsive-img center z-depth-2" style="margin-top: 12px;" src="{{image_url}}">{% endif %}
-		                            <p><i style="padding:8px;" class="mdi-action-event sm-green-text"></i>Date: <span style="color:#53ACA8!important">{{created}}</span></p>
-		                            <p><i style="padding:8px;" class="mdi-maps-pin-drop sm-green-text"></i>Location: <span style="color:#53ACA8!important">{{address_from}}</span></p>
-		                            <p><i style="padding:8px;" class="mdi-action-group-work sm-green-text"></i>Likeability: <span style="color:#53ACA8!important">{{likeability}}</span></p>
-		                            <p><i style="padding:8px;" class="mdi-image-style sm-green-text"></i>Feeling: <span style="color:#53ACA8!important">{{feeling}}</span></p>
-		                            <p><i style="padding:8px;" class="mdi-action-description sm-green-text"></i>Description: <span style="color:#53ACA8!important">{{description}}</span></p>
-		                            <p><i style="padding:8px;" class="mdi-action-book sm-green-text"></i>Place: <span style="color:#53ACA8!important">{{title}}</span></p>
-		                            <p><i style="padding:8px;" class="mdi-social-group-add sm-green-text"></i>Followers: <span style="color:#53ACA8!important">{{follows}}</span></p>
+		                            <p><i style="padding:8px;" class="mdi-action-event sm-green-text"></i>Date: <span style="color:#{{color}}!important">{{created}}</span></p>
+		                            <p><i style="padding:8px;" class="mdi-maps-pin-drop sm-green-text"></i>Location: <span style="color:#{{color}}!important">{{address_from}}</span></p>
+		                            <p><i style="padding:8px;" class="mdi-action-group-work sm-green-text"></i>Likeability: <span style="color:#{{color}}!important"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> {{likeability}}</span></p>
+		                            <p><i style="padding:8px;" class="mdi-image-style sm-green-text"></i>Feeling: <span style="color:#{{color}}!important">{{feeling}}</span></p>
+		                            <p><i style="padding:8px;" class="mdi-action-description sm-green-text"></i>Description: <span style="color:#{{color}}!important">{{description}}</span></p>
+		                            <p><i style="padding:8px;" class="mdi-action-book sm-green-text"></i>Place: <span style="color:#{{color}}!important">{{title}}</span></p>
+		                            <p><i style="padding:8px;" class="mdi-social-group-add sm-green-text"></i>Followers: <span style="color:#{{color}}!important">{{follows}}</span></p>
 		                        </div>
 		                    </div>
 		                </div>
@@ -95,24 +94,24 @@
           <div class="modal-content">
               <div class="row">
                     <div class="input-field col s12 center">
-                      <p class="center login-form-text">Este es el historial de cambios de tu reporte. Si tienes algo que agregar, no dudes en comentarlo.</p>
-                      <p class="center login-form-text">Para agregar un comentario llena la casilla inferior y da clic en comentar.</p>
+                      <p class="center login-form-text">This is the conversation around your report. If you got anything else to say, please don't hesitate.</p>
+                      <p class="center login-form-text">To add a comment, fill in the text input and click comment.</p>
                     </div>
                     <div class="row">
                       <div class="container">
                           <div class="row">
-							<div class="input-field container col s12" id="report_comments" style="font-weight:bold;">              
+							<div class="input-field container col s12" id="report_comments" style="font-weight:bold;margin-top:15px;">              
                             </div>
                             <div class="row">
 		                        <div class="input-field col s12 l6 right">
 		                            <i class="mdi-maps-map prefix sm-green-text"></i>
 		                            <textarea id="commentbox" name="commentbox" class="materialize-textarea" length="500" style="height: 22px;" type="text" ></textarea>
-		                            <label for="commentbox">Escribe aquí tu comentario</label>
+		                            <label for="commentbox">Write your comment here</label>
 		                        </div>
 		                    </div> 
                           	<div class="input-field col s12">
-                              <a class="btn-large waves-effect waves-light col s4 grey white-text modal-action modal-close" style="cursor:pointer;">Cerrar</a>
-                              <a class="btn-large waves-effect waves-light col s4 offset-s4 sm-green white-text" style="cursor:pointer;" id="submit_report_form_comment">Comentar</a>
+                              <a class="btn-large waves-effect waves-light col s4 grey white-text modal-action modal-close" style="cursor:pointer;">Close</a>
+                              <a class="btn-large waves-effect waves-light col s4 offset-s4 sm-green white-text" style="cursor:pointer;" id="submit_report_form_comment">Comment</a>
                             </div>
                           </div>
                       </div>
@@ -197,7 +196,7 @@
 
 			document.querySelector('#submit_report_form_comment').addEventListener('click', function() { 
 				if (document.getElementById("commentbox").value == '')
-    	            Materialize.toast('<span class="toast-warning">Oops! Escribe un comentario por favor.</span>',4500);
+    	            Materialize.toast('<span class="toast-warning">Oops! Write a comment please.</span>',4500);
     	        else{
     	        	document.getElementById("comment").value = document.getElementById("commentbox").value;
 			        document.getElementById("delete").value = "confirmed_comment";

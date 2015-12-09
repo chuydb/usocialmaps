@@ -1,5 +1,6 @@
 from webapp2_extras.appengine.auth.models import User
 from google.appengine.ext import ndb, blobstore
+import datetime
 
 #--------------------------------------- USER MODEL PROPERTIES  -----------------------------------------------------------         
 class Rewards(ndb.Model):
@@ -162,6 +163,19 @@ class Report(ndb.Model):
             break
         return '---'
 
+    def get_color(self):
+        if self.likeability == 'Not at all':
+            return 'FD5D47'
+        if self.likeability == 'A little':
+            return 'FFAA1E'
+        if self.likeability == 'As any other':
+            return 'F3CA59'
+        if self.likeability == 'A lot':
+            return 'B3DA93'
+        if self.likeability == 'I love it':
+            return '66D7E6'
+        return '9e9e9e'
+
     @classmethod
     def get_by_cdb(cls, cdb_id):
         return cls.query(cls.cdb_id == cdb_id).get()
@@ -187,7 +201,7 @@ class Comments(ndb.Model):
             return None
 
     def get_formatted_date(self):
-        return datetime.datetime(self.created.year,self.created.month,self.created.day, self.created.hour, self.created.minute, self.created.second).strftime("%Y-%m-%d a las %X %p (GMT-00)")
+        return datetime.datetime(self.created.year,self.created.month,self.created.day, self.created.hour, self.created.minute, self.created.second).strftime("%Y-%m-%d at %X (GMT-00)")
 
 class Followers(ndb.Model):
     user_id = ndb.IntegerProperty(required = True)

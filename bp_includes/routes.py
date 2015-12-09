@@ -43,6 +43,7 @@ _routes = [
     RedirectRoute('/report/image/upload/<report_id>', handlers.MaterializeReportUploadImageHandler, name='report-image-upload', strict_slash=True),
     RedirectRoute('/report/success/', handlers.MaterializeNewReportSuccessHandler, name='materialize-report-success', strict_slash=True),
     RedirectRoute('/report/comments/<report_id>/', handlers.MaterializeReportCommentsHandler, name='materialize-report-comments', strict_slash=True),
+    RedirectRoute('/report/comment/add/', handlers.MaterializeReportCommentsAddHandler, name='materialize-report-comments-add', strict_slash=True),
     RedirectRoute('/report/follow/', handlers.MaterializeFollowRequestHandler, name='materialize-report-follow', strict_slash=True), 
     
     # Statics

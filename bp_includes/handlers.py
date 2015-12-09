@@ -988,7 +988,7 @@ class MaterializeFollowRequestHandler(BaseHandler):
         try:
             report = models.Report.get_by_cdb(int(report_id))
             if report:
-                if kind == 'follow':
+                if kind == 'follow' and report.user_id != int(user_id):
                     follower = models.Followers.query(ndb.AND(models.Followers.user_id == long(user_id),models.Followers.report_id == long(report_id)))
                     if follower.count() == 0 and report:
                         _u = models.User.get_by_id(long(user_id))
@@ -1012,7 +1012,7 @@ class MaterializeFollowRequestHandler(BaseHandler):
                     elif follower.count() == 1:
                         reportDict['contents'] = 'user already following'
                     reportDict['status'] = 'success'
-                elif kind == 'unfollow':
+                elif kind == 'unfollow' and report.user_id != int(user_id):
                     follower = models.Followers.query(ndb.AND(models.Followers.user_id == long(user_id),models.Followers.report_id == long(report_id)))
                     if follower.count > 0:
                         for _f in follower:
@@ -1031,6 +1031,12 @@ class MaterializeFollowRequestHandler(BaseHandler):
                             t = urlfetch.fetch(url)
                     reportDict['status'] = 'success'
                     reportDict['contents'] = 'unfollow request successful'
+                elif report.user_id == int(user_id):
+                    reportDict['status'] = 'success'
+                    reportDict['contents'] = 'user is creator'
+                    reportDict['report_id'] = report_id
+                    reportDict['user_id'] = user_id
+                    reportDict['kind'] = kind
             else:
                 reportDict['status'] = 'success'
                 reportDict['contents'] = 'nothing to do here'
@@ -1052,27 +1058,26 @@ class MaterializeReportCommentsHandler(BaseHandler):
     def get(self,report_id):
         reportDict = {}
         logs = models.Comments.query(models.Comments.report_id == int(report_id))
-        logs = logs.order(-models.Comments.created)
+        logs = logs.order(models.Comments.created)
         
         html = '<ul class="collection" style="overflow:scroll;">'
         for log in logs:
-            if log.kind != 'note':
-                user = log.get_user()            
-                if user:
-                    image = user.get_image_url()
-                    initial_letter = user.name[1]
-                    name = user.name
-                else:
-                    image = -1
-                    initial_letter = log.user_email[1]
-                    name = ''
-                html+= '<li class="collection-item avatar" style="overflow:scroll;    text-align: right;">'
-                if image != -1:
-                    html+= '<img src="%s" alt="" class="circle" style="width: 60px;height: 60px;">' % image
-                else:
-                    html+= '<i class="mdi-action-face-unlock circle"></i>'
-                html+= '<span class="title right"><span class="orange-text">%s &lt;%s&gt;</span>:</span><br><p class="right"><span class="light-blue-text">%s</span><br>%s</p>' % (name, log.user_email, log.get_formatted_date(), log.contents)
-                html+= '</li>'
+            user = log.get_user()            
+            if user:
+                image = user.get_image_url()
+                initial_letter = user.name[1]
+                name = user.name
+            else:
+                image = -1
+                initial_letter = log.user_email[1]
+                name = ''
+            html+= '<li class="collection-item avatar" style="overflow:scroll;    text-align: right;">'
+            if image != -1:
+                html+= '<img src="%s" alt="" class="circle" style="width: 60px;height: 60px;">' % image
+            else:
+                html+= '<i class="mdi-action-face-unlock circle"></i>'
+            html+= '<span class="title right"><span class="sm-yellow-text">%s &lt;%s&gt;:</span></span><br><p class="right"><span class="sm-blue-text">%s</span><br>%s</p>' % (name, log.user_email, log.get_formatted_date(), log.contents)
+            html+= '</li>'
         html += '</ul>'
         reportDict['logs'] = {
             'html': html
@@ -1096,13 +1101,13 @@ class MaterializeReportsRequestHandler(BaseHandler):
             try:
                 params['reports'] = []
                 for report in user_reports:
-                    params['reports'].append((report.key.id(), report.title, report.created, report.address_from_coord, report.address_from, report.description, report.image_url, report.likeability, report.feeling, report.cdb_id, report.follows, report.get_log_count(), '66D7E6', 'own'))
+                    params['reports'].append((report.key.id(), report.title, report.created, report.address_from_coord, report.address_from, report.description, report.image_url, report.likeability, report.feeling, report.cdb_id, report.follows, report.get_log_count(), report.get_color(), 'own'))
                 try:
                     follows = models.Followers.query(models.Followers.user_id == int(user_info.key.id()))
                     for follow in follows:
                         report = models.Report.get_by_cdb(int(follow.report_id))
                         if report:
-                            params['reports'].append((report.key.id(), report.title, report.created, report.address_from_coord, report.address_from, report.description, report.image_url, report.likeability, report.feeling, report.cdb_id, report.follows, report.get_log_count(), '66D7E6', 'follow'))
+                            params['reports'].append((report.key.id(), report.title, report.created, report.address_from_coord, report.address_from, report.description, report.image_url, report.likeability, report.feeling, report.cdb_id, report.follows, report.get_log_count(), report.get_color(), 'follow'))
                 except:
                     pass
             except (AttributeError, TypeError), e:
@@ -1119,26 +1124,16 @@ class MaterializeReportsRequestHandler(BaseHandler):
         report_id = self.request.get('report_id')
         
         try:
-            if delete == 'confirmed_deletion':
-                report_info = models.Report.get_by_id(long(report_id))
-                if report_info:
-                    report_info.req_deletion = True
-            if delete == 'confirmed_cancelation':
-                report_info = models.Report.get_by_id(long(report_id))
-                if report_info:
-                    report_info.req_deletion = False
             if delete == 'confirmed_comment':
                 user_info = self.user_model.get_by_id(long(self.user_id))
                 report_info = models.Report.get_by_id(long(report_id))
                 if report_info:
-                    report_info.status = 'answered'
                     log_info = models.Comments()
                     log_info.user_email = user_info.email.lower()
                     log_info.report_id = int(report_id)
                     log_info.contents = self.request.get('comment')
                     log_info.put()                
 
-            report_info.put()
             self.add_message(messages.inquiry_success, 'success')
             return self.get()
 
@@ -1147,6 +1142,33 @@ class MaterializeReportsRequestHandler(BaseHandler):
             self.add_message(messages.saving_error, 'danger')
             return self.get()
 
+class MaterializeReportCommentsAddHandler(BaseHandler):
+    @user_required
+    def get(self):
+        reportDict = {}
+        report_id = self.request.get('report_id')
+        comments = self.request.get('comment')
+
+        try:
+            user_info = self.user_model.get_by_id(long(self.user_id))
+            report_info = models.Report.get_by_id(long(report_id))
+            if report_info:
+                log_info = models.Comments()
+                log_info.user_email = user_info.email.lower()
+                log_info.report_id = int(report_id)
+                log_info.contents = comments
+                log_info.put()                
+
+            reportDict['status'] = 'success'
+
+        except (AttributeError, KeyError, ValueError), e:
+            logging.error('Error updating report: %s ' % e)
+            reportDict['status'] = 'error: %s' % e
+            pass
+
+        self.response.headers.add_header("Access-Control-Allow-Origin", "*")
+        self.response.headers['Content-Type'] = 'application/json'
+        self.response.write(json.dumps(reportDict))
 
 # USER
 class MaterializeSettingsProfileRequestHandler(BaseHandler):
