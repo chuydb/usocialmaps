@@ -26,19 +26,19 @@ config = {
     'facebook_url': '',
     'meta_tags_code': """
             <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-            <meta name="description" content="This an amazing, magical materialized boilerplate for the Google AppEngine." />
+            <meta name="description" content="This an amazing, magical materialized app built with Mboilerplate for the Google AppEngine." />
             <meta name="keywords" content="mboilerplate, appengine, materialize, boilerplate, webcomponents, google cloud, gae"/>
             <meta property="og:site_name" content="usocialmaps.appspot.com"/>
-            <meta property="og:title" content="MBoilerplate"/>
+            <meta property="og:title" content="Social Maps"/>
             <meta property="og:type" content="website"/>
-            <meta property="og:description" content="This an amazing, magical materialized boilerplate for the Google AppEngine."/>
+            <meta property="og:description" content="This an amazing, magical materialized app built with Mboilerplate for the Google AppEngine."/>
             <meta property="og:url" content="http://usocialmaps.appspot.com"/>
             <meta property="og:image" content="http://usocialmaps.appspot.com/{{theme}}/materialize/images/landing/map.png"/>
             <meta name="twitter:card" content="summary_large_image">
-            <meta name="twitter:site" content="This an amazing, magical materialized boilerplate for the Google AppEngine.">
+            <meta name="twitter:site" content="This an amazing, magical materialized app built with Mboilerplate for the Google AppEngine.">
             <meta name="twitter:creator" content="@chuycepeda">
-            <meta name="twitter:title" content="MBoilerplate">
-            <meta name="twitter:description" content="This an amazing, magical materialized boilerplate for the Google AppEngine.">
+            <meta name="twitter:title" content="Social Maps">
+            <meta name="twitter:description" content="This an amazing, magical materialized app built with Mboilerplate for the Google AppEngine.">
             <meta name="twitter:image" content="http://usocialmaps.appspot.com/{{theme}}/materialize/images/landing/map.png">
             <meta property="twitter:url" content="http://usocialmaps.appspot.com"/>
             <meta name="viewport" content="width=device-width, initial-scale=1.0">

@@ -92,7 +92,21 @@
 					background-color: #59CEDF;
 				}
 	    	</style>
-		    {% block page_css %}{% endblock %}
+		    {% block page_css %}
+			<style>
+			#right-sidebar-nav{
+				    position: fixed;
+				    top: 65px;
+				    right: 0px;
+				    background-color: rgba(255, 255, 255, 0.59);
+				    width: 400px;
+				    height: 80%;
+				    overflow-y: scroll;
+				    z-index: 999;
+			}
+			</style>
+ 			<link href="/{{theme}}/materialize/css/plugins/rrssb/rrssb.css" type="text/css" rel="stylesheet" media="screen,projection">
+		    {% endblock %}
 		{% endblock %}
 		
 		<!-- All google, mixpanel and analytics tags from config files. -->
@@ -116,7 +130,58 @@
 			<!-- START NAVBAR -->
 			<nav style="background-color: transparent;position: fixed;border-bottom: none; z-index: 9999999;" class="z-depth-2">
 				<div class="nav-wrapper" style="background:white;opacity:0.85">
-				  <a href="{{uri_for("landing")}}" class="brand-logo"><img src="{{brand_logo}}" style="height:45px; margin-top:8px; {% if is_mobile %}margin-left:4px;{% else %}margin-left:10px;{% endif %}"></a>
+				  <a href="{{uri_for("landing")}}" class="brand-logo">
+				  	<img src="{{brand_logo}}" style="height:45px; margin-top:8px; {% if is_mobile %}margin-left:4px;{% else %}margin-left:10px;{% endif %}">
+				  	<div id="main-preloader" class="preloader-wrapper small active" style="display:none;">
+                      <div class="spinner-layer spinner-blue">
+                        <div class="circle-clipper left">
+                          <div class="circle"></div>
+                        </div>
+                        <div class="gap-patch">
+                          <div class="circle"></div>
+                        </div>
+                        <div class="circle-clipper right">
+                          <div class="circle"></div>
+                        </div>
+                      </div>
+
+                      <div class="spinner-layer spinner-red">
+                        <div class="circle-clipper left">
+                          <div class="circle"></div>
+                        </div>
+                        <div class="gap-patch">
+                          <div class="circle"></div>
+                        </div>
+                        <div class="circle-clipper right">
+                          <div class="circle"></div>
+                        </div>
+                      </div>
+
+                      <div class="spinner-layer spinner-yellow">
+                        <div class="circle-clipper left">
+                          <div class="circle"></div>
+                        </div>
+                        <div class="gap-patch">
+                          <div class="circle"></div>
+                        </div>
+                        <div class="circle-clipper right">
+                          <div class="circle"></div>
+                        </div>
+                      </div>
+
+                      <div class="spinner-layer spinner-green">
+                        <div class="circle-clipper left">
+                          <div class="circle"></div>
+                        </div>
+                        <div class="gap-patch">
+                          <div class="circle"></div>
+                        </div>
+                        <div class="circle-clipper right">
+                          <div class="circle"></div>
+                        </div>
+                      </div>
+                    </div>
+				  </a>
 				  <a href="#" data-activates="mobile-demo" class="button-collapse right"><i class="mdi-navigation-more-vert grey-text"></i></a>
 				  <ul id="nav-mobile" class="right hide-on-med-and-down">
 				    {% if not user_id %}
@@ -201,8 +266,12 @@
 		{% block body_content %}
 			<div id="map">				
 			</div>
+
 			<div class="hide-on-small-only" style="width:225px; position:fixed; top:12%; left:3%;">
-                <ul class="collapsible collapsible-accordion" data-collapsible="expandable">
+				<div>
+	            	<input id="search_address" type="text" placeholder="Search address... 🔎" onkeydown="if (event.keyCode == 13) codeAddress('search_address');" style="background-color: white;border-radius: 40px;line-height: 20px;text-align: center;">
+				</div>
+                <ul class="collapsible collapsible-accordion" data-collapsible="expandable" onclick="$('#right-sidebar-nav').hide()">
                   <li>
                     <div class="collapsible-header white-text truncate sm-blue"> Currently <span id="rep_count" style="font-family: roboto-regular;">0</span> reports.</div>
                   </li>
@@ -221,26 +290,81 @@
                   </li>
                   <li>
                     <div class="collapsible-header gpe-green-darken-1 white-text sm-blue" style="    background-color: #35B3C5!important;"><i class="mdi-content-filter-list"></i> Filter</div>
-                    <div class="collapsible-body white lighten-5">
+                    <div class="collapsible-body white lighten-5" style="max-height: 400px; overflow-y: scroll;">
                       <div class="row">
                       	<p>Likeability:</p>
                       	<div class="col s11 offset-s1"> 
-                      		<a class="grey-text" href="#" onclick="setQ('likeability',''); return false;"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> All</a> 
+                      		<a class="grey-text" href="#" onclick="setQ('likeability',''); return false;"> Clear all</a> 
                       	</div>
                       	<div class="col s11 offset-s1"> 
-                      		<a class="red-text" href="#" onclick="setQ('likeability','Not at all'); return false;"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> Not at all</a> 
+                      		<i class="mdi-toggle-check-box sm-green-text col s3" style="display:none;" id="likeability-notatall"></i><a style="color:#F26E62" href="#" onclick="setQ('likeability','Not at all'); return false;"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> Not at all</a> 
                       	</div>
                       	<div class="col s11 offset-s1"> 
-                      		<a class="orange-text" href="#" onclick="setQ('likeability','A little'); return false;"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> A little</a> 
+                      		<i class="mdi-toggle-check-box sm-green-text col s3" style="display:none;" id="likeability-alittle"></i><a style="color:#F79A50" href="#" onclick="setQ('likeability','A little'); return false;"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> A little</a> 
                       	</div>
                       	<div class="col s11 offset-s1"> 
-                      		<a class="sm-yellow-text" href="#" onclick="setQ('likeability','As any other'); return false;"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> As any other</a> 
+                      		<i class="mdi-toggle-check-box sm-green-text col s3" style="display:none;" id="likeability-asanyother"></i><a style="color:#FDC935" href="#" onclick="setQ('likeability','As any other'); return false;"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> As any other</a> 
                       	</div>
                       	<div class="col s11 offset-s1"> 
-                      		<a class="sm-green-text" href="#" onclick="setQ('likeability','A lot'); return false;"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> A lot</a> 
+                      		<i class="mdi-toggle-check-box sm-green-text col s3" style="display:none;" id="likeability-alot"></i><a style="color:#3CC6D7" href="#" onclick="setQ('likeability','A lot'); return false;"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> A lot</a> 
+                      	</div>
+                      	<div class="col s11 offset-s1" style="    margin-bottom: 30px;"> 
+                      		<i class="mdi-toggle-check-box sm-green-text col s3" style="display:none;" id="likeability-iloveit"></i><a style="color:#608FC4" href="#" onclick="setQ('likeability','I love it'); return false;"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> I love it</a> 
+                      	</div>
+                      	<p>Feeling:</p>
+                      	<div class="col s11 offset-s1"> 
+                      		<a class="grey-text" href="#" onclick="setQ('feeling',''); return false;"> Clear all</a> 
                       	</div>
                       	<div class="col s11 offset-s1"> 
-                      		<a class="sm-blue-text" href="#" onclick="setQ('likeability','I love it'); return false;"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> I love it</a> 
+                      		<i class="mdi-toggle-check-box sm-green-text col s3" style="display:none;" id="feeling-social"></i><a class="grey-text" href="#" onclick="setQ('feeling','Social'); return false;"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> Social</a> 
+                      	</div>
+                      	<div class="col s11 offset-s1"> 
+                      		<i class="mdi-toggle-check-box sm-green-text col s3" style="display:none;" id="feeling-free"></i><a class="grey-text" href="#" onclick="setQ('feeling','Free'); return false;"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> Free</a> 
+                      	</div>
+                      	<div class="col s11 offset-s1"> 
+                      		<i class="mdi-toggle-check-box sm-green-text col s3" style="display:none;" id="feeling-happy"></i><a class="grey-text" href="#" onclick="setQ('feeling','Happy'); return false;"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> Happy</a> 
+                      	</div>
+                      	<div class="col s11 offset-s1"> 
+                      		<i class="mdi-toggle-check-box sm-green-text col s3" style="display:none;" id="feeling-relaxed"></i><a class="grey-text" href="#" onclick="setQ('feeling','Relaxed'); return false;"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> Relaxed</a> 
+                      	</div>
+                      	<div class="col s11 offset-s1"> 
+                      		<i class="mdi-toggle-check-box sm-green-text col s3" style="display:none;" id="feeling-joyful"></i><a class="grey-text" href="#" onclick="setQ('feeling','Joyful'); return false;"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> Joyful</a> 
+                      	</div>
+                      	<div class="col s11 offset-s1"> 
+                      		<i class="mdi-toggle-check-box sm-green-text col s3" style="display:none;" id="feeling-amazed"></i><a class="grey-text" href="#" onclick="setQ('feeling','Amazed'); return false;"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> Amazed</a> 
+                      	</div>
+                      	<div class="col s11 offset-s1"> 
+                      		<i class="mdi-toggle-check-box sm-green-text col s3" style="display:none;" id="feeling-peaceful"></i><a class="grey-text" href="#" onclick="setQ('feeling','Peaceful'); return false;"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> Peaceful</a> 
+                      	</div>
+                      	<div class="col s11 offset-s1"> 
+                      		<i class="mdi-toggle-check-box sm-green-text col s3" style="display:none;" id="feeling-excited"></i><a class="grey-text" href="#" onclick="setQ('feeling','Excited'); return false;"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> Excited</a> 
+                      	</div>
+                      	<div class="col s11 offset-s1"> 
+                      		<i class="mdi-toggle-check-box sm-green-text col s3" style="display:none;" id="feeling-afraid"></i><a class="grey-text" href="#" onclick="setQ('feeling','Afraid'); return false;"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> Afraid</a> 
+                      	</div>
+                      	<div class="col s11 offset-s1"> 
+                      		<i class="mdi-toggle-check-box sm-green-text col s3" style="display:none;" id="feeling-nervous"></i><a class="grey-text" href="#" onclick="setQ('feeling','Nervous'); return false;"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> Nervous</a> 
+                      	</div>
+                      	<div class="col s11 offset-s1"> 
+                      		<i class="mdi-toggle-check-box sm-green-text col s3" style="display:none;" id="feeling-stressed"></i><a class="grey-text" href="#" onclick="setQ('feeling','Stressed'); return false;"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> Stressed</a> 
+                      	</div>
+                      	<div class="col s11 offset-s1"> 
+                      		<i class="mdi-toggle-check-box sm-green-text col s3" style="display:none;" id="feeling-confused"></i><a class="grey-text" href="#" onclick="setQ('feeling','Confused'); return false;"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> Confused</a> 
+                      	</div>
+                      	<div class="col s11 offset-s1"> 
+                      		<i class="mdi-toggle-check-box sm-green-text col s3" style="display:none;" id="feeling-anxious"></i><a class="grey-text" href="#" onclick="setQ('feeling','Anxious'); return false;"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> Anxious</a> 
+                      	</div>
+                      	<div class="col s11 offset-s1"> 
+                      		<i class="mdi-toggle-check-box sm-green-text col s3" style="display:none;" id="feeling-bored"></i><a class="grey-text" href="#" onclick="setQ('feeling','Bored'); return false;"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> Bored</a> 
+                      	</div>
+                      	<div class="col s11 offset-s1"> 
+                      		<i class="mdi-toggle-check-box sm-green-text col s3" style="display:none;" id="feeling-sporty"></i><a class="grey-text" href="#" onclick="setQ('feeling','Sporty'); return false;"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> Sporty</a> 
+                      	</div>
+                      	<div class="col s11 offset-s1"> 
+                      		<i class="mdi-toggle-check-box sm-green-text col s3" style="display:none;" id="feeling-nothing"></i><a class="grey-text" href="#" onclick="setQ('feeling','Nothing'); return false;"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> Nothing</a> 
+                      	</div>
+                      	<div class="col s11 offset-s1"> 
+                      		<i class="mdi-toggle-check-box sm-green-text col s3" style="display:none;" id="feeling-other"></i><a class="grey-text" href="#" onclick="setQ('feeling','Other'); return false;"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> Other</a> 
                       	</div>
                       </div>
                     </div>
@@ -354,7 +478,7 @@
                 <p class="col s12 m4"><i style="padding:8px;" class="mdi-action-group-work sm-blue-text"></i>Likeability: <span id="report_likeability" style="color:#53ACA8!important"></span></p>
                 <p class="col s12 m4"><i style="padding:8px;" class="mdi-action-face-unlock sm-blue-text"></i>Feeling: <span id="report_feeling" style="color:#53ACA8!important"></span></p>
                 <p class="col s12 m4"><i style="padding:8px;" class="mdi-av-subtitles sm-blue-text"></i>Place: <span id="report_title" style="color:#53ACA8!important"></span></p>
-		        <p class="col s12 "><i style="padding:8px;" class="mdi-social-group-add sm-blue-text"></i>Followers: <span id="report_followers" style="color:#53ACA8!important"></span> {% if user_id %}<a href="#" id="followBtn" class="waves-effect waves-white btn sm-green modal-action tooltipped" data-position="top" data-delay="50" data-tooltip="Follow this report will make it appear at your reports section."  onclick="followReport(this)" style="    margin-left: 16px;">Follow</a>{% endif %}</p>
+		        <p class="col s12 "><i style="padding:8px;" class="mdi-action-favorite sm-blue-text"></i>Likes: <span id="report_followers" style="color:#53ACA8!important"></span> {% if user_id %}<a href="#" id="followBtn" class="waves-effect waves-white btn sm-green modal-action tooltipped" data-position="top" data-delay="50" data-tooltip="Like this report and it will appear at your reports section."  onclick="followReport(this)" style="    margin-left: 16px;"><i class="mdi-action-favorite"></i> Like</a>{% endif %}</p>
                 <p class="col s12" style="margin-bottom:20px;"><i style="padding:8px;" class="mdi-action-description sm-blue-text"></i>Opinion: <span id="report_description" style="color:#53ACA8!important"></span></p>
                 <p class="col s12" style="margin-bottom:20px;"><i style="padding:8px;" class="mdi-action-speaker-notes sm-blue-text"></i>Comments: <br><span id="report_comments" style="color:#53ACA8!important"></span></p>
                 {% if user_id %}
@@ -373,6 +497,36 @@
                 <input id="report_uuid" type="hidden" value="">
               </div>
             </div>
+            <div id="modal_share" class="modal white {{brand_color}}-text center" style="display: none; opacity: 1; top: 0px;">
+		          <i class="mdi-navigation-close {{brand_color}}-text right modal-action modal-close" style="padding: 10px;"></i>
+		          <div class="modal-content">
+		              <div class="row">
+		                    <div class="input-field col s12 center" style="    margin-bottom: 40px;">
+		                      <p class="center login-form-text">Share this report using your favorite social network.</p>
+		                    </div>
+		                    <div class="row">
+		                      <div class="container">
+		                          <div id="share_scripts" class="row center">
+									<div id="share_content" class="col s8 offset-s2"></div>
+		                          </div>
+		                      </div>
+		                    </div>
+		              </div>
+		          </div>
+		    </div>
+		{% endblock %}
+
+		{% block right_sidebar %}
+			{% if path == uri_for('landing') %}
+				<!-- Right sidebar -->
+	            <div id="right-sidebar-nav" style="display:none;">
+                    <a href="#" class="right grey-text" onclick="$('#right-sidebar-nav').hide()"><i class="mdi-navigation-close"></i></a>
+	            	<ul id="report_list" class="collection" style="    margin-top: 30px;">
+	                  
+	                </ul>
+	            </div>
+	            <!-- Right sidebar -->
+            {% endif %}
 		{% endblock %}
 
 		{% block page_floatings %}
@@ -383,6 +537,7 @@
                   <i class="large mdi-content-add"></i>
                 </a>
                 <ul>
+                  {% if path == uri_for('landing') %}<li><a href="#" class="btn-floating gpe-green-lighten-1" onclick="$('#right-sidebar-nav').show()"><i class="large mdi-notification-more"></i></a></li>{% endif %}
                   {% if path != uri_for('contact') %}<li><a href="{{ uri_for('contact') }}" class="btn-floating gpe-green-lighten-1"><i class="large mdi-communication-email"></i></a></li>{% endif %}
                   {% if path != uri_for('landing') %}<li><a href="{{ uri_for('landing') }}" class="btn-floating gpe-green-lighten-1"><i class="large mdi-social-public"></i></a></li>{% endif %}
                   <li><a href="{{ uri_for('materialize-report-new') }}" class="btn-floating sm-green"><i class="large mdi-maps-place"></i></a></li>
@@ -665,29 +820,32 @@
 			{% block page_scripts %}
 				<script src="https://maps.googleapis.com/maps/api/js?v=3&libraries=drawing,places,panoramio,weather,visualization"></script>
 				<script src="http://libs.cartocdn.com/cartodb.js/v3/cartodb.js"></script>
+				<script src="/{{theme}}/materialize/js/plugins/rrssb/rrssb.min.js"></script>
                 <script type="text/javascript">
-                	var _query, _table_name = 'public_reports', _sql = new cartodb.SQL({ user: 'usocialmaps' });
+                	var _query, _user_name = 'usocialmaps', _table_name = 'public_reports', _sql = new cartodb.SQL({ user: _user_name });
     				var sublayers = [];
     				var sourceurl = "http://usocialmaps.appspot.com/default/materialize/images/markers/";
 					var catMarkers = [
-						['Not at all', 'red.png'],
-						['A little', 'orange.png'],
-						['As any other', 'amber.png'],
-						['A lot', 'green.png'],
-						['I love it', 'blue.png']
+						['Not at all', '_red.png'],
+						['A little', '_orange.png'],
+						['As any other', '_amber.png'],
+						['A lot', '_green.png'],
+						['I love it', '_blue.png']
 						];
-
+					/* FILTERS RELATED */
+					var _lks = [], _fls = [];
 
 					/* MAPS RELATED */
+					var geocoder = new google.maps.Geocoder();
 					var panorama, sv = new google.maps.StreetViewService();
-					var mapCenter = [25.6765307,-100.2124545],map;
-					google.maps.event.addDomListener(window,'load', init);
-                    
+					var map, mapCenter = [25.6765307,-100.2124545];
+					google.maps.event.addDomListener(window,'load', init);					
+
 					function init(){
 						/*  MAP  */
 						var mapOptions = {
 							center: new google.maps.LatLng(mapCenter[0], mapCenter[1]),
-							zoom: 13,
+							zoom: 12,
 							minZoom:5,
 							zoomControl: true,
 							zoomControlOptions: {
@@ -706,13 +864,28 @@
     					google.maps.event.addDomListener(window, 'resize', function() {
                             map.setCenter({lat: mapCenter[0], lng: mapCenter[1]});
                         });
+						
+						var autocomplete_from = new google.maps.places.Autocomplete(document.getElementById('search_address'))
+    					autocomplete_from.bindTo('bounds', map);
+						google.maps.event.addListener(autocomplete_from, 'place_changed', function() {
+						    var place = autocomplete_from.getPlace();
+						    if (place.geometry.viewport) {
+						      map.fitBounds(place.geometry.viewport);
+						    }else{
+						      map.setCenter(place.geometry.location);
+						      map.setZoom(17);
+						    }
+						});	
 
-
+						var centerControlDiv = document.createElement('div');
+						var centerControl = new CenterControl(centerControlDiv, map);
+						centerControlDiv.index = 1;
+						map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(centerControlDiv);
 
 						_query= "SELECT * FROM " + _table_name;	    
                         var interactivity_ = ["cartodb_id", "address","description","feeling","follows","image_url","likeability","title","uuid"];
 						var layerSource = {
-                            user_name: 'usocialmaps',
+                            user_name: _user_name,
                             type: 'cartodb',
                             sublayers: [{
                                 sql: _query,
@@ -737,12 +910,39 @@
                             sublayers[0].on('featureClick', function(e, latlng, pos, data) {
                             	  populateModal(data, latlng);
                             	  console.log(data);
+                            	  console.log(latlng);
 						    });  
 
 						    _sql.execute(_query).done(function(data) {
 							        $('#rep_count').html(addCommas(data.total_rows));
 						    }) 
                         });
+
+						var obj = getUrlVars();
+						if (obj.cdb_id){
+							var query = "select st_y(the_geom) as lat, st_x(the_geom) as lon, image_url, cartodb_id, follows, uuid, likeability, description, title, feeling, address from "+_table_name+" where cartodb_id = " + obj.cdb_id;
+							_sql.execute(query).done(function(data) {
+						        if(data.total_rows >= 1) {
+								     populateModal(data.rows[0], [data.rows[0].lat, data.rows[0].lon]);
+								}
+						    })
+						}
+
+						populateSidebar();
+					}
+
+					function getUrlVars(){
+					    var vars = [], hash;
+					    var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+					    for(var i = 0; i < hashes.length; i++)
+					    {
+					        hash = hashes[i].split('=');
+					        vars.push(hash[0]);
+					        vars[hash[0]] = hash[1];
+					        if (vars[hash[0]]) if (vars[hash[0]].search(/#/) != -1) vars[hash[0]]=vars[hash[0]].substr(0,vars[hash[0]].search(/#/));
+					    }
+					    console.log(vars);
+					    return vars;
 					}
 
                     function addCommas(val) {
@@ -787,8 +987,184 @@
 					}
 
 					function setQ(way, content){
-						if (way == 'likeability')
-							_query = "SELECT * FROM " + _table_name + " WHERE " + way + " ilike '%" + content + "%'";
+						var i, likeabilities = '', feelings = '';
+						switch(way){
+							case 'likeability':
+								switch(content){
+									case 'Not at all':
+										if ($('#likeability-notatall:visible').length > 0){
+											$('#likeability-notatall').hide();
+											i = _lks.indexOf("Not at all");
+											if(i != -1) _lks.splice(i, 1);
+										}else{
+											$('#likeability-notatall').show();
+											_lks.push("Not at all");
+										}
+										break;
+									case 'A little':
+										if ($('#likeability-alittle:visible').length > 0){
+											$('#likeability-alittle').hide();
+											i = _lks.indexOf("A little");
+											if(i != -1) _lks.splice(i, 1);
+										}else{
+											$('#likeability-alittle').show();
+											_lks.push("A little");
+										}
+										break;
+									case 'As any other':
+										if ($('#likeability-asanyother:visible').length > 0){
+											$('#likeability-asanyother').hide();
+											i = _lks.indexOf("As any other");
+											if(i != -1) _lks.splice(i, 1);
+										}else{
+											$('#likeability-asanyother').show();
+											_lks.push("As any other");
+										}
+										break;
+									case 'A lot':
+										if ($('#likeability-alot:visible').length > 0){
+											$('#likeability-alot').hide();
+											i = _lks.indexOf("A lot");
+											if(i != -1) _lks.splice(i, 1);
+										}else{
+											$('#likeability-alot').show();
+											_lks.push("A lot");
+										}
+										break;
+									case 'I love it':
+										if ($('#likeability-iloveit:visible').length > 0){
+											$('#likeability-iloveit').hide();
+											i = _lks.indexOf("I love it");
+											if(i != -1) _lks.splice(i, 1);
+										}else{
+											$('#likeability-iloveit').show();
+											_lks.push("I love it");
+										}
+										break;
+									default:
+											$('#likeability-notatall').hide();
+											$('#likeability-alittle').hide();
+											$('#likeability-asanyother').hide();
+											$('#likeability-alot').hide();
+											$('#likeability-iloveit').hide();
+											_lks = [];
+										break;
+								}
+								break;
+							case 'feeling':
+								switch(content){
+									case 'Social':
+										if ($('#feeling-social:visible').length > 0){$('#feeling-social').hide(); i = _fls.indexOf("Social"); if(i != -1) _fls.splice(i, 1);}
+										else{ $('#feeling-social').show(); _fls.push("Social");}
+										break;
+									case 'Free':
+										if ($('#feeling-free:visible').length > 0){$('#feeling-free').hide(); i = _fls.indexOf("Free"); if(i != -1) _fls.splice(i, 1);}
+										else{ $('#feeling-free').show(); _fls.push("Free");}
+										break;
+									case 'Happy':
+										if ($('#feeling-happy:visible').length > 0){$('#feeling-happy').hide(); i = _fls.indexOf("Happy"); if(i != -1) _fls.splice(i, 1);}
+										else{ $('#feeling-happy').show(); _fls.push("Happy");}
+										break;
+									case 'Relaxed':
+										if ($('#feeling-relaxed:visible').length > 0){$('#feeling-relaxed').hide(); i = _fls.indexOf("Relaxed"); if(i != -1) _fls.splice(i, 1);}
+										else{ $('#feeling-relaxed').show(); _fls.push("Relaxed");}
+										break;
+									case 'Joyful':
+										if ($('#feeling-joyful:visible').length > 0){$('#feeling-joyful').hide(); i = _fls.indexOf("Joyful"); if(i != -1) _fls.splice(i, 1);}
+										else{ $('#feeling-joyful').show(); _fls.push("Joyful");}
+										break;
+									case 'Amazed':
+										if ($('#feeling-amazed:visible').length > 0){$('#feeling-amazed').hide(); i = _fls.indexOf("Amazed"); if(i != -1) _fls.splice(i, 1);}
+										else{ $('#feeling-amazed').show(); _fls.push("Amazed");}
+										break;
+									case 'Peaceful':
+										if ($('#feeling-peaceful:visible').length > 0){$('#feeling-peaceful').hide(); i = _fls.indexOf("Peaceful"); if(i != -1) _fls.splice(i, 1);}
+										else{ $('#feeling-peaceful').show(); _fls.push("Peaceful");}
+										break;
+									case 'Excited':
+										if ($('#feeling-excited:visible').length > 0){$('#feeling-excited').hide(); i = _fls.indexOf("Excited"); if(i != -1) _fls.splice(i, 1);}
+										else{ $('#feeling-excited').show(); _fls.push("Excited");}
+										break;
+									case 'Afraid':
+										if ($('#feeling-afraid:visible').length > 0){$('#feeling-afraid').hide(); i = _fls.indexOf("Afraid"); if(i != -1) _fls.splice(i, 1);}
+										else{ $('#feeling-afraid').show(); _fls.push("Afraid");}
+										break;
+									case 'Nervous':
+										if ($('#feeling-nervous:visible').length > 0){$('#feeling-nervous').hide(); i = _fls.indexOf("Nervous"); if(i != -1) _fls.splice(i, 1);}
+										else{ $('#feeling-nervous').show(); _fls.push("Nervous");}
+										break;
+									case 'Stressed':
+										if ($('#feeling-stressed:visible').length > 0){$('#feeling-stressed').hide(); i = _fls.indexOf("Stressed"); if(i != -1) _fls.splice(i, 1);}
+										else{ $('#feeling-stressed').show(); _fls.push("Stressed");}
+										break;
+									case 'Confused':
+										if ($('#feeling-confused:visible').length > 0){$('#feeling-confused').hide(); i = _fls.indexOf("Confused"); if(i != -1) _fls.splice(i, 1);}
+										else{ $('#feeling-confused').show(); _fls.push("Confused");}
+										break;
+									case 'Anxious':
+										if ($('#feeling-anxious:visible').length > 0){$('#feeling-anxious').hide(); i = _fls.indexOf("Anxious"); if(i != -1) _fls.splice(i, 1);}
+										else{ $('#feeling-anxious').show(); _fls.push("Anxious");}
+										break;
+									case 'Bored':
+										if ($('#feeling-bored:visible').length > 0){$('#feeling-bored').hide(); i = _fls.indexOf("Bored"); if(i != -1) _fls.splice(i, 1);}
+										else{ $('#feeling-bored').show(); _fls.push("Bored");}
+										break;
+									case 'Sporty':
+										if ($('#feeling-sporty:visible').length > 0){$('#feeling-sporty').hide(); i = _fls.indexOf("Sporty"); if(i != -1) _fls.splice(i, 1);}
+										else{ $('#feeling-sporty').show(); _fls.push("Sporty");}
+										break;
+									case 'Nothing':
+										if ($('#feeling-nothing:visible').length > 0){$('#feeling-nothing').hide(); i = _fls.indexOf("Nothing"); if(i != -1) _fls.splice(i, 1);}
+										else{ $('#feeling-nothing').show(); _fls.push("Nothing");}
+										break;
+									case 'Other':
+										if ($('#feeling-other:visible').length > 0){$('#feeling-other').hide(); i = _fls.indexOf("Other"); if(i != -1) _fls.splice(i, 1);}
+										else{ $('#feeling-other').show(); _fls.push("Other");}
+										break;
+									default:
+										$('#feeling-social').hide(); 
+										$('#feeling-free').hide(); 
+										$('#feeling-happy').hide(); 
+										$('#feeling-relaxed').hide(); 
+										$('#feeling-joyful').hide(); 
+										$('#feeling-amazed').hide(); 
+										$('#feeling-peaceful').hide(); 
+										$('#feeling-excited').hide(); 
+										$('#feeling-afraid').hide(); 
+										$('#feeling-nervous').hide(); 
+										$('#feeling-stressed').hide(); 
+										$('#feeling-confused').hide(); 
+										$('#feeling-anxious').hide(); 
+										$('#feeling-bored').hide(); 
+										$('#feeling-sporty').hide(); 
+										$('#feeling-nothing').hide(); 
+										$('#feeling-other').hide();
+										_fls = [];
+										break; 
+								}
+								break;
+						}
+
+						for(var i=0,j=_lks.length;i<j;i++){
+							likeabilities += "likeability ilike '%" + _lks[i] + "%' or ";
+						}
+
+						for(var i=0,j=_fls.length;i<j;i++){
+							feelings += "feeling ilike '%" + _fls[i] + "%' or ";
+						}
+						console.log('likeabilities:', likeabilities);
+						console.log('feelings:', feelings);
+
+
+						if (likeabilities != '' && feelings != '')
+							_query = "SELECT * FROM " + _table_name + " WHERE (" + likeabilities.substr(0,likeabilities.length-4) + ") or (" + feelings.substr(0,feelings.length-4) + ")";
+						else if (likeabilities != '' && feelings == '')
+							_query = "SELECT * FROM " + _table_name + " WHERE " + likeabilities.substr(0,likeabilities.length-4);
+						else if (likeabilities == '' && feelings != '')
+							_query = "SELECT * FROM " + _table_name + " WHERE " + feelings.substr(0,feelings.length-4);
+						else if (likeabilities == '' && feelings == '')
+							_query = "SELECT * FROM " + _table_name;
+						console.log('_query:', _query);
             			
             			sublayers[0].setSQL(_query);
 						_sql.execute(_query).done(function(data) {
@@ -813,13 +1189,13 @@
 						$('#report_likeability').html(getLikeability(data.likeability));
 						$('#report_description').html(data.description);
 						$('#report_title').html(data.title);
-						$('#report_feeling').html(data.feeling);
+						$('#report_feeling').html(data.feeling.replace(/\s/g, ", "));
 						$('#report_address').html(data.address);
 						var qry = "SELECT created FROM " + _table_name + " WHERE cartodb_id = " + data.cartodb_id;
 						_sql.execute(qry).done(function(data) {
 							$('#report_date').html(data.rows[0].created.substr(0,10));
 						});
-						$('#followBtn').html('Follow');
+						$('#followBtn').html('<i class="mdi-action-favorite"></i> Like');
 						loadComments();
 						getgSV(latlng)
 
@@ -859,29 +1235,29 @@
 					function getLikeability(st){
 						switch(st){
 					        case 'Not at all':
-					            document.getElementById("modal3_content").style.borderLeft = "thick solid #FD5D47";
-					            return '<a class="red-text" href="#"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> Not at all</a>';   
+					            document.getElementById("modal3_content").style.borderLeft = "thick solid #F26E62";
+					            return '<a style="color:#F26E62" href="#"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> Not at all</a>';   
 					        case 'A little':
-					            document.getElementById("modal3_content").style.borderLeft = "thick solid #FFAA1E";
-					            return '<a class="orange-text" href="#"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> A little</a>';
+					            document.getElementById("modal3_content").style.borderLeft = "thick solid #F79A50";
+					            return '<a style="color:#F79A50" href="#"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> A little</a>';
 					        case 'As any other':
-					            document.getElementById("modal3_content").style.borderLeft = "thick solid #F3CA59";
-					            return '<a class="sm-yellow-text" href="#"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> As any other</a>';
+					            document.getElementById("modal3_content").style.borderLeft = "thick solid #FDC935";
+					            return '<a style="color:#FDC935" href="#"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> As any other</a>';
 					        case 'A lot':
-					            document.getElementById("modal3_content").style.borderLeft = "thick solid #B3DA93";
-					            return '<a class="sm-green-text" href="#"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> A lot</a>';
+					            document.getElementById("modal3_content").style.borderLeft = "thick solid #3CC6D7";
+					            return '<a style="color:#3CC6D7" href="#"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> A lot</a>';
 					        case 'I love it':
-					            document.getElementById("modal3_content").style.borderLeft = "thick solid #66D7E6";
-					            return '<a class="sm-blue-text" href="#"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> I love it</a>';
+					            document.getElementById("modal3_content").style.borderLeft = "thick solid #608FC4";
+					            return '<a style="color:#608FC4" href="#"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> I love it</a>';
 					    }
 					}					
 
 					function followReport(elem){
 						var kind;
-						if (elem.innerHTML.indexOf('Follow') >= 0){
+						if (elem.innerHTML.indexOf('Like') >= 0){
 							kind = 'follow';
 						}
-						else if (elem.innerHTML.indexOf('Unfollow') >= 0){
+						else if (elem.innerHTML.indexOf('Undo') >= 0){
 							kind = 'unfollow';
 						}
 						else{
@@ -900,10 +1276,10 @@
 			            }).done(function(data) {
 			            	console.log(data);
 			            	if (kind == 'follow' && data.status == 'success' && data.contents != 'user is creator'){
-			            		elem.innerHTML = elem.innerHTML.replace('Follow','Unfollow');
+			            		elem.innerHTML = elem.innerHTML.replace('<i class="mdi-action-favorite"></i> Like','Undo');
 			            	}
 			            	if (kind == 'unfollow' && data.status == 'success' && data.contents != 'user is creator'){
-			            		elem.innerHTML = elem.innerHTML.replace('Unfollow', 'Follow');
+			            		elem.innerHTML = elem.innerHTML.replace('Undo', '<i class="mdi-action-favorite"></i> Like');
 			            	}
 			            	var qry = "SELECT follows FROM " + _table_name + " WHERE cartodb_id = " + $('#report_ticket').val();
 							_sql.execute(qry).done(function(data) {
@@ -911,11 +1287,11 @@
 								$('#report_follows').val(data.rows[0].follows)
 							});
 							if (data.contents == 'user already following')
-			    				Materialize.toast('<span class="toast-warning">Oops! You already follow this report.</span>',4500);
+			    				Materialize.toast('<span class="toast-warning">Oops! You already like this report.</span>',4500);
 							else if (data.contents == 'follow request successful')
-			    				Materialize.toast('<span class="toast-success">You are now following this report.</span>',4500);
+			    				Materialize.toast('<span class="toast-success"><i class="mdi-action-favorite"></i></span>',4500);
 							else if (data.contents == 'unfollow request successful')
-			    				Materialize.toast('<span class="toast-success">You just stopped following the report.</span>',4500);
+			    				Materialize.toast('<span class="toast-success">Undo successful.</span>',4500);
 							else if (data.contents == 'user is creator')
 			    				Materialize.toast('<span class="toast-success">You created this report, it is already at your reports.</span>',4500);
 			            });
@@ -932,6 +1308,173 @@
 				         }).done(function(data) {
 				             $('#report_comments').html(data.logs.html);
 				         });
+					}
+
+					function codeAddress(input) {
+				        var address, obj;	     				        
+
+			            address = document.getElementById(input).value;
+			            obj = { 'address': address };
+				        geocoder.geocode( obj, function(results, status) {
+				            if (status == google.maps.GeocoderStatus.OK) {
+				                
+				                if (typeof(input) === 'string') {
+				                    map.setCenter(results[0].geometry.location);
+				                    switch (results[0].geometry.location_type){
+				                        case 'ROOFTOP': map.setZoom(17); break;
+				                        case 'RANGE_INTERPOLATED': map.setZoom(16); break;
+				                        case 'GEOMETRIC_CENTER': map.setZoom(15); break;
+				                        case 'APPROXIMATE': map.setZoom(13); break;
+				                    }
+				                }else{
+				                    if (results[1]) {
+				                        document.getElementById(input).value = results[1].formatted_address;
+				                    } else {
+				                        console.log('No results found');
+				                    }
+				                }
+				            
+				            } else {
+				                console.log('Geocode was not successful for the following reason: ' + status);
+				            }
+				        });
+				    }
+
+				    function CenterControl(controlDiv, map) {
+						// Set CSS for the control border.
+						var controlUI = document.createElement('div');
+						controlUI.style.backgroundColor = '#fff';
+						controlUI.style.border = '2px solid #fff';
+						controlUI.style.borderRadius = '3px';
+						controlUI.style.boxShadow = '0 2px 6px rgba(0,0,0,.3)';
+						controlUI.style.cursor = 'pointer';
+						controlUI.style.marginBottom = '2px';
+						controlUI.style.marginRight = '10px';
+						controlUI.style.textAlign = 'center';
+						controlUI.title = 'Click to locate you.';
+						controlDiv.appendChild(controlUI);
+
+						// Set CSS for the control interior.
+						var controlText = document.createElement('div');
+						controlText.style.color = 'rgb(25,25,25)';
+						controlText.style.fontFamily = 'Roboto,Arial,sans-serif';
+						controlText.style.fontSize = '16px';
+						controlText.style.lineHeight = '15px';
+						controlText.innerHTML = '<i class="mdi-maps-my-location grey-text text-darken-1" style="font-size:20px; padding:3px;"></i>';
+						controlUI.appendChild(controlText);
+
+						// Setup the click event listeners: simply set the map to Chicago.
+						controlUI.addEventListener('click', function() {
+							$('#main-preloader').show();
+							if (navigator.geolocation) {
+						        navigator.geolocation.getCurrentPosition(mapGoPosition);
+						    } else {
+		    	            	Materialize.toast('<span class="toast-warning">Oops! This navigator has no support for locating you.</span>',4500);
+								$('#main-preloader').hide();
+						    }
+						});
+					}
+
+					function mapGoPosition(position) {
+					    map.setCenter(new google.maps.LatLng(position.coords.latitude, position.coords.longitude));
+					    map.setZoom(16);
+						$('#main-preloader').hide();
+					}
+
+					function populateSidebar(){
+						var html = "", query = "select st_y(the_geom) as lat, st_x(the_geom) as lon, * from "+_table_name + " order by created desc limit 25 ";
+						_sql.execute(query).done(function(data) {
+					        if(data.total_rows >= 1) {
+							    for(var i=0,j=data.total_rows;i<j;i++){
+							    	html += '<li class="collection-item avatar" style="height:auto;margin-bottom:10px;border-radius:4px;background-color: rgba(255, 255, 255, 0);">';
+					                if (data.rows[i].image_url != 'None')
+					                	html += '<img src="'+data.rows[i].image_url+'" alt="" class="circle">';
+					               	else
+					               		html += '<img src="/default/materialize/images/logo.png" alt="" class="circle">';
+					                html+='<span class="title grey-text">'+data.rows[i].title+'<img src="'+getIcon(data.rows[i].likeability)+'" class="right" style="height:40px;"></span>';
+									html+='<p class="grey-text small">'+data.rows[i].created.substr(0,10)+'';
+									html+='<br>'+data.rows[i].address+'';
+									html+='</p>';
+									html+='<div class="row center">';
+									html+=getFeelingHTML(data.rows[i].likeability, data.rows[i].feeling);
+									html+='</div>';
+									html+='<p class="grey-text">'+data.rows[i].description+'</p>';
+									html+='<div class="row center" style="margin-top:10px;">';
+									html+='<div class="col s4">';
+									html+='<p class="" style="cursor: pointer;"><a class="grey-text" href="#" onclick="loadModal('+data.rows[i].cartodb_id+');"><i class="mdi-maps-place"></i>Map</a></p>';
+									html+='</div>';
+									html+='<div class="col s4">';
+									html+='<p class=""><a class="grey-text"><i class="mdi-action-favorite"></i> <span>'+data.rows[i].follows+'</span></a></p>';
+									html+='</div>';
+									html+='<div class="col s4">';
+									html+='<p class="" style="cursor:pointer;"><a class="grey-text" href="#" onclick="populateShare('+data.rows[i].cartodb_id+')"><i class="mdi-social-share"></i>Share</a></p>';
+									html+='</div>';
+									html+='</div>';
+									html+='</li>';
+							    }
+							    $('#report_list').html(html);
+								$('#right-sidebar-nav').show();
+							}
+					    })
+					}
+
+					function loadModal(cdb_id){
+						var query = "select st_y(the_geom) as lat, st_x(the_geom) as lon, image_url, cartodb_id, follows, uuid, likeability, description, title, feeling, address from "+_table_name+" where cartodb_id = " + cdb_id;
+						_sql.execute(query).done(function(data) {
+					        if(data.total_rows >= 1) {
+							     populateModal(data.rows[0], [data.rows[0].lat, data.rows[0].lon]);
+							}
+					    })
+					}
+
+					function populateShare(cdb_id){
+			        	var _html = ' <ul class="rrssb-buttons"> <li class="rrssb-facebook"><a href="https://www.facebook.com/sharer/sharer.php?u={{uri_for("landing", _full=True)}}?cdb_id='+cdb_id+'" class="popup"> <span class="rrssb-icon"> <svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid" width="29" height="29" viewBox="0 0 29 29"> <path d="M26.4 0H2.6C1.714 0 0 1.715 0 2.6v23.8c0 .884 1.715 2.6 2.6 2.6h12.393V17.988h-3.996v-3.98h3.997v-3.062c0-3.746 2.835-5.97 6.177-5.97 1.6 0 2.444.173 2.845.226v3.792H21.18c-1.817 0-2.156.9-2.156 2.168v2.847h5.045l-.66 3.978h-4.386V29H26.4c.884 0 2.6-1.716 2.6-2.6V2.6c0-.885-1.716-2.6-2.6-2.6z" class="cls-2" fill-rule="evenodd"/> </svg> </span> <span class="rrssb-text" style="margin-left: 18px!important;">facebook</span> </a> </li><li class="rrssb-twitter"> <a href="https://twitter.com/intent/tweet?text=Hey!%20come%20and%20see%20my%20place%20at%20{{uri_for("landing", _full=True)}}?cdb_id='+cdb_id+'&hashtags=socialmaps" class="popup"> <span class="rrssb-icon"> <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 28 28"> <path d="M24.253 8.756C24.69 17.08 18.297 24.182 9.97 24.62c-3.122.162-6.22-.646-8.86-2.32 2.702.18 5.375-.648 7.507-2.32-2.072-.248-3.818-1.662-4.49-3.64.802.13 1.62.077 2.4-.154-2.482-.466-4.312-2.586-4.412-5.11.688.276 1.426.408 2.168.387-2.135-1.65-2.73-4.62-1.394-6.965C5.574 7.816 9.54 9.84 13.802 10.07c-.842-2.738.694-5.64 3.434-6.48 2.018-.624 4.212.043 5.546 1.682 1.186-.213 2.318-.662 3.33-1.317-.386 1.256-1.248 2.312-2.4 2.942 1.048-.106 2.07-.394 3.02-.85-.458 1.182-1.343 2.15-2.48 2.71z"/> </svg> </span> <span class="rrssb-text" style="margin-left: 18px!important;">twitter</span> </a> </li></ul> ';
+			        	$('#share_content').html(_html);
+						$('#modal_share').openModal();
+
+			        	setTimeout(function(){ rrssbInit();}, 500);
+					}
+
+					function getIcon(st){
+						switch(st){
+					        case 'Not at all':
+					            return 'http://usocialmaps.appspot.com/default/materialize/images/markers/_red.png';
+					        case 'A little':
+					            return 'http://usocialmaps.appspot.com/default/materialize/images/markers/_orange.png';
+					        case 'As any other':
+					            return 'http://usocialmaps.appspot.com/default/materialize/images/markers/_amber.png';
+					        case 'A lot':
+					            return 'http://usocialmaps.appspot.com/default/materialize/images/markers/_green.png';
+					        case 'I love it':
+					            return 'http://usocialmaps.appspot.com/default/materialize/images/markers/_blue.png';
+					    }
+					}
+
+					function getFeelingHTML(l, f){
+						f = f.split(' ');
+						var r='', color ='';
+						switch(l){
+					        case 'Not at all':
+					            color="#F26E62";
+					            break;
+					        case 'A little':
+					            color="#F79A50";
+					            break;
+					        case 'As any other':
+					            color="#FDC935";
+					            break;
+					        case 'A lot':
+					            color="#3CC6D7";
+					            break;
+					        case 'I love it':
+					            color="#608FC4";
+					            break;
+					    }
+
+						for(var i=0,j=f.length;i<j;i++){
+							r += '<div class="col s4" style="color:'+color+'"><div class="col s12"><i class="mdi-image-brightness-1" style="font-size:15px;"></i></div><div class="col s12">'+f[i]+'</div></div>';
+						}
+						return r;
 					}
 
 					document.querySelector('#submit_report_form_comment').addEventListener('click', function() { 

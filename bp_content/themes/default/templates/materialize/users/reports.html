@@ -5,6 +5,7 @@
    
 {% block page_css %}
  	<link href="/{{theme}}/materialize/css/prism.css" type="text/css" rel="stylesheet" media="screen,projection">
+ 	<link href="/{{theme}}/materialize/css/plugins/rrssb/rrssb.css" type="text/css" rel="stylesheet" media="screen,projection">
     <link href="/{{theme}}/materialize/css/plugins/perfect-scrollbar/perfect-scrollbar.css" type="text/css" rel="stylesheet" media="screen,projection">
 {% endblock %}
 
@@ -36,17 +37,24 @@
 		                        </div>
 		                        <div class="card-content" style="border-left: 5px solid #{{color}};">                    
 		                            <a class="btn-floating activator btn-move-up waves-effect waves-light right" style="background-color:#{{color}}; width: 60px;height: 60px;top: -50px;">
-		                                <i class="{% if kind == 'follow' %}mdi-social-notifications-none{% else %}mdi-action-info{% endif %}" style="font-size:40px; margin-top:11px;"></i>
+		                                <i class="{% if kind == 'follow' %}mdi-action-favorite{% else %}mdi-action-info{% endif %}" style="font-size:40px; margin-top:11px;"></i>
 		                            </a>
 		                            <h4 class="card-title grey-text text-darken-4">
 		                                <a href="#" class="grey-text text-darken-4 activator" style="color:#{{color}}!important"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> {{likeability}}</a>
-		                            </h4>		                            
-		                            <p class="activator" style="cursor: pointer; line-height: 40px;"><span class="grey-text text-lighten-2 activator">Click here to see details.</span></p>
+		                            </h4>		
+		                            <div class="col s6">
+		                            	<p class="" style="cursor: pointer; line-height: 40px;"><a class="grey-text" href="{{uri_for('landing')}}?cdb_id={{cdb_id}}" target="_blank"><i class="mdi-maps-place"></i>Map</a></p>
+		                            	<p class="" style="cursor: pointer; line-height: 40px;"><a class="grey-text modal-trigger" href="#modal_share" onclick="populateShare({{cdb_id}})"><i class="mdi-social-share"></i>Share</a></p>
+		                            </div>                            
+		                            <div class="col s6">
+		                            	<p class="" style="line-height: 40px;"><a class="grey-text"><i class="mdi-action-favorite"></i>Likes: <span>{{follows}}</span></a></p>
+		                            	<p class="" style="cursor: pointer; line-height: 40px;"><a class="grey-text modal-trigger" href="#modal_comments" onclick="populateModal({{idx}})"><i class="mdi-action-speaker-notes"></i>Comments: <span>{{log_count}}</span></a></p>
+		                            </div>
 									
-									<p class="" style="cursor: pointer; line-height: 40px;"><i class="mdi-action-speaker-notes sm-green-text"></i>Comments: <span style="color:#53ACA8!important">{{log_count}}</span> <a class="grey-text text-lighten-2 modal-trigger" href="#modal_comments" onclick="populateModal({{idx}})">(click to read and comment)</a></p>
 
-		                            {% if kind == 'follow' %}<p class="" style="cursor: pointer; line-height: 40px;"><i class="mdi-social-notifications-none sm-green-text"></i><span style="color:#53ACA8!important">Following</span> <a class="grey-text text-lighten-2" href="#" onclick="followReport({{cdb_id}}, {{idx}})">(click here to unfollow)</a></p>
+		                            {% if kind == 'follow' %}<p class="" style="cursor: pointer; line-height: 40px;"><i class="mdi-action-favorite sm-green-text"></i><span style="color:#53ACA8!important">You're following this report because you liked it. </span> <a class="grey-text text-lighten-2" href="#" onclick="followReport({{cdb_id}}, {{idx}})">(click here to unfollow)</a></p>
 		                            {% endif %}
+			                            
 		                        </div>
 		                        <div class="card-reveal" style="border-left: 5px solid #{{color}};">
 		                            <span class="card-title grey-text text-darken-4"><i class="mdi-navigation-close right"></i></span>                   
@@ -57,7 +65,7 @@
 		                            <p><i style="padding:8px;" class="mdi-image-style sm-green-text"></i>Feeling: <span style="color:#{{color}}!important">{{feeling}}</span></p>
 		                            <p><i style="padding:8px;" class="mdi-action-description sm-green-text"></i>Description: <span style="color:#{{color}}!important">{{description}}</span></p>
 		                            <p><i style="padding:8px;" class="mdi-action-book sm-green-text"></i>Place: <span style="color:#{{color}}!important">{{title}}</span></p>
-		                            <p><i style="padding:8px;" class="mdi-social-group-add sm-green-text"></i>Followers: <span style="color:#{{color}}!important">{{follows}}</span></p>
+		                            <p><i style="padding:8px;" class="mdi-action-favorite sm-green-text"></i>Likes: <span style="color:#{{color}}!important">{{follows}}</span></p>
 		                        </div>
 		                    </div>
 		                </div>
@@ -119,6 +127,23 @@
               </div>
           </div>
     </div>
+    <div id="modal_share" class="modal white {{brand_color}}-text center" style="display: none; opacity: 1; top: 0px;">
+          <i class="mdi-navigation-close {{brand_color}}-text right modal-action modal-close" style="padding: 10px;"></i>
+          <div class="modal-content">
+              <div class="row">
+                    <div class="input-field col s12 center" style="    margin-bottom: 40px;">
+                      <p class="center login-form-text">Share this report using your favorite social network.</p>
+                    </div>
+                    <div class="row">
+                      <div class="container">
+                          <div id="share_scripts" class="row center">
+							<div id="share_content" class="col s8 offset-s2"></div>
+                          </div>
+                      </div>
+                    </div>
+              </div>
+          </div>
+    </div>
 {% endblock %}
 
 {% block footer_content %}
@@ -126,6 +151,7 @@
 
 {% block page_scripts %}
 	<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=true&libraries=places,visualization"></script>
+	<script src="/{{theme}}/materialize/js/plugins/rrssb/rrssb.min.js"></script>
 	<script type="text/javascript">
 	    var gmarkers=[];
 	    var map;
@@ -242,5 +268,10 @@
 	    			$('#panel_'+idx).hide();
 	            });
 			}
-	</script>
+			function populateShare(cdb_id){
+	        	var _html = ' <ul class="rrssb-buttons"> <li class="rrssb-facebook"><a href="https://www.facebook.com/sharer/sharer.php?u={{uri_for("landing", _full=True)}}?cdb_id='+cdb_id+'" class="popup"> <span class="rrssb-icon"> <svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid" width="29" height="29" viewBox="0 0 29 29"> <path d="M26.4 0H2.6C1.714 0 0 1.715 0 2.6v23.8c0 .884 1.715 2.6 2.6 2.6h12.393V17.988h-3.996v-3.98h3.997v-3.062c0-3.746 2.835-5.97 6.177-5.97 1.6 0 2.444.173 2.845.226v3.792H21.18c-1.817 0-2.156.9-2.156 2.168v2.847h5.045l-.66 3.978h-4.386V29H26.4c.884 0 2.6-1.716 2.6-2.6V2.6c0-.885-1.716-2.6-2.6-2.6z" class="cls-2" fill-rule="evenodd"/> </svg> </span> <span class="rrssb-text" style="margin-left: 18px!important;">facebook</span> </a> </li><li class="rrssb-twitter"> <a href="https://twitter.com/intent/tweet?text=Hey!%20come%20and%20see%20my%20place%20at%20{{uri_for("landing", _full=True)}}?cdb_id='+cdb_id+'&hashtags=socialmaps" class="popup"> <span class="rrssb-icon"> <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 28 28"> <path d="M24.253 8.756C24.69 17.08 18.297 24.182 9.97 24.62c-3.122.162-6.22-.646-8.86-2.32 2.702.18 5.375-.648 7.507-2.32-2.072-.248-3.818-1.662-4.49-3.64.802.13 1.62.077 2.4-.154-2.482-.466-4.312-2.586-4.412-5.11.688.276 1.426.408 2.168.387-2.135-1.65-2.73-4.62-1.394-6.965C5.574 7.816 9.54 9.84 13.802 10.07c-.842-2.738.694-5.64 3.434-6.48 2.018-.624 4.212.043 5.546 1.682 1.186-.213 2.318-.662 3.33-1.317-.386 1.256-1.248 2.312-2.4 2.942 1.048-.106 2.07-.394 3.02-.85-.458 1.182-1.343 2.15-2.48 2.71z"/> </svg> </span> <span class="rrssb-text" style="margin-left: 18px!important;">twitter</span> </a> </li></ul> ';
+	        	$('#share_content').html(_html);
+	        	setTimeout(function(){ rrssbInit();}, 500);
+			}
+		</script>
 {% endblock %}

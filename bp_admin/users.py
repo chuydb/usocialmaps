@@ -40,18 +40,14 @@ class AdminStatsHandler(BaseHandler):
 
 class AdminUserGeoChartHandler(BaseHandler):
     def get(self):
-        users = self.user_model.query().fetch(projection=['country'])
-        users_by_country = Counter()
-
         users = self.user_model.query()
         latlngs = []
         for user in users:
             if user.address is not None:
-                if user.address.latlng is not None:
-                    latlngs.append(user.address.latlng)
+                if user.address.address_from_coord is not None:
+                    latlngs.append(user.address.address_from_coord)
 
         params = {
-            "data": users_by_country.items(),
             "list_attrs": [('lat', 'lon')],
             "latlngs": latlngs,
         }

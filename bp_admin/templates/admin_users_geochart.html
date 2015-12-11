@@ -6,7 +6,7 @@
     <div class="container">
         <div class="row">
           <div class="col s12 m12 l12">
-            <h5 class="breadcrumbs-title">Map</h5>
+            <h5 class="breadcrumbs-title">Users' geolocation map</h5>
           </div>
         </div>
     </div>
@@ -23,6 +23,7 @@
 {% endblock %}
 
 {% block page_components %}
+    <script src="/boilerplate/webcomponents/bower_components/webcomponentsjs/webcomponents.min.js"></script>    
     <link rel="import" href="/boilerplate/webcomponents/bower_components/google-map/google-map.html">
 {% endblock %}
 
@@ -48,23 +49,5 @@
 {% endblock %}
  
 {% block page_scripts %}
-    <script src='https://www.google.com/jsapi'></script>
-    <script>
-        google.load('visualization', '1', {'packages': ['geochart']});
-        google.setOnLoadCallback(drawRegionsMap);
-        function drawRegionsMap() {
-            var data = google.visualization.arrayToDataTable([
-                ['Country', 'Registrations'],
-                {% for country, registrations in data %}
-                ['{{ country }}', {{ registrations }}],
-                {% endfor %}
-            ]);
-
-            var options = {};
-
-            var chart = new google.visualization.GeoChart(document.getElementById('chart_div'));
-            chart.draw(data, options);
-        }
-    </script>
  {% endblock %}
  

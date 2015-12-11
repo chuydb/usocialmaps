@@ -165,15 +165,15 @@ class Report(ndb.Model):
 
     def get_color(self):
         if self.likeability == 'Not at all':
-            return 'FD5D47'
+            return 'F26E62'
         if self.likeability == 'A little':
-            return 'FFAA1E'
+            return 'F79A50'
         if self.likeability == 'As any other':
-            return 'F3CA59'
+            return 'FDC935'
         if self.likeability == 'A lot':
-            return 'B3DA93'
+            return '3CC6D7'
         if self.likeability == 'I love it':
-            return '66D7E6'
+            return '608FC4'
         return '9e9e9e'
 
     @classmethod

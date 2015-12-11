@@ -1071,12 +1071,12 @@ class MaterializeReportCommentsHandler(BaseHandler):
                 image = -1
                 initial_letter = log.user_email[1]
                 name = ''
-            html+= '<li class="collection-item avatar" style="overflow:scroll;    text-align: right;">'
+            html+= '<li class="collection-item avatar" style="overflow:scroll;    text-align: right;     height: auto;">'
             if image != -1:
                 html+= '<img src="%s" alt="" class="circle" style="width: 60px;height: 60px;">' % image
             else:
                 html+= '<i class="mdi-action-face-unlock circle"></i>'
-            html+= '<span class="title right"><span class="sm-yellow-text">%s &lt;%s&gt;:</span></span><br><p class="right"><span class="sm-blue-text">%s</span><br>%s</p>' % (name, log.user_email, log.get_formatted_date(), log.contents)
+            html+= '<span class="title right"><span class="sm-yellow-text">%s:</span></span><br><p class="right"><span class="sm-blue-text">%s</span><br>%s</p>' % (name, log.get_formatted_date(), log.contents)
             html+= '</li>'
         html += '</ul>'
         reportDict['logs'] = {

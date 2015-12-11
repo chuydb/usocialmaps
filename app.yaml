@@ -63,6 +63,10 @@ handlers:
   mime_type: text/javascript
   static_dir: bp_includes/static/js
 
+# @bp_includes - polymer components
+- url: /boilerplate/webcomponents
+  static_dir: bp_includes/static/webcomponents
+
 # @bp_includes - images
 - url: /boilerplate/img/(.*\.(gif|png|jpg))
   static_files: bp_includes/static/img/\1
