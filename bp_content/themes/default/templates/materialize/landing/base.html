@@ -735,43 +735,52 @@
 						BrowserDetect.init();	
 					}); 
 
+					
 					function sendForm(formID){
 			    		if (formID == "form_login_user"){
 			    			if (document.getElementById('login_email').value != "" && document.getElementById('login_password') != ""){
 			    				document.getElementById(formID).submit();
 			    			}else{
-			    				Materialize.toast('<span class="toast-warning">Oops! ¿ Te faltó algún campo ?</span>',4500);
+			    				Materialize.toast('<span class="toast-warning">Oops! Are you missing an input field ?</span>',4500);
 			    			}
 			    		}else if (formID == "form_login"){
 			    			if (document.getElementById('email').value != "" && document.getElementById('password') != ""){
 			    				document.getElementById(formID).submit();
 			    			}else{
-			    				Materialize.toast('<span class="toast-warning">Oops! ¿ Te faltó algún campo ?</span>',4500);
+			    				Materialize.toast('<span class="toast-warning">Oops! Are you missing an input field ?</span>',4500);
 			    			}
 			    		}else if (formID == "form_register_user"){
 			    			if (document.getElementById('register_name').value != "" && document.getElementById('register_email').value != "" && document.getElementById('register_password').value != ""){
 			    				if (cleanUpSpecialChars(document.getElementById('register_password').value) == document.getElementById('register_password').value && cleanUpMailSpecialChars(document.getElementById('register_email').value) == document.getElementById('register_email').value)
 			    					document.getElementById(formID).submit();
 			    				else
-			    					Materialize.toast('<span class="toast-warning">Oops! Por favor evita caracteres especiales en email y contraseña</span>',4500);
+			    					Materialize.toast('<span class="toast-warning">Oops! Please avoid special chars.</span>',4500);
 
 			    			}else{
-			    				Materialize.toast('<span class="toast-warning">Oops! ¿ Te faltó algún campo ?</span>',4500);
+			    				Materialize.toast('<span class="toast-warning">Oops! Are you missing an input field ?</span>',4500);
 			    			}
 			    		}else if (formID == "form_register"){
 			    			if (document.getElementById('r_name').value != "" && document.getElementById('r_email').value != "" && document.getElementById('r_password').value != ""){
 			    				if (cleanUpSpecialChars(document.getElementById('r_password').value) == document.getElementById('r_password').value && cleanUpMailSpecialChars(document.getElementById('r_email').value) == document.getElementById('r_email').value)
 			    					document.getElementById(formID).submit();
 			    				else
-			    					Materialize.toast('<span class="toast-warning">Oops! Por favor evita caracteres especiales en email y contraseña</span>',4500);
+			    					Materialize.toast('<span class="toast-warning">Oops! Please avoid special chars.</span>',4500);
+			    			}else{
+			    				Materialize.toast('<span class="toast-warning">Oops! Are you missing an input field ?</span>',4500);
+			    			}
+			    		}else if (formID == "form_pass_reset"){
+			    			if (document.getElementById('password').value != ""){
+			    				if (cleanUpSpecialChars(document.getElementById('password').value) == document.getElementById('password').value){
+			    					document.getElementById('c_password').value = document.getElementById('password').value;
+			    					document.getElementById(formID).submit();
+			    				}else
+			    					Materialize.toast('<span class="toast-warning">Oops! Please avoid special chars.</span>',4500);
 
 			    			}else{
-			    				Materialize.toast('<span class="toast-warning">Oops! ¿ Te faltó algún campo ?</span>',4500);
+			    				Materialize.toast('<span class="toast-warning">Oops! Are you missing an input field ?</span>',4500);
 			    			}
 			    		}
-
 					}
-
 					function cleanUpSpecialChars(str){
 						str = str.replace(/[ÀÁÂÃÄÅ]/g,"A");
 						str = str.replace(/[àáâãäå]/g,"a");
@@ -1196,7 +1205,7 @@
 							$('#report_date').html(data.rows[0].created.substr(0,10));
 						});
 						$('#followBtn').html('<i class="mdi-action-favorite"></i> Like');
-						loadComments();
+						loadComments($('#report_uuid').val());
 						getgSV(latlng)
 
 						$('#modal3').openModal();
@@ -1297,8 +1306,8 @@
 			            });
 					}
 
-					function loadComments(){
-						var url = "/report/comments/"+$('#report_uuid').val()+"/";
+					function loadComments(_id){
+						var url = "/report/comments/"+_id+"/";
 				         $.ajax({
 				             url: url,
 				             type: 'GET',
@@ -1400,20 +1409,36 @@
 									html+='</div>';
 									html+='<p class="grey-text">'+data.rows[i].description+'</p>';
 									html+='<div class="row center" style="margin-top:10px;">';
-									html+='<div class="col s4">';
-									html+='<p class="" style="cursor: pointer;"><a class="grey-text" href="#" onclick="loadModal('+data.rows[i].cartodb_id+');"><i class="mdi-maps-place"></i>Map</a></p>';
+									html+='<div class="col s3">';
+									html+='<p class="" style="cursor: pointer;"><a class="grey-text" href="#" onclick="loadModal('+data.rows[i].cartodb_id+');"><i class="mdi-maps-place"></i></a></p>';
 									html+='</div>';
-									html+='<div class="col s4">';
+									html+='<div class="col s3">';
 									html+='<p class=""><a class="grey-text"><i class="mdi-action-favorite"></i> <span>'+data.rows[i].follows+'</span></a></p>';
 									html+='</div>';
-									html+='<div class="col s4">';
-									html+='<p class="" style="cursor:pointer;"><a class="grey-text" href="#" onclick="populateShare('+data.rows[i].cartodb_id+')"><i class="mdi-social-share"></i>Share</a></p>';
+									html+='<div class="col s3">';
+									html+='<p class="" style="cursor: pointer;"><a class="grey-text" href="#" onclick="loadModal('+data.rows[i].cartodb_id+');"><i class="mdi-action-speaker-notes"></i>';
+									var url = "/report/comments/"+data.rows[i].uuid+"/?q=count";
+							        $.ajax({
+							             url: url,
+							             type: 'GET',
+							             async: false,
+							             success: function(response) { 
+							                 console.log(response);
+							             }
+							        }).done(function(response) {
+							            html += response.count+'</a></p>';
+							        });
+									html+='</div>';
+									html+='<div class="col s3">';
+									html+='<p class="" style="cursor:pointer;"><a class="grey-text" href="#" onclick="populateShare('+data.rows[i].cartodb_id+')"><i class="mdi-social-share"></i></a></p>';
 									html+='</div>';
 									html+='</div>';
 									html+='</li>';
 							    }
 							    $('#report_list').html(html);
+							    {% if not is_mobile %}
 								$('#right-sidebar-nav').show();
+							    {% endif %}
 							}
 					    })
 					}
@@ -1490,7 +1515,7 @@
 					             }
 					         }).done(function(data) {
 					         	 if (data.status == 'success'){
-					             	loadComments();
+					             	loadComments($('#report_uuid').val());
 									$('#commentbox').val('');
 			    					Materialize.toast('<span class="toast-success">Your comment has been saved.</span>',4500);
 					         	 }else{

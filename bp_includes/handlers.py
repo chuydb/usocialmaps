@@ -1059,29 +1059,32 @@ class MaterializeReportCommentsHandler(BaseHandler):
         reportDict = {}
         logs = models.Comments.query(models.Comments.report_id == int(report_id))
         logs = logs.order(models.Comments.created)
-        
-        html = '<ul class="collection" style="overflow:scroll;">'
-        for log in logs:
-            user = log.get_user()            
-            if user:
-                image = user.get_image_url()
-                initial_letter = user.name[1]
-                name = user.name
-            else:
-                image = -1
-                initial_letter = log.user_email[1]
-                name = ''
-            html+= '<li class="collection-item avatar" style="overflow:scroll;    text-align: right;     height: auto;">'
-            if image != -1:
-                html+= '<img src="%s" alt="" class="circle" style="width: 60px;height: 60px;">' % image
-            else:
-                html+= '<i class="mdi-action-face-unlock circle"></i>'
-            html+= '<span class="title right"><span class="sm-yellow-text">%s:</span></span><br><p class="right"><span class="sm-blue-text">%s</span><br>%s</p>' % (name, log.get_formatted_date(), log.contents)
-            html+= '</li>'
-        html += '</ul>'
-        reportDict['logs'] = {
-            'html': html
-        }
+        q = self.request.get('q')
+        if q == 'count':
+            reportDict['count'] = logs.count()
+        else:
+            html = '<ul class="collection" style="overflow:scroll;">'
+            for log in logs:
+                user = log.get_user()            
+                if user:
+                    image = user.get_image_url()
+                    initial_letter = user.name[1]
+                    name = user.name
+                else:
+                    image = -1
+                    initial_letter = log.user_email[1]
+                    name = ''
+                html+= '<li class="collection-item avatar" style="overflow:scroll;    text-align: right;     height: auto;">'
+                if image != -1:
+                    html+= '<img src="%s" alt="" class="circle" style="width: 60px;height: 60px;">' % image
+                else:
+                    html+= '<i class="mdi-action-face-unlock circle"></i>'
+                html+= '<span class="title right"><span class="sm-yellow-text">%s:</span></span><br><p class="right"><span class="sm-blue-text">%s</span><br>%s</p>' % (name, log.get_formatted_date(), log.contents)
+                html+= '</li>'
+            html += '</ul>'
+            reportDict['logs'] = {
+                'html': html
+            }
         self.response.headers.add_header("Access-Control-Allow-Origin", "*")
         self.response.headers['Content-Type'] = 'application/json'
         self.response.write(json.dumps(reportDict))

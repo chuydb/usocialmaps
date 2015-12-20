@@ -133,7 +133,7 @@ config = {
 
     #branding stuff
     'brand_logo': '/default/materialize/images/logoH.png',
-    'brand_favicon': '/default/materialize/images/logo.png',
+    'brand_favicon': '/default/materialize/images/logofav.png',
     'brand_color' : 'sm-green',
 
     #bitly integration
