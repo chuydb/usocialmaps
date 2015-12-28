@@ -97,14 +97,26 @@
 			#right-sidebar-nav{
 				    position: fixed;
 				    top: 65px;
-				    right: 0px;
-				    background-color: rgba(255, 255, 255, 0.59);
-				    width: 400px;
+				    right: 0px;				    
 				    height: 80%;
 				    overflow-y: scroll;
 				    z-index: 999;
 			}
 			</style>
+			{% if is_mobile %} 
+				<style>
+				#right-sidebar-nav{
+					background-color: rgba(255, 255, 255, 1); width: 100%;  
+				}
+				</style>
+			{% else %} 
+				<style>
+				#right-sidebar-nav{
+					background-color: rgba(255, 255, 255, 0.59); width: 400px; 
+				}
+				</style>
+			{% endif %}
+
  			<link href="/{{theme}}/materialize/css/plugins/rrssb/rrssb.css" type="text/css" rel="stylesheet" media="screen,projection">
 		    {% endblock %}
 		{% endblock %}

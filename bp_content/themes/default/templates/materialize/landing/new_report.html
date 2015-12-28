@@ -291,7 +291,10 @@
 	        	markerDrop (latlng);
 	    	}	
 
-	    	
+	    	var centerControlDiv = document.createElement('div');
+			var centerControl = new CenterControl(centerControlDiv, map);
+			centerControlDiv.index = 1;
+			map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(centerControlDiv);
     		
     		$( "#submit_report_form" ).click(function() {
     			uphone = document.getElementById('userphone').value;
@@ -325,6 +328,49 @@
     	        document.getElementById("form_report").submit()        
     	    });
 		}
+
+		function CenterControl(controlDiv, map) {
+			// Set CSS for the control border.
+			var controlUI = document.createElement('div');
+			controlUI.style.backgroundColor = '#fff';
+			controlUI.style.border = '2px solid #fff';
+			controlUI.style.borderRadius = '3px';
+			controlUI.style.boxShadow = '0 2px 6px rgba(0,0,0,.3)';
+			controlUI.style.cursor = 'pointer';
+			controlUI.style.marginBottom = '2px';
+			controlUI.style.marginRight = '10px';
+			controlUI.style.textAlign = 'center';
+			controlUI.title = 'Click to locate you.';
+			controlDiv.appendChild(controlUI);
+
+			// Set CSS for the control interior.
+			var controlText = document.createElement('div');
+			controlText.style.color = 'rgb(25,25,25)';
+			controlText.style.fontFamily = 'Roboto,Arial,sans-serif';
+			controlText.style.fontSize = '16px';
+			controlText.style.lineHeight = '15px';
+			controlText.innerHTML = '<i class="mdi-maps-my-location grey-text text-darken-1" style="font-size:20px; padding:3px;"></i>';
+			controlUI.appendChild(controlText);
+
+			// Setup the click event listeners: simply set the map to Chicago.
+			controlUI.addEventListener('click', function() {
+				$('#main-preloader').show();
+				if (navigator.geolocation) {
+			        navigator.geolocation.getCurrentPosition(mapGoPosition);
+			    } else {
+	            	Materialize.toast('<span class="toast-warning">Oops! This navigator has no support for locating you.</span>',4500);
+					$('#main-preloader').hide();
+			    }
+			});
+		}
+
+		function mapGoPosition(position) {
+		    map.setCenter(new google.maps.LatLng(position.coords.latitude, position.coords.longitude));
+		    map.setZoom(16);
+			$('#main-preloader').hide();
+		}
+
+
 		var _fls = [];
 		function setQ(way, content){
 				var i, likeabilities = '', feelings = '';

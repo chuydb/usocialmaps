@@ -14,28 +14,10 @@ class AdminStatsHandler(BaseHandler):
     def get(self):
         params = {}
         users = self.user_model.query()
-        users = users.order(self.user_model.created)
-        _users = []
-        counter = 0
-        for user in users:
-            counter += 1
-            _created = user.created - timedelta(hours = 6)
-            _users.append([counter,_created.strftime("%a, %d %b %Y %H:%M:%S %z")])
-       
-        params['users'] = json.dumps(_users)
-        params['sum_users'] = counter
+        params['sum_users'] = users.count()
 
         blogs = models.BlogPost.query()
-        blogs = blogs.order(models.BlogPost.created)
-        _blogs = []
-        counter = 0
-        for blog in blogs:
-            counter += 1
-            _created = blog.created - timedelta(hours = 6)
-            _blogs.append([counter,_created.strftime("%a, %d %b %Y %H:%M:%S %z")])
-       
-        params['blogs'] = json.dumps(_blogs)
-        params['sum_blogs'] = counter
+        params['sum_blogs'] = blogs.count()
         return self.render_template('admin_stats.html', **params)
 
 class AdminUserGeoChartHandler(BaseHandler):

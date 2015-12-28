@@ -7,7 +7,7 @@
         <td style="background-color: #FFF;padding:15px 10px">
           <center>
           <a href="http://usocialmaps.appspot.com" target="_blank">
-            <img src="http://usocialmaps.appspot.com/default/materialize/images/favicon/fav-blue.png" height="80px" style="margin-bottom: -45px;">
+            <img src="http://usocialmaps.appspot.com/default/materialize/images/logoH.png" height="50px" style="margin-bottom: -25px;">
           </a>
           </center>
         </td>
@@ -19,7 +19,7 @@
       <tr>
         <td style="width:24px"></td>
         <td style="background-color:#ffffff;padding:15px;color:#494949; border-radius:3px">
-          <h1 style="min-height:48px;margin:0;color:#3594F6;font-size:20px;font-weight:normal;line-height:48px;text-align:center;font-family:roboto">¡Hey {{username}}!</h1>
+          <h1 style="min-height:48px;margin:0;color:#3594F6;font-size:20px;font-weight:normal;line-height:48px;text-align:center;font-family:roboto">Hey {{username}}!</h1>
           <table cellpadding="0" cellspacing="0" border="0" style="width:552px;margin:-16px auto;padding:0px;background-color:#ffffff;border-spacing:0;border-collapse:collapse">
             <tbody>
               <tr height="20" style="height:20px">
@@ -32,22 +32,24 @@
                       <tr>
                         <td width="20" valign="middle" style="width:20px"></td>
                         <td width="512" valign="middle" style="width:512px">
-                          <h3 style="margin:15px 0 25px;color:#3594F6;font-size:20px;font-weight:400;line-height:24px;letter-spacing:0.35px;font-family: roboto-thin; text-align:center;">Hubo algunos cambios en tu cuenta</h3>
-                          <p style="margin:0 0 22px;font-size:14px;line-height:24px;letter-spacing:.5px;font-family:roboto-light">Encontramos un cambio en tu dirección de correo, para confirmarlo por favor da clic en el link que enviamos a esa nueva dirección.</p>
-                          <p style="margin:0 0 22px;font-size:14px;line-height:24px;letter-spacing:.5px;font-family:roboto-light">Si tú no realizaste este cambio y crees que tu cuenta puede estar comprometida, por favor búscanos en:</p>
+                          <h3 style="margin:15px 0 25px;color:#3594F6;font-size:20px;font-weight:400;line-height:24px;letter-spacing:0.35px;font-family: roboto-thin; text-align:center;">We noticed some changes in your account</h3>
+                          <p style="margin:0 0 22px;font-size:14px;line-height:24px;letter-spacing:.5px;font-family:roboto-light">
+                          We've received a notification to change your email address, to confirm please go to your new email address to confirm you own it.</p>
+                          <p style="margin:0 0 22px;font-size:14px;line-height:24px;letter-spacing:.5px;font-family:roboto-light">
+                          If you haven't made this change, your account might be compromised, please go to:</p>
                           
                           <div style="text-align:center">
                             <table cellspacing="0" cellpadding="0" style="margin-left:auto;margin-right:auto; margin-top: 50px;">
                               <tbody>
                                 <tr>
-                                  <td align="center" width="290" height="50" bgcolor="" style="border-radius: 8px;border: 1px solid #66B454; cursor:pointer;" onclick=""><a href="{{support_url}}" style="color: #66B454;font-size:18px;font-family: roboto;text-decoration:none; letter-spacing:1px" target="_blank">Ayuda</a>
+                                  <td align="center" width="290" height="50" bgcolor="" style="border-radius: 8px;border: 1px solid #66B454; cursor:pointer;" onclick=""><a href="{{support_url}}" style="color: #66B454;font-size:18px;font-family: roboto;text-decoration:none; letter-spacing:1px" target="_blank">Support</a>
                                   </td>
                                 </tr>
                               </tbody>
                             </table><u></u>
                           </div>                          
                           <div style="margin-top: 50px;padding:0px 15px 5px;color: #5A5858;font-size: 13px;line-height:24px;">                         
-                            <p style="font-family:roboto-light;font-size:14px;text-align:center; letter-spacing:0.5px">¿Dudas? Revisa nuestras </span><a href="{{faq_url}}" style="color:#3498db;text-decoration:none" target="_blank">preguntas frecuentes</a>.</p>
+                            <p style="font-family:roboto-light;font-size:14px;text-align:center; letter-spacing:0.5px">Doubts? </span><a href="{{faq_url}}" style="color:#3498db;text-decoration:none" target="_blank"> Check our FAQ</a>.</p>
                           </div>
                           
                           <div align="center">
