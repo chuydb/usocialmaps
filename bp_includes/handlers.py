@@ -607,7 +607,6 @@ def disclaim(_self, **kwargs):
     
     return _params, user_info
 
-
 # LANDING
 class MaterializeLandingRequestHandler(BaseHandler):
     """
@@ -865,6 +864,8 @@ class MaterializeNewReportHandler(BaseHandler):
         subCat = self.request.get('subCat')
         description = self.request.get('description')
         title = self.request.get('title')
+        video_url = self.request.get('video_url')
+        kind = self.request.get('kind')
         
         try:
             user_report = models.Report()
@@ -872,6 +873,8 @@ class MaterializeNewReportHandler(BaseHandler):
             user_report.address_from_coord = ndb.GeoPt(address_from_coord)
             user_report.address_from = address_from
             user_report.title = title
+            user_report.kind = kind
+            user_report.video_url = video_url
             user_report.description = description
             user_report.likeability = catGroup
             user_report.feeling  = subCat
@@ -884,7 +887,7 @@ class MaterializeNewReportHandler(BaseHandler):
             cartodb_domain = self.app.config.get('cartodb_user')
             cartodb_table = self.app.config.get('cartodb_reports_table')
             #INSERT
-            unquoted_url = ("https://%s.cartodb.com/api/v2/sql?q=INSERT INTO %s (the_geom, title, description, address, image_url, likeability, feeling, follows, uuid, created) VALUES (ST_GeomFromText('POINT(%s %s)', 4326),'%s','%s','%s','%s','%s','%s',%s,'%s','%s')&api_key=%s" % (cartodb_domain, cartodb_table, user_report.address_from_coord.lon, user_report.address_from_coord.lat, user_report.title,user_report.description,user_report.address_from,user_report.image_url,user_report.likeability,user_report.feeling,user_report.follows,user_report.key.id(), user_report.created.strftime("%Y-%m-%d"),api_key)).encode('utf8')
+            unquoted_url = ("https://%s.cartodb.com/api/v2/sql?q=INSERT INTO %s (the_geom, title, description, address, image_url, likeability, feeling, follows, uuid, created, kind, video_url) VALUES (ST_GeomFromText('POINT(%s %s)', 4326),'%s','%s','%s','%s','%s','%s',%s,'%s','%s','%s','%s')&api_key=%s" % (cartodb_domain, cartodb_table, user_report.address_from_coord.lon, user_report.address_from_coord.lat, user_report.title,user_report.description,user_report.address_from,user_report.image_url,user_report.likeability,user_report.feeling,user_report.follows,user_report.key.id(), user_report.created.strftime("%Y-%m-%d"),user_report.kind,user_report.video_url,api_key)).encode('utf8')
             url = urllib.quote(unquoted_url, safe='~@$&()*!+=:;,.?/\'')
             t = urlfetch.fetch(url)
             logging.info("t: %s" % t.content)
@@ -1074,7 +1077,7 @@ class MaterializeReportCommentsHandler(BaseHandler):
                     image = -1
                     initial_letter = log.user_email[1]
                     name = ''
-                html+= '<li class="collection-item avatar" style="overflow:scroll;    text-align: right;     height: auto;">'
+                html+= '<li class="collection-item avatar" style="text-align: right;     height: auto;  display:inline-block; width: 100%; border: 1px solid white;">'
                 if image != -1:
                     html+= '<img src="%s" alt="" class="circle" style="width: 60px;height: 60px;">' % image
                 else:
@@ -1098,24 +1101,31 @@ class MaterializeReportsRequestHandler(BaseHandler):
         """ returns simple html for a get request """
         params, user_info = disclaim(self)
 
+        def get_video_url(url):
+            if url:
+                logging.info('url: %s' % url)
+                if 'embed' in url:
+                    return url
+                else:
+                    return 'https://www.youtube.com/embed/%s' % url.split('=')[-1]
+
         user_reports = models.Report.query(models.Report.user_id == int(user_info.key.id()))
         user_reports = user_reports.order(-models.Report.created)
         if user_reports is not None:
             try:
                 params['reports'] = []
                 for report in user_reports:
-                    params['reports'].append((report.key.id(), report.title, report.created, report.address_from_coord, report.address_from, report.description, report.image_url, report.likeability, report.feeling, report.cdb_id, report.follows, report.get_log_count(), report.get_color(), 'own'))
+                    params['reports'].append((report.key.id(), report.title, report.created, report.address_from_coord, report.address_from, report.description, report.image_url, report.likeability, report.feeling, report.cdb_id, report.follows, report.get_log_count(), report.get_color(), 'own', report.kind, get_video_url(report.video_url)))
                 try:
                     follows = models.Followers.query(models.Followers.user_id == int(user_info.key.id()))
                     for follow in follows:
                         report = models.Report.get_by_cdb(int(follow.report_id))
                         if report:
-                            params['reports'].append((report.key.id(), report.title, report.created, report.address_from_coord, report.address_from, report.description, report.image_url, report.likeability, report.feeling, report.cdb_id, report.follows, report.get_log_count(), report.get_color(), 'follow'))
+                            params['reports'].append((report.key.id(), report.title, report.created, report.address_from_coord, report.address_from, report.description, report.image_url, report.likeability, report.feeling, report.cdb_id, report.follows, report.get_log_count(), report.get_color(), 'follow', report.kind, get_video_url(report.video_url)))
                 except:
                     pass
-            except (AttributeError, TypeError), e:
-                login_error_message = _(messages.expired_session)
-                logging.error('Error updating profile: %s' % e)
+            except Exception as e:
+                logging.error('error at: %s' % e)
                 self.add_message(login_error_message, 'danger')
                 self.redirect_to('login')
 

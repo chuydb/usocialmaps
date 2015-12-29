@@ -98,7 +98,6 @@
 				    position: fixed;
 				    top: 65px;
 				    right: 0px;				    
-				    height: 80%;
 				    overflow-y: scroll;
 				    z-index: 999;
 			}
@@ -107,12 +106,14 @@
 				<style>
 				#right-sidebar-nav{
 					background-color: rgba(255, 255, 255, 1); width: 100%;  
+				    height: 100%;
 				}
 				</style>
 			{% else %} 
 				<style>
 				#right-sidebar-nav{
-					background-color: rgba(255, 255, 255, 0.59); width: 400px; 
+					background-color: rgba(255, 255, 255, 0.8); width: 400px; 
+				    height: 85%;
 				}
 				</style>
 			{% endif %}
@@ -283,7 +284,7 @@
 				<div>
 	            	<input id="search_address" type="text" placeholder="Search address... 🔎" onkeydown="if (event.keyCode == 13) codeAddress('search_address');" style="background-color: white;border-radius: 40px;line-height: 20px;text-align: center;">
 				</div>
-                <ul class="collapsible collapsible-accordion" data-collapsible="expandable" onclick="$('#right-sidebar-nav').hide()">
+                <ul class="collapsible collapsible-accordion" data-collapsible="expandable" onclick="$('#right-sidebar-nav').hide()" style="opacity: 0.9;">
                   <li>
                     <div class="collapsible-header white-text truncate sm-blue"> Currently <span id="rep_count" style="font-family: roboto-regular;">0</span> reports.</div>
                   </li>
@@ -304,80 +305,97 @@
                     <div class="collapsible-header gpe-green-darken-1 white-text sm-blue" style="    background-color: #35B3C5!important;"><i class="mdi-content-filter-list"></i> Filter</div>
                     <div class="collapsible-body white lighten-5" style="max-height: 400px; overflow-y: scroll;">
                       <div class="row">
-                      	<p>Likeability:</p>
-                      	<div class="col s11 offset-s1"> 
-                      		<a class="grey-text" href="#" onclick="setQ('likeability',''); return false;"> Clear all</a> 
-                      	</div>
-                      	<div class="col s11 offset-s1"> 
-                      		<i class="mdi-toggle-check-box sm-green-text col s3" style="display:none;" id="likeability-notatall"></i><a style="color:#F26E62" href="#" onclick="setQ('likeability','Not at all'); return false;"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> Not at all</a> 
-                      	</div>
-                      	<div class="col s11 offset-s1"> 
-                      		<i class="mdi-toggle-check-box sm-green-text col s3" style="display:none;" id="likeability-alittle"></i><a style="color:#F79A50" href="#" onclick="setQ('likeability','A little'); return false;"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> A little</a> 
-                      	</div>
-                      	<div class="col s11 offset-s1"> 
-                      		<i class="mdi-toggle-check-box sm-green-text col s3" style="display:none;" id="likeability-asanyother"></i><a style="color:#FDC935" href="#" onclick="setQ('likeability','As any other'); return false;"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> As any other</a> 
-                      	</div>
-                      	<div class="col s11 offset-s1"> 
-                      		<i class="mdi-toggle-check-box sm-green-text col s3" style="display:none;" id="likeability-alot"></i><a style="color:#3CC6D7" href="#" onclick="setQ('likeability','A lot'); return false;"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> A lot</a> 
-                      	</div>
-                      	<div class="col s11 offset-s1" style="    margin-bottom: 30px;"> 
-                      		<i class="mdi-toggle-check-box sm-green-text col s3" style="display:none;" id="likeability-iloveit"></i><a style="color:#608FC4" href="#" onclick="setQ('likeability','I love it'); return false;"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> I love it</a> 
-                      	</div>
-                      	<p>Feeling:</p>
-                      	<div class="col s11 offset-s1"> 
-                      		<a class="grey-text" href="#" onclick="setQ('feeling',''); return false;"> Clear all</a> 
-                      	</div>
-                      	<div class="col s11 offset-s1"> 
-                      		<i class="mdi-toggle-check-box sm-green-text col s3" style="display:none;" id="feeling-social"></i><a class="grey-text" href="#" onclick="setQ('feeling','Social'); return false;"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> Social</a> 
-                      	</div>
-                      	<div class="col s11 offset-s1"> 
-                      		<i class="mdi-toggle-check-box sm-green-text col s3" style="display:none;" id="feeling-free"></i><a class="grey-text" href="#" onclick="setQ('feeling','Free'); return false;"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> Free</a> 
-                      	</div>
-                      	<div class="col s11 offset-s1"> 
-                      		<i class="mdi-toggle-check-box sm-green-text col s3" style="display:none;" id="feeling-happy"></i><a class="grey-text" href="#" onclick="setQ('feeling','Happy'); return false;"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> Happy</a> 
-                      	</div>
-                      	<div class="col s11 offset-s1"> 
-                      		<i class="mdi-toggle-check-box sm-green-text col s3" style="display:none;" id="feeling-relaxed"></i><a class="grey-text" href="#" onclick="setQ('feeling','Relaxed'); return false;"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> Relaxed</a> 
-                      	</div>
-                      	<div class="col s11 offset-s1"> 
-                      		<i class="mdi-toggle-check-box sm-green-text col s3" style="display:none;" id="feeling-joyful"></i><a class="grey-text" href="#" onclick="setQ('feeling','Joyful'); return false;"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> Joyful</a> 
-                      	</div>
-                      	<div class="col s11 offset-s1"> 
-                      		<i class="mdi-toggle-check-box sm-green-text col s3" style="display:none;" id="feeling-amazed"></i><a class="grey-text" href="#" onclick="setQ('feeling','Amazed'); return false;"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> Amazed</a> 
-                      	</div>
-                      	<div class="col s11 offset-s1"> 
-                      		<i class="mdi-toggle-check-box sm-green-text col s3" style="display:none;" id="feeling-peaceful"></i><a class="grey-text" href="#" onclick="setQ('feeling','Peaceful'); return false;"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> Peaceful</a> 
-                      	</div>
-                      	<div class="col s11 offset-s1"> 
-                      		<i class="mdi-toggle-check-box sm-green-text col s3" style="display:none;" id="feeling-excited"></i><a class="grey-text" href="#" onclick="setQ('feeling','Excited'); return false;"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> Excited</a> 
-                      	</div>
-                      	<div class="col s11 offset-s1"> 
-                      		<i class="mdi-toggle-check-box sm-green-text col s3" style="display:none;" id="feeling-afraid"></i><a class="grey-text" href="#" onclick="setQ('feeling','Afraid'); return false;"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> Afraid</a> 
-                      	</div>
-                      	<div class="col s11 offset-s1"> 
-                      		<i class="mdi-toggle-check-box sm-green-text col s3" style="display:none;" id="feeling-nervous"></i><a class="grey-text" href="#" onclick="setQ('feeling','Nervous'); return false;"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> Nervous</a> 
-                      	</div>
-                      	<div class="col s11 offset-s1"> 
-                      		<i class="mdi-toggle-check-box sm-green-text col s3" style="display:none;" id="feeling-stressed"></i><a class="grey-text" href="#" onclick="setQ('feeling','Stressed'); return false;"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> Stressed</a> 
-                      	</div>
-                      	<div class="col s11 offset-s1"> 
-                      		<i class="mdi-toggle-check-box sm-green-text col s3" style="display:none;" id="feeling-confused"></i><a class="grey-text" href="#" onclick="setQ('feeling','Confused'); return false;"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> Confused</a> 
-                      	</div>
-                      	<div class="col s11 offset-s1"> 
-                      		<i class="mdi-toggle-check-box sm-green-text col s3" style="display:none;" id="feeling-anxious"></i><a class="grey-text" href="#" onclick="setQ('feeling','Anxious'); return false;"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> Anxious</a> 
-                      	</div>
-                      	<div class="col s11 offset-s1"> 
-                      		<i class="mdi-toggle-check-box sm-green-text col s3" style="display:none;" id="feeling-bored"></i><a class="grey-text" href="#" onclick="setQ('feeling','Bored'); return false;"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> Bored</a> 
-                      	</div>
-                      	<div class="col s11 offset-s1"> 
-                      		<i class="mdi-toggle-check-box sm-green-text col s3" style="display:none;" id="feeling-sporty"></i><a class="grey-text" href="#" onclick="setQ('feeling','Sporty'); return false;"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> Sporty</a> 
-                      	</div>
-                      	<div class="col s11 offset-s1"> 
-                      		<i class="mdi-toggle-check-box sm-green-text col s3" style="display:none;" id="feeling-nothing"></i><a class="grey-text" href="#" onclick="setQ('feeling','Nothing'); return false;"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> Nothing</a> 
-                      	</div>
-                      	<div class="col s11 offset-s1"> 
-                      		<i class="mdi-toggle-check-box sm-green-text col s3" style="display:none;" id="feeling-other"></i><a class="grey-text" href="#" onclick="setQ('feeling','Other'); return false;"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> Other</a> 
-                      	</div>
+	                      	<span style="padding:10px">Kind:</span>
+	                      	<div class="col s11 offset-s1"> 
+	                      		<a class="grey-text" href="#" onclick="setQ('kind',''); return false;"> Clear all</a> 
+	                      	</div>
+	                      	<div class="col s11 offset-s1"> 
+	                      		<i class="mdi-toggle-check-box sm-green-text col s3" style="display:none;" id="kind-opinion"></i><a class="grey-text" href="#" onclick="setQ('kind','opinion'); return false;"><i class="mdi-image-brightness-1" style="font-size:15px;"></i>Opinion</a> 
+	                      	</div>
+	                      	<div class="col s11 offset-s1"> 
+	                      		<i class="mdi-toggle-check-box sm-green-text col s3" style="display:none;" id="kind-idea"></i><a class="grey-text" href="#" onclick="setQ('kind','idea'); return false;"><i class="mdi-image-brightness-1" style="font-size:15px;"></i>Idea</a> 
+	                      	</div>
+	                      	<div class="col s11 offset-s1"> 
+	                      		<i class="mdi-toggle-check-box sm-green-text col s3" style="display:none;" id="kind-intervention"></i><a class="grey-text" href="#" onclick="setQ('kind','intervention'); return false;"><i class="mdi-image-brightness-1" style="font-size:15px;"></i>Intervention</a> 
+	                      	</div>
+                      </div>
+                      <div class="row">
+	                      	<span style="padding:10px">Likeability:</span>
+	                      	<div class="col s11 offset-s1"> 
+	                      		<a class="grey-text" href="#" onclick="setQ('likeability',''); return false;"> Clear all</a> 
+	                      	</div>
+	                      	<div class="col s11 offset-s1"> 
+	                      		<i class="mdi-toggle-check-box sm-green-text col s3" style="display:none;" id="likeability-notatall"></i><a style="color:#F26E62" href="#" onclick="setQ('likeability','Not at all'); return false;"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> Not at all</a> 
+	                      	</div>
+	                      	<div class="col s11 offset-s1"> 
+	                      		<i class="mdi-toggle-check-box sm-green-text col s3" style="display:none;" id="likeability-alittle"></i><a style="color:#F79A50" href="#" onclick="setQ('likeability','A little'); return false;"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> A little</a> 
+	                      	</div>
+	                      	<div class="col s11 offset-s1"> 
+	                      		<i class="mdi-toggle-check-box sm-green-text col s3" style="display:none;" id="likeability-asanyother"></i><a style="color:#FDC935" href="#" onclick="setQ('likeability','As any other'); return false;"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> As any other</a> 
+	                      	</div>
+	                      	<div class="col s11 offset-s1"> 
+	                      		<i class="mdi-toggle-check-box sm-green-text col s3" style="display:none;" id="likeability-alot"></i><a style="color:#3CC6D7" href="#" onclick="setQ('likeability','A lot'); return false;"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> A lot</a> 
+	                      	</div>
+	                      	<div class="col s11 offset-s1"> 
+	                      		<i class="mdi-toggle-check-box sm-green-text col s3" style="display:none;" id="likeability-iloveit"></i><a style="color:#608FC4" href="#" onclick="setQ('likeability','I love it'); return false;"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> I love it</a> 
+	                      	</div>                      	
+                      </div>
+                      <div class="row">
+	                      	<span style="padding:10px">Feeling:</span>
+	                      	<div class="col s11 offset-s1"> 
+	                      		<a class="grey-text" href="#" onclick="setQ('feeling',''); return false;"> Clear all</a> 
+	                      	</div>
+	                      	<div class="col s11 offset-s1"> 
+	                      		<i class="mdi-toggle-check-box sm-green-text col s3" style="display:none;" id="feeling-social"></i><a class="grey-text" href="#" onclick="setQ('feeling','Social'); return false;"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> Social</a> 
+	                      	</div>
+	                      	<div class="col s11 offset-s1"> 
+	                      		<i class="mdi-toggle-check-box sm-green-text col s3" style="display:none;" id="feeling-free"></i><a class="grey-text" href="#" onclick="setQ('feeling','Free'); return false;"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> Free</a> 
+	                      	</div>
+	                      	<div class="col s11 offset-s1"> 
+	                      		<i class="mdi-toggle-check-box sm-green-text col s3" style="display:none;" id="feeling-happy"></i><a class="grey-text" href="#" onclick="setQ('feeling','Happy'); return false;"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> Happy</a> 
+	                      	</div>
+	                      	<div class="col s11 offset-s1"> 
+	                      		<i class="mdi-toggle-check-box sm-green-text col s3" style="display:none;" id="feeling-relaxed"></i><a class="grey-text" href="#" onclick="setQ('feeling','Relaxed'); return false;"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> Relaxed</a> 
+	                      	</div>
+	                      	<div class="col s11 offset-s1"> 
+	                      		<i class="mdi-toggle-check-box sm-green-text col s3" style="display:none;" id="feeling-joyful"></i><a class="grey-text" href="#" onclick="setQ('feeling','Joyful'); return false;"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> Joyful</a> 
+	                      	</div>
+	                      	<div class="col s11 offset-s1"> 
+	                      		<i class="mdi-toggle-check-box sm-green-text col s3" style="display:none;" id="feeling-amazed"></i><a class="grey-text" href="#" onclick="setQ('feeling','Amazed'); return false;"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> Amazed</a> 
+	                      	</div>
+	                      	<div class="col s11 offset-s1"> 
+	                      		<i class="mdi-toggle-check-box sm-green-text col s3" style="display:none;" id="feeling-peaceful"></i><a class="grey-text" href="#" onclick="setQ('feeling','Peaceful'); return false;"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> Peaceful</a> 
+	                      	</div>
+	                      	<div class="col s11 offset-s1"> 
+	                      		<i class="mdi-toggle-check-box sm-green-text col s3" style="display:none;" id="feeling-excited"></i><a class="grey-text" href="#" onclick="setQ('feeling','Excited'); return false;"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> Excited</a> 
+	                      	</div>
+	                      	<div class="col s11 offset-s1"> 
+	                      		<i class="mdi-toggle-check-box sm-green-text col s3" style="display:none;" id="feeling-afraid"></i><a class="grey-text" href="#" onclick="setQ('feeling','Afraid'); return false;"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> Afraid</a> 
+	                      	</div>
+	                      	<div class="col s11 offset-s1"> 
+	                      		<i class="mdi-toggle-check-box sm-green-text col s3" style="display:none;" id="feeling-nervous"></i><a class="grey-text" href="#" onclick="setQ('feeling','Nervous'); return false;"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> Nervous</a> 
+	                      	</div>
+	                      	<div class="col s11 offset-s1"> 
+	                      		<i class="mdi-toggle-check-box sm-green-text col s3" style="display:none;" id="feeling-stressed"></i><a class="grey-text" href="#" onclick="setQ('feeling','Stressed'); return false;"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> Stressed</a> 
+	                      	</div>
+	                      	<div class="col s11 offset-s1"> 
+	                      		<i class="mdi-toggle-check-box sm-green-text col s3" style="display:none;" id="feeling-confused"></i><a class="grey-text" href="#" onclick="setQ('feeling','Confused'); return false;"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> Confused</a> 
+	                      	</div>
+	                      	<div class="col s11 offset-s1"> 
+	                      		<i class="mdi-toggle-check-box sm-green-text col s3" style="display:none;" id="feeling-anxious"></i><a class="grey-text" href="#" onclick="setQ('feeling','Anxious'); return false;"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> Anxious</a> 
+	                      	</div>
+	                      	<div class="col s11 offset-s1"> 
+	                      		<i class="mdi-toggle-check-box sm-green-text col s3" style="display:none;" id="feeling-bored"></i><a class="grey-text" href="#" onclick="setQ('feeling','Bored'); return false;"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> Bored</a> 
+	                      	</div>
+	                      	<div class="col s11 offset-s1"> 
+	                      		<i class="mdi-toggle-check-box sm-green-text col s3" style="display:none;" id="feeling-sporty"></i><a class="grey-text" href="#" onclick="setQ('feeling','Sporty'); return false;"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> Sporty</a> 
+	                      	</div>
+	                      	<div class="col s11 offset-s1"> 
+	                      		<i class="mdi-toggle-check-box sm-green-text col s3" style="display:none;" id="feeling-nothing"></i><a class="grey-text" href="#" onclick="setQ('feeling','Nothing'); return false;"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> Nothing</a> 
+	                      	</div>
+	                      	<div class="col s11 offset-s1"> 
+	                      		<i class="mdi-toggle-check-box sm-green-text col s3" style="display:none;" id="feeling-other"></i><a class="grey-text" href="#" onclick="setQ('feeling','Other'); return false;"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> Other</a> 
+	                      	</div>
                       </div>
                     </div>
                   </li>
@@ -485,14 +503,18 @@
 	                	<div class="sm-green" id='gSVpanorama' style='height: 300px;overflow: hidden;-webkit-transform: translateZ(0px);'></div>
 	                </div>
 	            </div>
-                <p class="col s12 m4"><i style="padding:8px;" class="mdi-action-event sm-blue-text"></i>Date: <span id="report_date" style="color:#53ACA8!important"></span></p>
-                <p class="col s12 m8"><i style="padding:8px;" class="mdi-maps-pin-drop sm-blue-text"></i>Location: <span id="report_address" style="color:#53ACA8!important"></span></p>
-                <p class="col s12 m4"><i style="padding:8px;" class="mdi-action-group-work sm-blue-text"></i>Likeability: <span id="report_likeability" style="color:#53ACA8!important"></span></p>
-                <p class="col s12 m4"><i style="padding:8px;" class="mdi-action-face-unlock sm-blue-text"></i>Feeling: <span id="report_feeling" style="color:#53ACA8!important"></span></p>
-                <p class="col s12 m4"><i style="padding:8px;" class="mdi-av-subtitles sm-blue-text"></i>Place: <span id="report_title" style="color:#53ACA8!important"></span></p>
-		        <p class="col s12 "><i style="padding:8px;" class="mdi-action-favorite sm-blue-text"></i>Likes: <span id="report_followers" style="color:#53ACA8!important"></span> {% if user_id %}<a href="#" id="followBtn" class="waves-effect waves-white btn sm-green modal-action tooltipped" data-position="top" data-delay="50" data-tooltip="Like this report and it will appear at your reports section."  onclick="followReport(this)" style="    margin-left: 16px;"><i class="mdi-action-favorite"></i> Like</a>{% endif %}</p>
-                <p class="col s12" style="margin-bottom:20px;"><i style="padding:8px;" class="mdi-action-description sm-blue-text"></i>Opinion: <span id="report_description" style="color:#53ACA8!important"></span></p>
-                <p class="col s12" style="margin-bottom:20px;"><i style="padding:8px;" class="mdi-action-speaker-notes sm-blue-text"></i>Comments: <br><span id="report_comments" style="color:#53ACA8!important"></span></p>
+	            <div class="row" id="video-row" style="display:none">
+	            	<div class="video-container no-controls" id="report_video"></div>
+	            </div>
+
+                <span class="col s12"><span id="report_title"></span></span>
+                <span class="col s12"><span id="report_date"></span></span>
+                <span class="col s12"><span id="report_address"></span></span>
+                <span class="col s12">Likeability: <span id="report_likeability"></span></span>
+                <span class="col s12">Feelings: <span id="report_feeling"></span></span>
+		        <span class="col s12 "><i style="font-size: 18px;" class="mdi-action-favorite grey-text"></i><span id="report_followers"></span> {% if user_id %}<a href="#" id="followBtn" class="waves-effect waves-white btn sm-green modal-action tooltipped" data-position="top" data-delay="50" data-tooltip="Like this report and it will appear at your reports section."  onclick="followReport(this)" style="    margin-left: 16px;">Like</a>{% endif %}</span>
+                <p class="col s12" style="margin-bottom:20px;">Description: <span id="report_description" style="color:#53ACA8!important"></span></p>
+                <p class="col s12" style="margin-bottom:20px;">Comments: <br><span id="report_comments" style="color:#53ACA8!important"></span></p>
                 {% if user_id %}
                 <div class="row">
                     <div class="input-field col s11 offset-s1 m7 offset-m1">
@@ -854,20 +876,20 @@
 						['I love it', '_blue.png']
 						];
 					/* FILTERS RELATED */
-					var _lks = [], _fls = [];
+					var _lks = [], _fls = [], _kinds = [];
 
 					/* MAPS RELATED */
 					var geocoder = new google.maps.Geocoder();
 					var panorama, sv = new google.maps.StreetViewService();
-					var map, mapCenter = [25.6765307,-100.2124545];
+					var map, mapCenter = [36.0982464589387,-48.44487637500003];
 					google.maps.event.addDomListener(window,'load', init);					
 
 					function init(){
 						/*  MAP  */
 						var mapOptions = {
 							center: new google.maps.LatLng(mapCenter[0], mapCenter[1]),
-							zoom: 12,
-							minZoom:5,
+							zoom: 4,
+							minZoom:4,
 							zoomControl: true,
 							zoomControlOptions: {
 								style: google.maps.ZoomControlStyle.SMALL,	
@@ -904,7 +926,7 @@
 						map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(centerControlDiv);
 
 						_query= "SELECT * FROM " + _table_name;	    
-                        var interactivity_ = ["cartodb_id", "address","description","feeling","follows","image_url","likeability","title","uuid"];
+                        var interactivity_ = "cartodb_id, address, description, feeling, follows, image_url, likeability, title, uuid, video_url, kind";
 						var layerSource = {
                             user_name: _user_name,
                             type: 'cartodb',
@@ -927,16 +949,25 @@
                             cdb.vis.Vis.addInfowindow(map, sublayers[0], interactivity_, {
                                 infowindowTemplate: $('#infowindow_'+_table_name).html()
                             });
-                            sublayers[0].setInteraction(true);                                 
+                            sublayers[0].setInteraction(true);      
                             sublayers[0].on('featureClick', function(e, latlng, pos, data) {
-                            	  populateModal(data, latlng);
                             	  console.log(data);
                             	  console.log(latlng);
+                            	  populateModal(data, latlng);
 						    });  
 
 						    _sql.execute(_query).done(function(data) {
 							        $('#rep_count').html(addCommas(data.total_rows));
 						    }) 
+
+						    _sql.getBounds(_query).done(function(bounds) {
+						    	var _bounds = new google.maps.LatLngBounds();
+							    _bounds.extend(new google.maps.LatLng(bounds[0][0], bounds[0][1]));
+							    _bounds.extend(new google.maps.LatLng(bounds[1][0], bounds[1][1]));
+							    map.fitBounds(_bounds);
+						    });
+
+
                         });
 
 						var obj = getUrlVars();
@@ -962,7 +993,6 @@
 					        vars[hash[0]] = hash[1];
 					        if (vars[hash[0]]) if (vars[hash[0]].search(/#/) != -1) vars[hash[0]]=vars[hash[0]].substr(0,vars[hash[0]].search(/#/));
 					    }
-					    console.log(vars);
 					    return vars;
 					}
 
@@ -1008,8 +1038,48 @@
 					}
 
 					function setQ(way, content){
-						var i, likeabilities = '', feelings = '';
+						var i, likeabilities = '', feelings = '', kinds = '';
 						switch(way){
+							case 'kind':
+								switch(content){
+									case 'opinion':
+										if ($('#kind-opinion:visible').length > 0){
+											$('#kind-opinion').hide();
+											i = _kinds.indexOf("opinion");
+											if(i != -1) _kinds.splice(i, 1);
+										}else{
+											$('#kind-opinion').show();
+											_kinds.push("opinion");
+										}
+										break;
+									case 'idea':
+										if ($('#kind-idea:visible').length > 0){
+											$('#kind-idea').hide();
+											i = _kinds.indexOf("idea");
+											if(i != -1) _kinds.splice(i, 1);
+										}else{
+											$('#kind-idea').show();
+											_kinds.push("idea");
+										}
+										break;
+									case 'intervention':
+										if ($('#kind-intervention:visible').length > 0){
+											$('#kind-intervention').hide();
+											i = _kinds.indexOf("intervention");
+											if(i != -1) _kinds.splice(i, 1);
+										}else{
+											$('#kind-intervention').show();
+											_kinds.push("intervention");
+										}
+										break;
+									default:
+											$('#kind-opinion').hide();
+											$('#kind-idea').hide();
+											$('#kind-intervention').hide();
+											_kinds = [];
+										break;
+								}
+								break;
 							case 'likeability':
 								switch(content){
 									case 'Not at all':
@@ -1166,6 +1236,10 @@
 								break;
 						}
 
+						for(var i=0,j=_kinds.length;i<j;i++){
+							kinds += "kind ilike '%" + _kinds[i] + "%' or ";
+						}
+
 						for(var i=0,j=_lks.length;i<j;i++){
 							likeabilities += "likeability ilike '%" + _lks[i] + "%' or ";
 						}
@@ -1173,17 +1247,26 @@
 						for(var i=0,j=_fls.length;i<j;i++){
 							feelings += "feeling ilike '%" + _fls[i] + "%' or ";
 						}
+						console.log('kinds:', kinds);
 						console.log('likeabilities:', likeabilities);
 						console.log('feelings:', feelings);
 
 
-						if (likeabilities != '' && feelings != '')
-							_query = "SELECT * FROM " + _table_name + " WHERE (" + likeabilities.substr(0,likeabilities.length-4) + ") or (" + feelings.substr(0,feelings.length-4) + ")";
-						else if (likeabilities != '' && feelings == '')
-							_query = "SELECT * FROM " + _table_name + " WHERE " + likeabilities.substr(0,likeabilities.length-4);
-						else if (likeabilities == '' && feelings != '')
-							_query = "SELECT * FROM " + _table_name + " WHERE " + feelings.substr(0,feelings.length-4);
-						else if (likeabilities == '' && feelings == '')
+						if (kinds != '' && likeabilities != '' && feelings != '')
+							_query = "SELECT * FROM " + _table_name + " WHERE (" + kinds.substr(0,kinds.length-4) + ") and (" + likeabilities.substr(0,likeabilities.length-4) + ") and (" + feelings.substr(0,feelings.length-4) + ")";
+						else if (kinds != '' && likeabilities != '' && feelings == '')
+							_query = "SELECT * FROM " + _table_name + " WHERE (" + kinds.substr(0,kinds.length-4) + ") and (" + likeabilities.substr(0,likeabilities.length-4) + ")";
+						else if (kinds != '' && likeabilities == '' && feelings != '')
+							_query = "SELECT * FROM " + _table_name + " WHERE (" + kinds.substr(0,kinds.length-4) + ") and (" + feelings.substr(0,feelings.length-4) + ")";
+						else if (kinds != '' && likeabilities == '' && feelings == '')
+							_query = "SELECT * FROM " + _table_name + " WHERE (" + kinds.substr(0,kinds.length-4) + ")";
+						else if (kinds == '' && likeabilities != '' && feelings != '')
+							_query = "SELECT * FROM " + _table_name + " WHERE (" + feelings.substr(0,feelings.length-4) + ") and (" + likeabilities.substr(0,likeabilities.length-4) + ")";
+						else if (kinds == '' && likeabilities != '' && feelings == '')
+							_query = "SELECT * FROM " + _table_name + " WHERE (" + likeabilities.substr(0,likeabilities.length-4) + ")";
+						else if (kinds == '' && likeabilities == '' && feelings != '')
+							_query = "SELECT * FROM " + _table_name + " WHERE (" + feelings.substr(0,feelings.length-4) + ")";
+						else if (kinds == '' && likeabilities == '' && feelings == '')
 							_query = "SELECT * FROM " + _table_name;
 						console.log('_query:', _query);
             			
@@ -1194,6 +1277,7 @@
 					}
 
 					function populateModal(data, latlng){
+						map.setCenter(new google.maps.LatLng(latlng[0], latlng[1]));
 						if (data.image_url != 'None'){
 							$('#report_image').attr("src", data.image_url );
 							$('#report_image').show();
@@ -1206,19 +1290,37 @@
 						$('#report_follows').val(data.follows);
 						$('#report_uuid').val(data.uuid);
 						$('#commentbox').val('');
-						$('#report_followers').html(data.follows);
-						$('#report_likeability').html(getLikeability(data.likeability));
-						$('#report_description').html(data.description);
-						$('#report_title').html(data.title);
-						$('#report_feeling').html(data.feeling.replace(/\s/g, ", "));
-						$('#report_address').html(data.address);
+
+						$('#report_title').html('<span class="title grey-text">'+data.title+'<img src="'+getIcon(data.likeability)+'" style="height:40px;margin-bottom: -14px;"></span>');
 						var qry = "SELECT created FROM " + _table_name + " WHERE cartodb_id = " + data.cartodb_id;
 						_sql.execute(qry).done(function(data) {
-							$('#report_date').html(data.rows[0].created.substr(0,10));
+							$('#report_date').html('<span class="small grey-text">' + data.rows[0].created.substr(0,10) + '</span>');
 						});
-						$('#followBtn').html('<i class="mdi-action-favorite"></i> Like');
+						$('#report_address').html('<span class="small grey-text">' + data.address + '</span>');
+
+						$('#report_likeability').html(getLikeability(data.likeability));
+						var feeling_html='<div class="row center">';
+						feeling_html+=getFeelingHTML(data.likeability, data.feeling);
+						feeling_html+='</div>';
+						$('#report_feeling').html(feeling_html);
+
+						$('#report_followers').html('<span class="small grey-text">' + data.follows + '</span>');
+						$('#followBtn').html('Like');
+
+						$('#report_description').html(data.description);
 						loadComments($('#report_uuid').val());
 						getgSV(latlng)
+
+						if (data.video_url != 'None'){
+							if (data.video_url.indexOf('embed') != -1)
+								$('#report_video').html('<iframe width="640" height="360" src="'+data.video_url+'" frameborder="0" allowfullscreen=""></iframe>');
+							else{
+								$('#report_video').html('<iframe width="640" height="360" src="https://www.youtube.com/embed/'+data.video_url.split("=")[data.video_url.split("=").length-1]+'" frameborder="0" allowfullscreen=""></iframe>');
+							}
+							$('#video-row').show();
+						}else{
+							$('#video-row').hide();
+						}
 
 						$('#modal3').openModal();
 						if (document.getElementById('close-infowindow')) document.getElementById('close-infowindow').click();
@@ -1257,19 +1359,19 @@
 						switch(st){
 					        case 'Not at all':
 					            document.getElementById("modal3_content").style.borderLeft = "thick solid #F26E62";
-					            return '<a style="color:#F26E62" href="#"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> Not at all</a>';   
+					            return '<a style="color:#F26E62" href="#">Not at all</a>';   
 					        case 'A little':
 					            document.getElementById("modal3_content").style.borderLeft = "thick solid #F79A50";
-					            return '<a style="color:#F79A50" href="#"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> A little</a>';
+					            return '<a style="color:#F79A50" href="#">A little</a>';
 					        case 'As any other':
 					            document.getElementById("modal3_content").style.borderLeft = "thick solid #FDC935";
-					            return '<a style="color:#FDC935" href="#"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> As any other</a>';
+					            return '<a style="color:#FDC935" href="#">As any other</a>';
 					        case 'A lot':
 					            document.getElementById("modal3_content").style.borderLeft = "thick solid #3CC6D7";
-					            return '<a style="color:#3CC6D7" href="#"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> A lot</a>';
+					            return '<a style="color:#3CC6D7" href="#">A lot</a>';
 					        case 'I love it':
 					            document.getElementById("modal3_content").style.borderLeft = "thick solid #608FC4";
-					            return '<a style="color:#608FC4" href="#"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> I love it</a>';
+					            return '<a style="color:#608FC4" href="#">I love it</a>';
 					    }
 					}					
 
@@ -1297,10 +1399,10 @@
 			            }).done(function(data) {
 			            	console.log(data);
 			            	if (kind == 'follow' && data.status == 'success' && data.contents != 'user is creator'){
-			            		elem.innerHTML = elem.innerHTML.replace('<i class="mdi-action-favorite"></i> Like','Undo');
+			            		elem.innerHTML = elem.innerHTML.replace('Like','Undo');
 			            	}
 			            	if (kind == 'unfollow' && data.status == 'success' && data.contents != 'user is creator'){
-			            		elem.innerHTML = elem.innerHTML.replace('Undo', '<i class="mdi-action-favorite"></i> Like');
+			            		elem.innerHTML = elem.innerHTML.replace('Undo', 'Like');
 			            	}
 			            	var qry = "SELECT follows FROM " + _table_name + " WHERE cartodb_id = " + $('#report_ticket').val();
 							_sql.execute(qry).done(function(data) {
@@ -1315,6 +1417,7 @@
 			    				Materialize.toast('<span class="toast-success">Undo successful.</span>',4500);
 							else if (data.contents == 'user is creator')
 			    				Materialize.toast('<span class="toast-success">You created this report, it is already at your reports.</span>',4500);
+			    			populateSidebar();
 			            });
 					}
 
@@ -1407,15 +1510,17 @@
 						_sql.execute(query).done(function(data) {
 					        if(data.total_rows >= 1) {
 							    for(var i=0,j=data.total_rows;i<j;i++){
-							    	html += '<li class="collection-item avatar" style="height:auto;margin-bottom:10px;border-radius:4px;background-color: rgba(255, 255, 255, 0);">';
+							    	html += '<li class="collection-item avatar" style="height:auto;margin-bottom:10px;border-radius:4px;background-color: rgba(255, 255, 255, 0);    padding: 20px;">';
 					                if (data.rows[i].image_url != 'None')
-					                	html += '<img src="'+data.rows[i].image_url+'" alt="" class="circle">';
+					                	html += '';//'<img src="'+data.rows[i].image_url+'" alt="" class="circle">';
 					               	else
-					               		html += '<img src="/default/materialize/images/logo.png" alt="" class="circle">';
+					               		html += '';//'<img src="/default/materialize/images/logo.png" alt="" class="circle">';
 					                html+='<span class="title grey-text">'+data.rows[i].title+'<img src="'+getIcon(data.rows[i].likeability)+'" class="right" style="height:40px;"></span>';
 									html+='<p class="grey-text small">'+data.rows[i].created.substr(0,10)+'';
 									html+='<br>'+data.rows[i].address+'';
 									html+='</p>';
+									if (data.rows[i].image_url != 'None')
+					                	html += '<div class="row center"><img src="'+data.rows[i].image_url+'" alt="" class="responsive-img"></div>';
 									html+='<div class="row center">';
 									html+=getFeelingHTML(data.rows[i].likeability, data.rows[i].feeling);
 									html+='</div>';
@@ -1425,7 +1530,7 @@
 									html+='<p class="" style="cursor: pointer;"><a class="grey-text" href="#" onclick="loadModal('+data.rows[i].cartodb_id+');"><i class="mdi-maps-place"></i></a></p>';
 									html+='</div>';
 									html+='<div class="col s3">';
-									html+='<p class=""><a class="grey-text"><i class="mdi-action-favorite"></i> <span>'+data.rows[i].follows+'</span></a></p>';
+									html+='<p class="" style="cursor: pointer;"><a class="grey-text" href="#" onclick="loadModal('+data.rows[i].cartodb_id+', true);"><i class="mdi-action-favorite"></i> <span>'+data.rows[i].follows+'</span></a></p>';
 									html+='</div>';
 									html+='<div class="col s3">';
 									html+='<p class="" style="cursor: pointer;"><a class="grey-text" href="#" onclick="loadModal('+data.rows[i].cartodb_id+');"><i class="mdi-action-speaker-notes"></i>';
@@ -1435,7 +1540,7 @@
 							             type: 'GET',
 							             async: false,
 							             success: function(response) { 
-							                 console.log(response);
+							                 // console.log(response);
 							             }
 							        }).done(function(response) {
 							            html += response.count+'</a></p>';
@@ -1455,13 +1560,19 @@
 					    })
 					}
 
-					function loadModal(cdb_id){
-						var query = "select st_y(the_geom) as lat, st_x(the_geom) as lon, image_url, cartodb_id, follows, uuid, likeability, description, title, feeling, address from "+_table_name+" where cartodb_id = " + cdb_id;
+					function loadModal(cdb_id, f){
+						f = typeof f !== 'undefined' ? f : false;
+						var query = "select st_y(the_geom) as lat, st_x(the_geom) as lon, image_url, video_url, kind, cartodb_id, follows, uuid, likeability, description, title, feeling, address from "+_table_name+" where cartodb_id = " + cdb_id;
 						_sql.execute(query).done(function(data) {
 					        if(data.total_rows >= 1) {
+					        	 console.log(data);
 							     populateModal(data.rows[0], [data.rows[0].lat, data.rows[0].lon]);
 							}
 					    })
+					    if (f){
+			        		setTimeout(function(){ $('#followBtn').click();}, 500);
+			        		populateSidebar();
+					    }
 					}
 
 					function populateShare(cdb_id){

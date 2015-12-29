@@ -28,7 +28,7 @@
 	<div class="section">
 		<div class="container">
 			<div class="row">
-				{% for idx, title, created, address_from_coord, address_from, description, image_url, likeability, feeling, cdb_id, follows, log_count, color, kind in reports %}
+				{% for idx, title, created, address_from_coord, address_from, description, image_url, likeability, feeling, cdb_id, follows, log_count, color, source, kind, video_url in reports %}
 		            <div class="col s12 m6 l3" id="panel_{{idx}}">
 		                <div class="map-card">
 		                    <div class="card">
@@ -37,7 +37,7 @@
 		                        </div>
 		                        <div class="card-content" style="border-left: 5px solid #{{color}};">                    
 		                            <a class="btn-floating activator btn-move-up waves-effect waves-light right" style="background-color:#{{color}}; width: 60px;height: 60px;top: -50px;">
-		                                <i class="{% if kind == 'follow' %}mdi-action-favorite{% else %}mdi-action-info{% endif %}" style="font-size:40px; margin-top:11px;"></i>
+		                                <i class="{% if source == 'follow' %}mdi-action-favorite{% else %}mdi-action-info{% endif %}" style="font-size:40px; margin-top:11px;"></i>
 		                            </a>
 		                            <h4 class="card-title grey-text text-darken-4">
 		                                <a href="#" class="grey-text text-darken-4 activator" style="color:#{{color}}!important"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> {{likeability}}</a>
@@ -52,13 +52,14 @@
 		                            </div>
 									
 
-		                            {% if kind == 'follow' %}<p class="" style="cursor: pointer; line-height: 40px;"><i class="mdi-action-favorite sm-green-text"></i><span style="color:#53ACA8!important">You're following this report because you liked it. </span> <a class="grey-text text-lighten-2" href="#" onclick="followReport({{cdb_id}}, {{idx}})">(click here to unfollow)</a></p>
+		                            {% if source == 'follow' %}<p class="" style="cursor: pointer; line-height: 40px;"><i class="mdi-action-favorite sm-green-text"></i><span style="color:#53ACA8!important">You're following this report because you liked it. </span> <a class="grey-text text-lighten-2" href="#" onclick="followReport({{cdb_id}}, {{idx}})">(click here to unfollow)</a></p>
 		                            {% endif %}
 			                            
 		                        </div>
 		                        <div class="card-reveal" style="border-left: 5px solid #{{color}};">
 		                            <span class="card-title grey-text text-darken-4"><i class="mdi-navigation-close right"></i></span>                   
 		                            {% if image_url %}<img class="responsive-img center z-depth-2" style="margin-top: 12px;" src="{{image_url}}">{% endif %}
+		                            <p><i style="padding:8px;" class="mdi-action-event sm-green-text"></i>Kind: <span style="color:#{{color}}!important">{{kind}}</span></p>
 		                            <p><i style="padding:8px;" class="mdi-action-event sm-green-text"></i>Date: <span style="color:#{{color}}!important">{{created}}</span></p>
 		                            <p><i style="padding:8px;" class="mdi-maps-pin-drop sm-green-text"></i>Location: <span style="color:#{{color}}!important">{{address_from}}</span></p>
 		                            <p><i style="padding:8px;" class="mdi-action-group-work sm-green-text"></i>Likeability: <span style="color:#{{color}}!important"><i class="mdi-image-brightness-1" style="font-size:15px;"></i> {{likeability}}</span></p>
@@ -66,6 +67,7 @@
 		                            <p><i style="padding:8px;" class="mdi-action-description sm-green-text"></i>Description: <span style="color:#{{color}}!important">{{description}}</span></p>
 		                            <p><i style="padding:8px;" class="mdi-action-book sm-green-text"></i>Place: <span style="color:#{{color}}!important">{{title}}</span></p>
 		                            <p><i style="padding:8px;" class="mdi-action-favorite sm-green-text"></i>Likes: <span style="color:#{{color}}!important">{{follows}}</span></p>
+		                            {% if video_url %}<div class="video-container no-controls"><iframe width="640" height="360" src="{{video_url}}" frameborder="0" allowfullscreen=""></iframe></div>{% endif %}
 		                        </div>
 		                    </div>
 		                </div>

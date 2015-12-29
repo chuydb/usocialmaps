@@ -91,6 +91,7 @@ class User(User):
 class Report(ndb.Model):
     created = ndb.DateTimeProperty(auto_now_add = True)                                                                             #: Creation date on ndb
     updated = ndb.DateTimeProperty(auto_now = True)                                                                                 #: Modification date on ndb
+    kind = ndb.StringProperty(default = 'opinion')                                                                                  #: Report kind
     title = ndb.StringProperty()                                                                                                    #: Report title
     description = ndb.TextProperty()                                                                                                #: Report description
     address_from_coord = ndb.GeoPtProperty()                                                                                        #: lat/long address for report 
@@ -98,6 +99,7 @@ class Report(ndb.Model):
     cdb_id = ndb.IntegerProperty(default = -1)                                                                                      #: ID in CartoDB PostGIS DB
     user_id = ndb.IntegerProperty(required = True, default = -1)                                                                    #: Reporting user ID
     image_url = ndb.StringProperty()                                                                                                #: Report media 
+    video_url = ndb.StringProperty()                                                                                                #: Report media 
     likeability = ndb.StringProperty()                                                                                              #: Parent category
     feeling  = ndb.StringProperty()                                                                                                 #: Child category
     follows = ndb.IntegerProperty(default = 0)                                                                                      #: Followers as votes/relevance for this report

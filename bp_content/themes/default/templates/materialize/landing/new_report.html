@@ -23,10 +23,24 @@
 	        	 <form class="col s12" id="form_report" action="{{ url|safe }}" enctype="multipart/form-data" method="post">
 		                <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
 		                <input type="hidden" id="catGroup" name="catGroup">
+		                <input type="hidden" id="kind" name="kind">
 		                <input type="hidden" id="subCat" name="subCat">
 		                <div class="container">                
 		                    <div class="col s12 m9 offset-m1">
 		    	                <div class="row">
+		    	                	<div class="row">
+		    	                		<div class="input-field col s11 offset-s1 m5 offset-m1">
+		                                    <!-- Dropdown Trigger -->
+		                                    <p class="grey-text">I want to share an...</p>
+		                                    <a data-hover="false" id='kindGroupbtn' class='dropdown-button disabled btn sm-green white-text truncate' href='#' data-activates='kindGroupdd' style="min-width: 250px; min-height: 45px; line-height: 45px;">---</a>
+		                                    <!-- Dropdown Structure -->
+		                                    <ul id='kindGroupdd' class='dropdown-content' style="max-height: 250px; font-weight: bolder;">
+		                                    	<li> <a style="color:#F26E62" href="#" onclick="document.getElementById('kindGroupbtn').innerHTML=this.innerHTML; document.getElementById('kind').value=(this.innerHTML).trim(); return false;">opinion</a></li>
+		                                    	<li> <a style="color:#F79A50" href="#" onclick="document.getElementById('kindGroupbtn').innerHTML=this.innerHTML; document.getElementById('kind').value=(this.innerHTML).trim(); return false;">idea</a></li>
+		                                    	<li> <a style="color:#FDC935" href="#" onclick="document.getElementById('kindGroupbtn').innerHTML=this.innerHTML; document.getElementById('kind').value=(this.innerHTML).trim(); return false;">intervention</a></li>
+		                                    </ul>                
+		                                </div>
+		    	                	</div>
 	                                <div class="input-field col s11 offset-s1">
 	                                    <i class="mdi-av-subtitles prefix sm-green-text"></i>
 	                                    <input id="title" name="title" class="materialize-textarea" length="100" type="text">
@@ -136,7 +150,13 @@
 	                                            <input class="file-path validate" type="text" style="width: 50%">
 	                                        </div>
 	                                    </div>
-		                            </div>                                                
+		                            </div>    
+
+		                            <div class="input-field col s11 offset-s1">
+	                                    <i class="mdi-av-play-circle-fill prefix sm-green-text"></i>
+	                                    <input id="video_url" name="video_url" class="materialize-textarea" length="100" type="text">
+	                                    <label for="video_url">If you have a youtube video please add it here:</label>
+	                                </div>                                            
 		    	                
 		    	                </div>
 		        	        </div>
@@ -303,6 +323,10 @@
     				Materialize.toast('<span class="toast-danger">Oops! Please complete your profile first.</span>',3000,'',function(){window.location.href = "{{uri_for('materialize-settings-profile')}}";});
     	            return false;
     			}
+    	        if (document.getElementById('kind').value == ''){
+    	            Materialize.toast('<span class="toast-warning">Oops! Please set the kind of your sharing.</span>',4500);
+    	            return false;
+    	        }
     	        if (!marker){
     	            Materialize.toast('<span class="toast-warning">Oops! Please set a location.</span>',4500);
     	            return false;
