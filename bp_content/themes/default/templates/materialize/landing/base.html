@@ -1311,7 +1311,7 @@
 						loadComments($('#report_uuid').val());
 						getgSV(latlng)
 
-						if (data.video_url != 'None'){
+						if (data.video_url.indexOf('http') != -1){
 							if (data.video_url.indexOf('embed') != -1)
 								$('#report_video').html('<iframe width="640" height="360" src="'+data.video_url+'" frameborder="0" allowfullscreen=""></iframe>');
 							else{

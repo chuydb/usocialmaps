@@ -1111,6 +1111,7 @@ class MaterializeReportsRequestHandler(BaseHandler):
 
         user_reports = models.Report.query(models.Report.user_id == int(user_info.key.id()))
         user_reports = user_reports.order(-models.Report.created)
+        user_reports = user_reports.fetch(50)
         if user_reports is not None:
             try:
                 params['reports'] = []
