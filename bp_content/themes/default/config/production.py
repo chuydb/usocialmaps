@@ -36,7 +36,7 @@ config = {
     
     
      # contact page email settings
-    'contact_recipient': "chuycepeda@gmail.com",
+    'contact_recipient': "info.socialmaps@gmail.com",
 	
 	
     # get your own recaptcha keys by registering at http://www.google.com/recaptcha/

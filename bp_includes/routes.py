@@ -51,6 +51,7 @@ _routes = [
     RedirectRoute(r'/humans.txt', handlers.HumansHandler, name='humans', strict_slash=True),
     RedirectRoute(r'/sitemap.xml', handlers.SitemapHandler, name='sitemap', strict_slash=True),
     RedirectRoute(r'/crossdomain.xml', handlers.CrossDomainHandler, name='crossdomain', strict_slash=True),
+    RedirectRoute('/mboilerplate/users/', handlers.MBoiUsersHandler, name='mboi-users', strict_slash=True),
     
     #Taskqueues
     RedirectRoute('/taskqueue-send-email/', handlers.SendEmailHandler, name='taskqueue-send-email', strict_slash=True),

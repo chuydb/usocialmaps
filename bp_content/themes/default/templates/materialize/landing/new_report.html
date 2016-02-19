@@ -49,7 +49,7 @@
 	                                <div class="input-field col s11 offset-s1">
 	                                    <i class="mdi-maps-map prefix sm-green-text"></i>
 	                                    <textarea id="description" name="description" class="materialize-textarea" length="500" style="height: 22px;" type="text" ></textarea>
-	                                    <label for="description">Write your opinion about this place. What do you like and do not like? How can it be improved? What's happening here?</label>
+	                                    <label for="description">Write your opinion about this place. What do you like and do not like? How can it be improved? What's happening here? (Optional)</label>
 	                                </div>
 		    	                    <div class="row center">
 		                                <div class="input-field col s11 offset-s1 m5 offset-m1">
@@ -341,10 +341,6 @@
     	        }
     	        if (document.getElementById('title').value == ''){
     	            Materialize.toast('<span class="toast-warning">Oops! Please set the name of the place.</span>',4500);
-    	            return false;
-    	        }
-    	        if (document.getElementById('description').value == ''){
-    	            Materialize.toast('<span class="toast-warning">Oops! Please set your opinion.</span>',4500);
     	            return false;
     	        }
     	        document.getElementById('catGroup').value= document.getElementById('catGroup').value.replace('<i class="mdi-image-brightness-1" style="font-size:15px;"></i> ','');

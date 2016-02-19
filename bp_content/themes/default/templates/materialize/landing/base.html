@@ -105,14 +105,16 @@
 			{% if is_mobile %} 
 				<style>
 				#right-sidebar-nav{
-					background-color: rgba(255, 255, 255, 1); width: 100%;  
+					/*background-color: rgba(255, 255, 255, 1); */
+					width: 100%;  
 				    height: 100%;
 				}
 				</style>
 			{% else %} 
 				<style>
 				#right-sidebar-nav{
-					background-color: rgba(255, 255, 255, 0.8); width: 400px; 
+					/*background-color: rgba(255, 255, 255, 0.8); */
+					width: 400px; 
 				    height: 85%;
 				}
 				</style>
@@ -512,7 +514,7 @@
                 <span class="col s12"><span id="report_address"></span></span>
                 <span class="col s12">Likeability: <span id="report_likeability"></span></span>
                 <span class="col s12">Feelings: <span id="report_feeling"></span></span>
-		        <span class="col s12 "><i style="font-size: 18px;" class="mdi-action-favorite grey-text"></i><span id="report_followers"></span> {% if user_id %}<a href="#" id="followBtn" class="waves-effect waves-white btn sm-green modal-action tooltipped" data-position="top" data-delay="50" data-tooltip="Like this report and it will appear at your reports section."  onclick="followReport(this)" style="    margin-left: 16px;">Like</a>{% endif %}</span>
+		        <span class="col s12 "><i style="font-size: 18px;" class="mdi-action-favorite grey-text"></i><span id="report_followers"></span> {% if user_id %}<a href="#" id="followBtn" class="waves-effect waves-white btn sm-green modal-action tooltipped" data-position="top" data-delay="50" data-tooltip="Like this report and it will appear at your reports section."  onclick="followReport(this)" style="    margin-left: 16px;"><i style="font-size: 18px;" class="mdi-action-favorite"></i></a>{% endif %}</span>
                 <p class="col s12" style="margin-bottom:20px;">Description: <span id="report_description" style="color:#53ACA8!important"></span></p>
                 <p class="col s12" style="margin-bottom:20px;">Comments: <br><span id="report_comments" style="color:#53ACA8!important"></span></p>
                 {% if user_id %}
@@ -554,8 +556,8 @@
 			{% if path == uri_for('landing') %}
 				<!-- Right sidebar -->
 	            <div id="right-sidebar-nav" style="display:none;">
-                    <a href="#" class="right grey-text" onclick="$('#right-sidebar-nav').hide()"><i class="mdi-navigation-close"></i></a>
-	            	<ul id="report_list" class="collection" style="    margin-top: 30px;">
+                    <a href="#" class="right" onclick="$('#right-sidebar-nav').hide()" style="color: #9BC868!important;font-size: 25px;font-family: roboto-black!important;background-color: white;height: 25px;line-height: 2rem;"><i class="mdi-navigation-close"></i></a>
+	            	<ul id="report_list" class="collection" style="    margin-top: 30px;    margin-right: 8px;     border: none!important;">
 	                  
 	                </ul>
 	            </div>
@@ -602,7 +604,7 @@
 		    <!--scrollbar-->
 		    <script type="text/javascript" src="/{{theme}}/materialize/js/plugins/perfect-scrollbar/perfect-scrollbar.min.js"></script>
 		    <!--plugins.js - Some Specific JS codes for Plugin Settings-->
-		    <script type="text/javascript" src="/{{theme}}/materialize/js/plugins.js"></script>
+		    <script type="text/javascript" src="/{{theme}}/materialize/js/plugins.js?v=1"></script>
 		  	<script src="/{{theme}}/materialize/js/plugins/jquery/jquery.color-2.1.0.js"></script>
 		  	<!-- Toast Notification -->
 		    {% if messages|safe %}		    	
@@ -893,10 +895,14 @@
 							zoomControl: true,
 							zoomControlOptions: {
 								style: google.maps.ZoomControlStyle.SMALL,	
+        						position: google.maps.ControlPosition.LEFT_BOTTOM
 							},
 							mapTypeControl: false,
 							scrollwheel: false,
 							streetViewControl: true,
+							streetViewControlOptions: {
+						        position: google.maps.ControlPosition.LEFT_BOTTOM
+						    },
 							panControl:false,
 							backgroundColor: 'rgb(249, 249, 249)',
 							rotateControl:true,
@@ -923,7 +929,7 @@
 						var centerControlDiv = document.createElement('div');
 						var centerControl = new CenterControl(centerControlDiv, map);
 						centerControlDiv.index = 1;
-						map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(centerControlDiv);
+						map.controls[google.maps.ControlPosition.LEFT_BOTTOM].push(centerControlDiv);
 
 						_query= "SELECT * FROM " + _table_name;	    
                         var interactivity_ = "cartodb_id, address, description, feeling, follows, image_url, likeability, title, uuid, video_url, kind";
@@ -1006,7 +1012,6 @@
 					function createTileStyle(tStyle, table) {
 						var mOverlap;
 						var close;
-						var tileStyle = "#" + table + "{";
 						switch (tStyle) {
 						case 'normal':
 							mOverlap = true;
@@ -1025,11 +1030,15 @@
 							closeStyle = "}";
 							break;
 						}
+						var tileStyle = "#" + table + "{marker-line-color: #FFF;marker-line-opacity: 1;marker-line-width: 5;marker-allow-overlap:" + mOverlap + ";marker-width:80;}";
 						for (var i = 0; i < catMarkers.length; i++) {
-							tileStyle += "[likeability='" + catMarkers[i][0] + "']{marker-file:url('" + sourceurl  + catMarkers[i][1] + "');marker-line-color: #FFF;marker-line-opacity: 1;marker-line-width: 5;marker-allow-overlap:" + mOverlap + ";marker-width:80;}";
+							tileStyle += "#" + table + "[likeability='" + catMarkers[i][0] + "']{marker-file:url('" + sourceurl + catMarkers[i][1] + "');}";
 						}
 						
-						tileStyle += closeStyle;
+						tileStyle += "#" + table + "[kind='idea']{marker-file:url('" + sourceurl + "idea.png');}";
+						tileStyle += "#" + table + "[kind='intervention']{marker-file:url('" + sourceurl + "intervention.png');}";
+						
+						//tileStyle += closeStyle;
 						return tileStyle;
 					}
 
@@ -1291,7 +1300,7 @@
 						$('#report_uuid').val(data.uuid);
 						$('#commentbox').val('');
 
-						$('#report_title').html('<span class="title grey-text">'+data.title+'<img src="'+getIcon(data.likeability)+'" style="height:40px;margin-bottom: -14px;"></span>');
+						$('#report_title').html('<span class="title grey-text">'+data.title+'<img src="'+getIcon(data.likeability, data.kind)+'" style="height:40px;margin-bottom: -14px;"></span><a class="grey-text right" href="#" onclick="$(\'#modal3\').closeModal();populateShare('+data.cartodb_id+');return false;"><i class="mdi-social-share"></i></a>');
 						var qry = "SELECT created FROM " + _table_name + " WHERE cartodb_id = " + data.cartodb_id;
 						_sql.execute(qry).done(function(data) {
 							$('#report_date').html('<span class="small grey-text">' + data.rows[0].created.substr(0,10) + '</span>');
@@ -1305,7 +1314,7 @@
 						$('#report_feeling').html(feeling_html);
 
 						$('#report_followers').html('<span class="small grey-text">' + data.follows + '</span>');
-						$('#followBtn').html('Like');
+						$('#followBtn').html('<i style="font-size: 18px;" class="mdi-action-favorite"></i>');
 
 						$('#report_description').html(data.description);
 						loadComments($('#report_uuid').val());
@@ -1377,7 +1386,7 @@
 
 					function followReport(elem){
 						var kind;
-						if (elem.innerHTML.indexOf('Like') >= 0){
+						if (elem.innerHTML.indexOf('<i style="font-size: 18px;" class="mdi-action-favorite"></i>') >= 0){
 							kind = 'follow';
 						}
 						else if (elem.innerHTML.indexOf('Undo') >= 0){
@@ -1399,10 +1408,10 @@
 			            }).done(function(data) {
 			            	console.log(data);
 			            	if (kind == 'follow' && data.status == 'success' && data.contents != 'user is creator'){
-			            		elem.innerHTML = elem.innerHTML.replace('Like','Undo');
+			            		elem.innerHTML = elem.innerHTML.replace('<i style="font-size: 18px;" class="mdi-action-favorite"></i>','Undo');
 			            	}
 			            	if (kind == 'unfollow' && data.status == 'success' && data.contents != 'user is creator'){
-			            		elem.innerHTML = elem.innerHTML.replace('Undo', 'Like');
+			            		elem.innerHTML = elem.innerHTML.replace('Undo', '<i style="font-size: 18px;" class="mdi-action-favorite"></i>');
 			            	}
 			            	var qry = "SELECT follows FROM " + _table_name + " WHERE cartodb_id = " + $('#report_ticket').val();
 							_sql.execute(qry).done(function(data) {
@@ -1473,7 +1482,7 @@
 						controlUI.style.boxShadow = '0 2px 6px rgba(0,0,0,.3)';
 						controlUI.style.cursor = 'pointer';
 						controlUI.style.marginBottom = '2px';
-						controlUI.style.marginRight = '10px';
+						controlUI.style.marginLeft = '10px';
 						controlUI.style.textAlign = 'center';
 						controlUI.title = 'Click to locate you.';
 						controlDiv.appendChild(controlUI);
@@ -1510,24 +1519,24 @@
 						_sql.execute(query).done(function(data) {
 					        if(data.total_rows >= 1) {
 							    for(var i=0,j=data.total_rows;i<j;i++){
-							    	html += '<li class="collection-item avatar" style="height:auto;margin-bottom:10px;border-radius:4px;background-color: rgba(255, 255, 255, 0);    padding: 20px;">';
+							    	html += '<li class="collection-item avatar" style="height:auto;margin-bottom:10px;border-radius:4px;background-color: rgba(255, 255, 255, 0.85);    padding: 20px;     border-radius: 25px!important;">';
 					                if (data.rows[i].image_url != 'None')
 					                	html += '';//'<img src="'+data.rows[i].image_url+'" alt="" class="circle">';
 					               	else
 					               		html += '';//'<img src="/default/materialize/images/logo.png" alt="" class="circle">';
-					                html+='<span class="title grey-text">'+data.rows[i].title+'<img src="'+getIcon(data.rows[i].likeability)+'" class="right" style="height:40px;"></span>';
+					                html+='<span class="title grey-text" style="cursor:pointer" onclick="loadModal('+data.rows[i].cartodb_id+');">'+data.rows[i].title+'<img src="'+getIcon(data.rows[i].likeability, data.rows[i].kind)+'" class="right" style="height:40px;"></span>';
 									html+='<p class="grey-text small">'+data.rows[i].created.substr(0,10)+'';
 									html+='<br>'+data.rows[i].address+'';
 									html+='</p>';
 									if (data.rows[i].image_url != 'None')
-					                	html += '<div class="row center"><img src="'+data.rows[i].image_url+'" alt="" class="responsive-img"></div>';
+					                	html += '<div class="row center" style="cursor:pointer"><img src="'+data.rows[i].image_url+'" alt="" class="responsive-img" onclick="loadModal('+data.rows[i].cartodb_id+');"></div>';
 									html+='<div class="row center">';
 									html+=getFeelingHTML(data.rows[i].likeability, data.rows[i].feeling);
 									html+='</div>';
 									html+='<p class="grey-text">'+data.rows[i].description+'</p>';
 									html+='<div class="row center" style="margin-top:10px;">';
-									html+='<div class="col s3">';
-									html+='<p class="" style="cursor: pointer;"><a class="grey-text" href="#" onclick="loadModal('+data.rows[i].cartodb_id+');"><i class="mdi-maps-place"></i></a></p>';
+									html+='<div class="col s3">';					        	 
+									html+='<p class="" style="cursor: pointer;"><a class="grey-text" href="#" onclick="map.setZoom(20);loadModal('+data.rows[i].cartodb_id+');"><i class="mdi-maps-place"></i></a></p>';
 									html+='</div>';
 									html+='<div class="col s3">';
 									html+='<p class="" style="cursor: pointer;"><a class="grey-text" href="#" onclick="loadModal('+data.rows[i].cartodb_id+', true);"><i class="mdi-action-favorite"></i> <span>'+data.rows[i].follows+'</span></a></p>';
@@ -1583,7 +1592,12 @@
 			        	setTimeout(function(){ rrssbInit();}, 500);
 					}
 
-					function getIcon(st){
+					function getIcon(st, kind){
+						if (kind == "intervention")
+							return "http://usocialmaps.appspot.com/default/materialize/images/markers/intervention.png";
+						if (kind == "idea")
+							return "http://usocialmaps.appspot.com/default/materialize/images/markers/idea.png";
+
 						switch(st){
 					        case 'Not at all':
 					            return 'http://usocialmaps.appspot.com/default/materialize/images/markers/_red.png';
@@ -1625,6 +1639,7 @@
 						return r;
 					}
 
+					{% if user_id %}
 					document.querySelector('#submit_report_form_comment').addEventListener('click', function() { 
 						if (document.getElementById("commentbox").value == '')
 		    	            Materialize.toast('<span class="toast-warning">Oops! Write a comment please.</span>',4500);
@@ -1647,6 +1662,7 @@
 					         });
 		    	        }	            	            
 			        });
+					{% endif %}
 				</script>
 
 				<script type="infowindow/html" id="infowindow_public_reports">

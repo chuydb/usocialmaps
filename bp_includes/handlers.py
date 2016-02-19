@@ -1077,12 +1077,12 @@ class MaterializeReportCommentsHandler(BaseHandler):
                     image = -1
                     initial_letter = log.user_email[1]
                     name = ''
-                html+= '<li class="collection-item avatar" style="text-align: right;     height: auto;  display:inline-block; width: 100%; border: 1px solid white;">'
+                html+= '<li class="collection-item avatar" style="height: auto;  display:inline-block; width: 100%; border: 1px solid white;">'
                 if image != -1:
                     html+= '<img src="%s" alt="" class="circle" style="width: 60px;height: 60px;">' % image
                 else:
                     html+= '<i class="mdi-action-face-unlock circle"></i>'
-                html+= '<span class="title right"><span class="sm-yellow-text">%s:</span></span><br><p class="right"><span class="sm-blue-text">%s</span><br>%s</p>' % (name, log.get_formatted_date(), log.contents)
+                html+= '<span class="title left" style="margin-left:20px"><span class="sm-yellow-text">%s:</span></span><br><p class="left" style="margin-left:20px"><span class="sm-blue-text">%s</span><br>%s</p>' % (name, log.get_formatted_date(), log.contents)
                 html+= '</li>'
             html += '</ul>'
             reportDict['logs'] = {
@@ -1710,6 +1710,24 @@ class SendEmailHandler(BaseHandler):
     These handlers are just to be a full website in the web background.
 
 """
+class MBoiUsersHandler(BaseHandler):
+    def get(self):
+        reportDict = {}
+        try:
+            users = self.user_model.query()
+            reportDict['status'] = 'success'
+            reportDict['users'] = users.count()
+            reportDict['exception'] = ''
+            
+        except Exception as e:
+            reportDict['status'] = 'error'
+            reportDict['users'] = 0
+            reportDict['exception'] = '%s' % e
+
+        self.response.headers.add_header("Access-Control-Allow-Origin", "*")
+        self.response.headers['Content-Type'] = 'application/json'
+        self.response.write(json.dumps(reportDict))
+        
 class RobotsHandler(BaseHandler):
     def get(self):
         params = {
